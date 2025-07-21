@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, AsyncGenerator, BinaryIO
 
 import orjson
 
@@ -33,3 +33,13 @@ def orjson_dumps(__obj: Any, *, default=None) -> str:
         default=default,
         option=orjson.OPT_NON_STR_KEYS | orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_SERIALIZE_UUID | orjson.OPT_UTC_Z,
     ).decode("utf-8")
+
+
+async def iterfile(file_content: BinaryIO) -> AsyncGenerator[bytes, None]:
+    try:
+        chunk = await file_content.content.read(8192)
+        while chunk:
+            yield chunk
+            chunk = await file_content.content.read(8192)
+    finally:
+        await file_content.release()

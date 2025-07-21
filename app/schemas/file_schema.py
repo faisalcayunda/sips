@@ -3,14 +3,12 @@ from typing import Optional
 
 from pydantic import Field
 
-from app.core.data_types import UUID7Field
-
 from .base import BaseSchema
 from .user_schema import UserSchema
 
 
 class FileSchema(BaseSchema):
-    id: UUID7Field
+    id: int
     object_name: str
     uploaded_by: UserSchema
     created_at: datetime

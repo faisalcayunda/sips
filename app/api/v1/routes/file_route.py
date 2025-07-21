@@ -20,6 +20,7 @@ from app.models import UserModel
 from app.schemas.base import PaginatedResponse
 from app.schemas.file_schema import FileSchema
 from app.services import FileService
+from app.utils.helpers import iterfile
 
 router = APIRouter()
 
@@ -51,9 +52,7 @@ async def get_files(
 
 
 @router.get("/files/{id}", response_model=FileSchema)
-async def get_file(
-    id: UUID7Field, service: FileService = Depends(Factory().get_file_service)
-):
+async def get_file(id: UUID7Field, service: FileService = Depends(Factory().get_file_service)):
     file = await service.find_by_id(id)
     return file
 
@@ -65,60 +64,33 @@ async def upload_file(
     current_user: UserModel = Depends(get_current_active_user),
     service: FileService = Depends(Factory().get_file_service),
 ):
-    result = await service.upload_file(
-        file=file, description=description, user_id=current_user.id
-    )
+    result = await service.upload_file(file=file, description=description, user_id=current_user.id)
     return result
 
 
-@router.get(
-    "/files/{file_id}", response_model=FileSchema, summary="Dapatkan metadata file"
-)
-async def get_file_info(
-    file_id: UUID7Field, service: FileService = Depends(Factory().get_file_service)
-):
+@router.get("/files/{file_id}", response_model=FileSchema, summary="Dapatkan metadata file")
+async def get_file_info(file_id: UUID7Field, service: FileService = Depends(Factory().get_file_service)):
     file = await service.find_by_id(file_id)
     if not file:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="File tidak ditemukan"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File tidak ditemukan")
     return file
 
 
 @router.get("/files/{file_id}/download", summary="Download file")
-async def download_file(
-    file_id: str, service: FileService = Depends(Factory().get_file_service)
-):
+async def download_file(file_id: str, service: FileService = Depends(Factory().get_file_service)):
     if file_id.isdigit():
-        file_content, object_info, file_model = await service.get_file_content(
-            file_id=file_id
-        )
+        file_content, object_info, file_model = await service.get_file_content(file_id=file_id)
     else:
-        file_content, object_info, file_model = await service.get_file_content(
-            object_name=file_id
-        )
-
-    async def iterfile():
-        try:
-            chunk = await file_content.content.read(8192)
-            while chunk:
-                yield chunk
-                chunk = await file_content.content.read(8192)
-        finally:
-            await file_content.release()
+        file_content, object_info, file_model = await service.get_file_content(object_name=file_id)
 
     return StreamingResponse(
-        iterfile(),
+        content=iterfile(file_content),
         media_type=file_model.content_type,
-        headers={
-            "Content-Disposition": f'attachment; filename="{file_model.filename}"'
-        },
+        headers={"Content-Disposition": f'attachment; filename="{file_model.filename}"'},
     )
 
 
-@router.delete(
-    "/files/{file_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Hapus file"
-)
+@router.delete("/files/{file_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Hapus file")
 async def delete_file(
     file_id: UUID7Field,
     current_user: UserModel = Depends(get_current_active_user),
