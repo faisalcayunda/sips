@@ -1,0 +1,52 @@
+from datetime import date, datetime
+
+import uuid6
+from pytz import timezone
+from sqlalchemy import (
+    UUID,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    BigInteger,
+    String,
+    Integer,
+)
+from sqlalchemy.orm import relationship
+
+from app.core.config import settings
+
+from . import Base
+
+
+class UserModel(Base):
+    __tablename__ = "user_account"
+
+    id = Column("acc_id", String(36), primary_key=True, index=True)
+    name = Column("acc_name", String, nullable=False)
+    address = Column("acc_address", String, nullable=True)
+    phone = Column("acc_phone", String, nullable=True)
+    gender = Column("acc_gender", String, nullable=True)
+    agency_name = Column("acc_agency_name", String, nullable=True)
+    agency_type = Column("acc_agency_type", String, nullable=True)
+    file = Column("acc_file", String, nullable=True)
+    avatar = Column("acc_avatar", String, nullable=True)
+    email = Column("acc_email", String, unique=True, nullable=False)
+    password = Column("acc_password", String, nullable=False)
+    enable = Column("acc_enable", Boolean, default=True)
+    role_id = Column(Integer)
+    last_login = Column(
+        DateTime(timezone=True),
+        nullable=True,
+        default=datetime.now(timezone(settings.TIMEZONE)),
+    )
+    create_by = Column(String(36), nullable=True)
+    update_by = Column(String(36), nullable=True)
+    create_at = Column(
+        DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE))
+    )
+    update_at = Column(
+        DateTime(timezone=True),
+        default=datetime.now(timezone(settings.TIMEZONE)),
+        onupdate=datetime.now(timezone(settings.TIMEZONE)),
+    )

@@ -1,0 +1,74 @@
+name: Deploy to SSH Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Export Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          tags: sips-backend:latest
+          outputs: type=docker,dest=sips-backend.tar
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Copy Docker image to server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "sips-backend.tar"
+          target: "~/"
+          timeout: 600s 
+
+      - name: Deploy container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            # Memuat image
+            docker load -i ~/sips-backend.tar
+
+            # Menghentikan dan menghapus container lama jika ada
+            docker stop sips-backend || true
+            docker rm sips-backend || true
+
+            # Menjalankan container baru dengan restart policy dan resource limits
+            docker run -d --name sips-backend \
+              --restart unless-stopped \
+              --env-file /home/pds/application/.env \
+              -p 5000:5000 \
+              --health-interval=30s \
+              --health-timeout=10s \
+              --health-retries=3 \
+              sips-backend:latest
+
+            # docker exec sips-backend python migrations/scripts.py
+
+            # Menghapus image lama yang tidak terpakai
+            docker image prune -af --filter "until=24h"
+
+            # Membersihkan file tar
+            rm -f ~/sips-backend.tar
+
+            # Verifikasi status container
+            docker ps | grep sips-backend
