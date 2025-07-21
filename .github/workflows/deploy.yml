@@ -66,13 +66,14 @@ jobs:
 
             # Deploy minio
             docker run -d \
-              --name satu-peta-minio \
+              --restart unless-stopped \
+              --name minio \
               -p 9000:9000 \
               -p 9001:9001 \
               -v ~/minio/data:/data \
-              --env-file /home/application/sips-api/.env
-              quay.io/minio/minio \
-              server /data --console-address ":9001"
+              --env-file /home/application/sips-api/.env \
+              minio/minio:latest \
+              server /data --console-address ":9001" || true
 
             # Menghapus image lama yang tidak terpakai
             docker image prune -af --filter "until=24h"
