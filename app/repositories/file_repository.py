@@ -14,3 +14,8 @@ class FileRepository(BaseRepository[FileModel]):
         query = select(self.model.user_id).where(self.model.user_id == user_id)
         result = await db.session.execute(query)
         return result.scalars().all()
+
+    async def find_by_object_name(self, object_name: str):
+        query = select(self.model).where(self.model.object_name == object_name)
+        result = await db.session.execute(query)
+        return result.scalars().first()
