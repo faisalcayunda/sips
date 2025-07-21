@@ -55,7 +55,7 @@ jobs:
             # Menjalankan container baru dengan restart policy dan resource limits
             docker run -d --name sips-backend \
               --restart unless-stopped \
-              --env-file /home/pds/application/.env \
+              --env-file /home/application/sips-api/.env \
               -p 5000:5000 \
               --health-interval=30s \
               --health-timeout=10s \
@@ -63,6 +63,16 @@ jobs:
               sips-backend:latest
 
             # docker exec sips-backend python migrations/scripts.py
+
+            # Deploy minio
+            docker run -d \
+              --name satu-peta-minio \
+              -p 9000:9000 \
+              -p 9001:9001 \
+              -v ~/minio/data:/data \
+              --env-file /home/application/sips-api/.env
+              quay.io/minio/minio \
+              server /data --console-address ":9001"
 
             # Menghapus image lama yang tidak terpakai
             docker image prune -af --filter "until=24h"
