@@ -1,6 +1,7 @@
 from .base import Base
 from .file_model import FileModel
 from .refresh_token_model import RefreshTokenModel
+from .regional_model import RegionalModel
 from .user_model import UserModel
 
 __all__ = [
@@ -8,5 +9,6 @@ __all__ = [
     "FileModel",
     "OrganizationModel",
     "RefreshTokenModel",
+    "RegionalModel",
     "UserModel",
 ]
