@@ -1,6 +1,7 @@
 from .base import Base
 from .file_model import FileModel
 from .foresty_schema_model import ForestySchemaModel
+from .proposal_foresty_status_model import ProposalForestyStatusModel
 from .refresh_token_model import RefreshTokenModel
 from .regional_model import RegionalModel
 from .user_model import UserModel
@@ -13,4 +14,5 @@ __all__ = [
     "RefreshTokenModel",
     "RegionalModel",
     "UserModel",
+    "ProposalForestyStatusModel",
 ]

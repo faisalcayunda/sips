@@ -4,6 +4,7 @@ from app.core.minio_client import MinioClient
 from app.models import (
     FileModel,
     ForestySchemaModel,
+    ProposalForestyStatusModel,
     RefreshTokenModel,
     RegionalModel,
     UserModel,
@@ -11,6 +12,7 @@ from app.models import (
 from app.repositories import (
     FileRepository,
     ForestySchemaRepository,
+    ProposalForestyStatusRepository,
     RegionalRepository,
     TokenRepository,
     UserRepository,
@@ -19,6 +21,7 @@ from app.services import (
     AuthService,
     FileService,
     ForestySchemaService,
+    ProposalForestyStatusService,
     RegionalService,
     UserService,
 )
@@ -30,6 +33,9 @@ class Factory:
     file_repository = staticmethod(partial(FileRepository, FileModel))
     regional_repository = staticmethod(partial(RegionalRepository, RegionalModel))
     foresty_schema_repository = staticmethod(partial(ForestySchemaRepository, ForestySchemaModel))
+    proposal_foresty_status_repository = staticmethod(
+        partial(ProposalForestyStatusRepository, ProposalForestyStatusModel)
+    )
 
     def get_auth_service(
         self,
@@ -58,3 +64,8 @@ class Factory:
         self,
     ):
         return ForestySchemaService(self.foresty_schema_repository())
+
+    def get_proposal_foresty_status_service(
+        self,
+    ):
+        return ProposalForestyStatusService(self.proposal_foresty_status_repository())
