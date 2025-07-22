@@ -27,8 +27,8 @@ app = FastAPI(
     description=settings.DESCRIPTION,
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
-    root_path="/api",
-    docs_url="/docs",
+    root_path="/",
+    docs_url="/",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
 )
@@ -57,27 +57,21 @@ app.include_router(api_router)
 async def api_exception_handler(request: Request, exc: APIException):
     response_content = prepare_error_response(message=exc.message)
 
-    return JSONResponse(
-        status_code=exc.status_code, content=response_content, headers=exc.headers
-    )
+    return JSONResponse(status_code=exc.status_code, content=response_content, headers=exc.headers)
 
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     response_content = prepare_error_response(message=str(exc.detail))
 
-    return JSONResponse(
-        status_code=exc.status_code, content=response_content, headers=exc.headers
-    )
+    return JSONResponse(status_code=exc.status_code, content=response_content, headers=exc.headers)
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     response_content = prepare_error_response(message=exc.errors())
 
-    return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=response_content
-    )
+    return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=response_content)
 
 
 @app.exception_handler(LookupError)
@@ -89,9 +83,7 @@ async def enum_exception_handler(request: Request, exc: LookupError):
             message="Invalid enum value",
             detail=error_message,
         )
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST, content=response_content
-        )
+        return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=response_content)
 
     raise exc
 
@@ -104,9 +96,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         detail=str(exc) if settings.DEBUG else None,
     )
 
-    return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST, content=response_content
-    )
+    return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=response_content)
 
 
 @app.exception_handler(Exception)
@@ -115,6 +105,4 @@ async def global_exception_handler(request: Request, exc: Exception):
         message="Internal server error", detail=str(exc) if settings.DEBUG else None
     )
 
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response_content
-    )
+    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=response_content)
