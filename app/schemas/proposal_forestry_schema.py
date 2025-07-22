@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 
 from .base import BaseSchema
 
@@ -13,7 +13,7 @@ class YesNoEnum(str, Enum):
 class ProposalForestrySchema(BaseSchema):
     id: str
     regional_id: str
-    assist_account_id: Optional[str] = None
+    assist_account_id: Optional[List[str]] = None
     name: Optional[str] = None
     schema_id: str
     kph_account_id: str
@@ -39,7 +39,7 @@ class ProposalForestrySchema(BaseSchema):
 
 class ProposalForestryCreateSchema(BaseSchema):
     regional_id: str
-    assist_account_id: Optional[str] = None
+    assist_account_id: Optional[List[str]] = None
     name: Optional[str] = None
     schema_id: str
     kph_account_id: str
@@ -62,7 +62,7 @@ class ProposalForestryCreateSchema(BaseSchema):
 
 class ProposalForestryUpdateSchema(BaseSchema):
     regional_id: Optional[str] = None
-    assist_account_id: Optional[str] = None
+    assist_account_id: Optional[List[str]] = None
     name: Optional[str] = None
     schema_id: Optional[str] = None
     kph_account_id: Optional[str] = None

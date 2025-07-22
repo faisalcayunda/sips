@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pytz import timezone
-from sqlalchemy import CHAR, Column, DateTime, Enum, Float, Integer, String
+from sqlalchemy import CHAR, JSON, Column, DateTime, Enum, Float, Integer, String
 
 from app.core.config import settings
 
@@ -13,7 +13,9 @@ class ForestryProposalModel(Base):
 
     id = Column("fore_kps_id", CHAR(11), primary_key=True, nullable=False)
     regional_id = Column("reg_id", CHAR(10), nullable=False)
-    assist_account_id = Column("assist_acc_id", String(256), nullable=True)
+    # Menggunakan ARRAY(String) untuk menyimpan array of string pada PostgreSQL
+
+    assist_account_id = Column("assist_acc_id", JSON, nullable=True)
     name = Column("fore_name", String(256), nullable=True)
     schema_id = Column("fore_skema_id", CHAR(4), nullable=False)
     kph_account_id = Column("kph_acc_id", CHAR(36), nullable=False)
