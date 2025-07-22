@@ -11,7 +11,6 @@ from app.schemas.foresty_schema_schema import (
     ForestySchemaSchema,
     ForestySchemaUpdateSchema,
 )
-from app.schemas.user_schema import UserSchema
 from app.services import ForestySchemaService
 
 router = APIRouter()
@@ -58,13 +57,13 @@ async def get_foresty_schemas(
     "/foresty-schemas",
     response_model=ForestySchemaSchema,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(get_current_active_user)],
 )
 async def create_foresty_schema(
     data: ForestySchemaCreateSchema,
-    current_user: UserSchema = Depends(get_current_active_user),
     service: ForestySchemaService = Depends(Factory().get_foresty_schema_service),
 ):
-    return await service.create(data.dict(), current_user)
+    return await service.create(data.dict())
 
 
 @router.patch(
