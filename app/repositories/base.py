@@ -3,10 +3,9 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar
 from fastapi_async_sqlalchemy import db
 from sqlalchemy import String, cast
 from sqlalchemy import delete as sqlalchemy_delete
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, inspect, or_, select
 from sqlalchemy import update as sqlalchemy_update
 from sqlalchemy.orm import joinedload, selectinload
-from uuid6 import UUID
 
 from app.core.database import Base
 
@@ -18,6 +17,7 @@ class BaseRepository(Generic[ModelType]):
 
     def __init__(self, model: Type[ModelType]):
         self.model: Type[ModelType] = model
+        self.inspector = inspect(self.model)
 
     def build_base_query(self, include_deleted: bool = False):
         """Build base query dengan soft delete handling."""
@@ -26,9 +26,7 @@ class BaseRepository(Generic[ModelType]):
             query = query.where(self.model.is_deleted.is_(False))
         return query
 
-    async def find_by_id(
-        self, id: int, relationships: List[str] = None
-    ) -> Optional[ModelType]:
+    async def find_by_id(self, id: int, relationships: List[str] = None) -> Optional[ModelType]:
         """Find record by ID dengan optional eager loading."""
         query = self.build_base_query().where(self.model.id == id)
 
@@ -68,11 +66,7 @@ class BaseRepository(Generic[ModelType]):
                     if hasattr(self.model, col)
                 ]
             else:
-                search_conditions = [
-                    cast(getattr(self.model, col), String).ilike(f"%{search}%")
-                    for col in self.model.__table__.columns.keys()
-                    if not col.startswith("_")
-                ]
+                search_conditions = [cast(col, String).ilike(f"%{search}%") for col in self.inspector.c]
 
             if search_conditions:
                 query = query.where(or_(*search_conditions))
@@ -144,9 +138,7 @@ class BaseRepository(Generic[ModelType]):
 
         return None
 
-    async def update(
-        self, id: int, data: Dict[str, Any], refresh: bool = True
-    ) -> Optional[ModelType]:
+    async def update(self, id: int, data: Dict[str, Any], refresh: bool = True) -> Optional[ModelType]:
         """Update record dengan optimization."""
         clean_data = {k: v for k, v in data.items() if v is not None}
 
