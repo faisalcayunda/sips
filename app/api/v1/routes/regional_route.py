@@ -68,7 +68,7 @@ async def create_regional(
     response_model=RegionalSchema,
     dependencies=[Depends(get_current_active_user)],
 )
-async def update_user(
+async def update_regional(
     id: str,
     data: RegionalUpdateSchema,
     service: RegionalService = Depends(Factory().get_regional_service),
@@ -81,5 +81,5 @@ async def update_user(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(get_current_active_user)],
 )
-async def delete_user(id: str, service: RegionalService = Depends(Factory().get_regional_service)):
+async def delete_regional(id: str, service: RegionalService = Depends(Factory().get_regional_service)):
     await service.delete(id)
