@@ -1,16 +1,16 @@
-import re
+from datetime import datetime
 from typing import Optional
 
 from pydantic import EmailStr, Field, field_validator
 
 from app.core.exceptions import UnprocessableEntity
+
 from .base import BaseSchema
-from datetime import datetime
 
 
 # Disesuaikan dengan struktur user_model.py
 class UserSchema(BaseSchema):
-    id: int
+    id: str
     name: str
     address: Optional[str] = None
     phone: Optional[str] = None
