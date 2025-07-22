@@ -3,6 +3,7 @@ from functools import partial
 from app.core.minio_client import MinioClient
 from app.models import (
     FileModel,
+    ForestryProposalModel,
     PiapsModel,
     ProposalforestryStatusModel,
     RefreshTokenModel,
@@ -12,6 +13,7 @@ from app.models import (
 )
 from app.repositories import (
     FileRepository,
+    ForestryProposalRepository,
     PiapsRepository,
     ProposalforestryStatusRepository,
     RegionalRepository,
@@ -22,6 +24,7 @@ from app.repositories import (
 from app.services import (
     AuthService,
     FileService,
+    ForestyProposalService,
     PiapsService,
     ProposalforestryStatusService,
     RegionalService,
@@ -40,6 +43,7 @@ class Factory:
         partial(ProposalforestryStatusRepository, ProposalforestryStatusModel)
     )
     piaps_repository = staticmethod(partial(PiapsRepository, PiapsModel))
+    forestry_proposal_repository = staticmethod(partial(ForestryProposalRepository, ForestryProposalModel))
 
     def get_auth_service(
         self,
@@ -78,3 +82,8 @@ class Factory:
         self,
     ):
         return PiapsService(self.piaps_repository())
+
+    def get_proposal_forestry_service(
+        self,
+    ):
+        return ForestyProposalService(self.forestry_proposal_repository())
