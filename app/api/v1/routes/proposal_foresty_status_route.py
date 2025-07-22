@@ -11,7 +11,6 @@ from app.schemas.proposal_foresty_status_schema import (
     ProposalForestyStatusSchema,
     ProposalForestyStatusUpdateSchema,
 )
-from app.schemas.user_schema import UserSchema
 from app.services import ProposalForestyStatusService
 
 router = APIRouter()
@@ -61,13 +60,13 @@ async def get_proposal_foresty_status(
     "/proposal-foresty-status",
     response_model=ProposalForestyStatusSchema,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(get_current_active_user)],
 )
 async def create_proposal_foresty_status(
     data: ProposalForestyStatusCreateSchema,
-    current_user: UserSchema = Depends(get_current_active_user),
     service: ProposalForestyStatusService = Depends(Factory().get_proposal_foresty_status_service),
 ):
-    return await service.create(data.dict(), current_user)
+    return await service.create(data.dict())
 
 
 @router.patch(
