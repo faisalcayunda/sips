@@ -1,9 +1,9 @@
+import logging
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 
 from fastapi import HTTPException, status
 from pytz import timezone
-from uuid6 import UUID
 
 from app.core.config import settings
 from app.core.security import (
@@ -15,7 +15,6 @@ from app.core.security import (
 from app.models.user_model import UserModel
 from app.repositories.token_repository import TokenRepository
 from app.repositories.user_repository import UserRepository
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -23,17 +22,13 @@ logger = logging.getLogger(__name__)
 class AuthService:
     tz = timezone(settings.TIMEZONE)
 
-    def __init__(
-        self, user_repository: UserRepository, token_repository: TokenRepository
-    ):
+    def __init__(self, user_repository: UserRepository, token_repository: TokenRepository):
         self.user_repository = user_repository
         self.token_repository = token_repository
 
-    async def authenticate_user(
-        self, username: str, password: str
-    ) -> Optional[UserModel]:
+    async def authenticate_user(self, email: str, password: str) -> Optional[UserModel]:
         """Autentikasi user dengan username dan password."""
-        user = await self.user_repository.find_by_username(username)
+        user = await self.user_repository.find_by_email(email)
         if not user:
             return None
         if not verify_password(password, user.password):
@@ -82,9 +77,7 @@ class AuthService:
                     detail="Could not validate credentials",
                 )
 
-            token_obj = await self.token_repository.find_valid_token(
-                refresh_token, user_id=user_id
-            )
+            token_obj = await self.token_repository.find_valid_token(refresh_token, user_id=user_id)
             if not token_obj:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
