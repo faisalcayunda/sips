@@ -1,8 +1,8 @@
 from .base import Base
 from .file_model import FileModel
-from .foresty_schema_model import ForestySchemaModel
+from .forestry_schema_model import forestrySchemaModel
 from .piaps_model import PiapsModel
-from .proposal_foresty_status_model import ProposalForestyStatusModel
+from .proposal_forestry_status_model import ProposalforestryStatusModel
 from .refresh_token_model import RefreshTokenModel
 from .regional_model import RegionalModel
 from .user_model import UserModel
@@ -11,10 +11,10 @@ __all__ = [
     "Base",
     "FileModel",
     "OrganizationModel",
-    "ForestySchemaModel",
+    "forestrySchemaModel",
     "RefreshTokenModel",
     "RegionalModel",
     "UserModel",
-    "ProposalForestyStatusModel",
+    "ProposalforestryStatusModel",
     "PiapsModel",
 ]

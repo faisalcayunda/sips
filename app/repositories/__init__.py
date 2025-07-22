@@ -1,8 +1,8 @@
 from .base import BaseRepository
 from .file_repository import FileRepository
-from .foresty_schema_repository import ForestySchemaRepository
+from .forestry_schema_repository import forestrySchemaRepository
 from .piaps_repository import PiapsRepository
-from .proposal_foresty_status_repository import ProposalForestyStatusRepository
+from .proposal_forestry_status_repository import ProposalforestryStatusRepository
 from .regional_repository import RegionalRepository
 from .token_repository import TokenRepository
 from .user_repository import UserRepository
@@ -13,7 +13,7 @@ __all__ = [
     "TokenRepository",
     "UserRepository",
     "RegionalRepository",
-    "ForestySchemaRepository",
-    "ProposalForestyStatusRepository",
+    "forestrySchemaRepository",
+    "ProposalforestryStatusRepository",
     "PiapsRepository",
 ]

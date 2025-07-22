@@ -3,7 +3,7 @@ from typing import Optional
 from .base import BaseSchema
 
 
-class ForestySchemaSchema(BaseSchema):
+class forestrySchemaSchema(BaseSchema):
     id: str
     schema_id: str
     name: str
@@ -11,14 +11,14 @@ class ForestySchemaSchema(BaseSchema):
     ord: Optional[int] = None
 
 
-class ForestySchemaCreateSchema(BaseSchema):
+class forestrySchemaCreateSchema(BaseSchema):
     schema_id: str
     name: str
     description: Optional[str] = None
     ord: Optional[int] = None
 
 
-class ForestySchemaUpdateSchema(BaseSchema):
+class forestrySchemaUpdateSchema(BaseSchema):
     schema_id: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None

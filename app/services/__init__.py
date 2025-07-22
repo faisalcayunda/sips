@@ -1,9 +1,9 @@
 from .auth_service import AuthService
 from .base import BaseService
 from .file_service import FileService
-from .foresty_schema_service import ForestySchemaService
+from .forestry_schema_service import forestrySchemaService
 from .piaps_service import PiapsService
-from .proposal_foresty_status_service import ProposalForestyStatusService
+from .proposal_forestry_status_service import ProposalforestryStatusService
 from .regional_service import RegionalService
 from .user_service import UserService
 
@@ -14,7 +14,7 @@ __all__ = [
     "OrganizationService",
     "UserService",
     "RegionalService",
-    "ForestySchemaService",
-    "ProposalForestyStatusService",
+    "forestrySchemaService",
+    "ProposalforestryStatusService",
     "PiapsService",
 ]

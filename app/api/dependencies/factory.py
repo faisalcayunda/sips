@@ -3,30 +3,30 @@ from functools import partial
 from app.core.minio_client import MinioClient
 from app.models import (
     FileModel,
-    ForestySchemaModel,
     PiapsModel,
-    ProposalForestyStatusModel,
+    ProposalforestryStatusModel,
     RefreshTokenModel,
     RegionalModel,
     UserModel,
+    forestrySchemaModel,
 )
 from app.repositories import (
     FileRepository,
-    ForestySchemaRepository,
     PiapsRepository,
-    ProposalForestyStatusRepository,
+    ProposalforestryStatusRepository,
     RegionalRepository,
     TokenRepository,
     UserRepository,
+    forestrySchemaRepository,
 )
 from app.services import (
     AuthService,
     FileService,
-    ForestySchemaService,
     PiapsService,
-    ProposalForestyStatusService,
+    ProposalforestryStatusService,
     RegionalService,
     UserService,
+    forestrySchemaService,
 )
 
 
@@ -35,9 +35,9 @@ class Factory:
     token_repository = staticmethod(partial(TokenRepository, RefreshTokenModel))
     file_repository = staticmethod(partial(FileRepository, FileModel))
     regional_repository = staticmethod(partial(RegionalRepository, RegionalModel))
-    foresty_schema_repository = staticmethod(partial(ForestySchemaRepository, ForestySchemaModel))
-    proposal_foresty_status_repository = staticmethod(
-        partial(ProposalForestyStatusRepository, ProposalForestyStatusModel)
+    forestry_schema_repository = staticmethod(partial(forestrySchemaRepository, forestrySchemaModel))
+    proposal_forestry_status_repository = staticmethod(
+        partial(ProposalforestryStatusRepository, ProposalforestryStatusModel)
     )
     piaps_repository = staticmethod(partial(PiapsRepository, PiapsModel))
 
@@ -64,15 +64,15 @@ class Factory:
     ):
         return RegionalService(self.regional_repository())
 
-    def get_foresty_schema_service(
+    def get_forestry_schema_service(
         self,
     ):
-        return ForestySchemaService(self.foresty_schema_repository())
+        return forestrySchemaService(self.forestry_schema_repository())
 
-    def get_proposal_foresty_status_service(
+    def get_proposal_forestry_status_service(
         self,
     ):
-        return ProposalForestyStatusService(self.proposal_foresty_status_repository())
+        return ProposalforestryStatusService(self.proposal_forestry_status_repository())
 
     def get_piaps_service(
         self,
