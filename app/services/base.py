@@ -21,13 +21,16 @@ class BaseService(Generic[ModelType, RepositoryType]):
         self._has_soft_delete = hasattr(self.model_class, "is_deleted")
 
     @lru_cache(maxsize=256)
-    def _parse_filter_item(self, filter_item: str) -> Tuple[str, str]:
-        """Cache parsing filter."""
-        try:
-            col, value = filter_item.split("=", 1)
-            return col.strip(), value.strip()
-        except ValueError:
-            raise UnprocessableEntity(f"Invalid filter {filter_item} must be 'name=value'")
+    def _parse_filter_item(self, filter_item: str) -> Tuple[str, str, str]:
+        """Cache parsing filter. Mendukung operator '=', '>=', '<='."""
+        for op in ("!=", ">=", "<=", "="):
+            if op in filter_item:
+                try:
+                    col, value = filter_item.split(op, 1)
+                    return col.strip(), op, value.strip()
+                except ValueError:
+                    raise UnprocessableEntity(f"Invalid filter {filter_item} must be 'name{op}value'")
+        raise UnprocessableEntity(f"Invalid filter {filter_item}. Must use '=', '>=', or '<=' as separator.")
 
     @lru_cache(maxsize=256)
     def _parse_sort_item(self, sort_item: str) -> Tuple[str, str]:
@@ -76,26 +79,48 @@ class BaseService(Generic[ModelType, RepositoryType]):
             if isinstance(filter_item, list):
                 or_conditions = []
                 for values in filter_item:
-                    col, value = self._parse_filter_item(values)
+                    col, operator, value = self._parse_filter_item(values)
                     self._validate_column(col)
                     converted_value = self._convert_value(col, value)
 
                     if isinstance(converted_value, bool):
                         or_conditions.append(getattr(self.model_class, col).is_(converted_value))
+
                     else:
-                        or_conditions.append(getattr(self.model_class, col) == converted_value)
+                        match operator:
+                            case "=":
+                                or_conditions.append(getattr(self.model_class, col) == converted_value)
+                            case "!=":
+                                or_conditions.append(getattr(self.model_class, col) != converted_value)
+                            case ">=":
+                                or_conditions.append(getattr(self.model_class, col) >= converted_value)
+                            case "<=":
+                                or_conditions.append(getattr(self.model_class, col) <= converted_value)
+                            case _:
+                                raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
 
                 if or_conditions:
                     list_model_filters.append(or_(*or_conditions))
             else:
-                col, value = self._parse_filter_item(filter_item)
+                col, operator, value = self._parse_filter_item(filter_item)
                 self._validate_column(col)
                 converted_value = self._convert_value(col, value)
 
                 if isinstance(converted_value, bool):
                     list_model_filters.append(getattr(self.model_class, col).is_(converted_value))
+
                 else:
-                    list_model_filters.append(getattr(self.model_class, col) == converted_value)
+                    match operator:
+                        case "=":
+                            list_model_filters.append(getattr(self.model_class, col) == converted_value)
+                        case "!=":
+                            list_model_filters.append(getattr(self.model_class, col) != converted_value)
+                        case ">=":
+                            list_model_filters.append(getattr(self.model_class, col) >= converted_value)
+                        case "<=":
+                            list_model_filters.append(getattr(self.model_class, col) <= converted_value)
+                        case _:
+                            raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
 
         return list_model_filters
 
