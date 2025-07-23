@@ -1,3 +1,4 @@
+from .attachment_model import AttachmentModel
 from .base import Base
 from .file_model import FileModel
 from .forestry_schema_model import forestrySchemaModel
@@ -19,4 +20,5 @@ __all__ = [
     "ProposalforestryStatusModel",
     "PiapsModel",
     "ForestryProposalModel",
+    "AttachmentModel",
 ]

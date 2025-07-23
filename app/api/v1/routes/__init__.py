@@ -1,3 +1,4 @@
+from .attachment_route import router as attachment_router
 from .auth_route import router as auth_router
 from .file_route import router as file_router
 from .forestry_schema_route import router as forestry_schema_router
@@ -16,4 +17,5 @@ __all__ = [
     "proposal_forestry_status_router",
     "piaps_router",
     "proposal_forestry_router",
+    "attachment_router",
 ]

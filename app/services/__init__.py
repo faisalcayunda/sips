@@ -1,3 +1,4 @@
+from .attachment_service import AttachmentService
 from .auth_service import AuthService
 from .base import BaseService
 from .file_service import FileService
@@ -19,4 +20,5 @@ __all__ = [
     "ProposalforestryStatusService",
     "PiapsService",
     "ForestyProposalService",
+    "AttachmentService",
 ]

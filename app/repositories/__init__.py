@@ -1,3 +1,4 @@
+from .attachment_repository import AttachmentRepository
 from .base import BaseRepository
 from .file_repository import FileRepository
 from .forestry_schema_repository import forestrySchemaRepository
@@ -18,4 +19,5 @@ __all__ = [
     "ProposalforestryStatusRepository",
     "PiapsRepository",
     "ForestryProposalRepository",
+    "AttachmentRepository",
 ]
