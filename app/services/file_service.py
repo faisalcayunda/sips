@@ -2,7 +2,6 @@ import io
 import os
 from datetime import datetime
 from typing import Any, BinaryIO, Dict, List, Tuple
-from uuid import UUID
 
 from fastapi import HTTPException, UploadFile, status
 from pytz import timezone
@@ -45,9 +44,7 @@ class FileService(BaseService[FileModel, FileRepository]):
     async def find_by_object_name(self, object_name: str) -> FileModel:
         return await self.repository.find_by_object_name(object_name)
 
-    async def upload_file(
-        self, file: UploadFile, description: str = None, user_id: str = None
-    ) -> FileModel:
+    async def upload_file(self, file: UploadFile, description: str = None, user_id: str = None) -> FileModel:
         """
         Upload file ke MinIO dan simpan metadata ke database.
 
@@ -107,7 +104,7 @@ class FileService(BaseService[FileModel, FileRepository]):
             )
 
     async def get_file_content(
-        self, file_id: int = None, object_name: str = None
+        self, file_id: int = None, object_name: str = None, db_check: bool = False
     ) -> Tuple[BinaryIO, Dict[str, Any], FileModel]:
         """
         Ambil konten file dari MinIO.
@@ -120,26 +117,28 @@ class FileService(BaseService[FileModel, FileRepository]):
             Tuple dari (file content, object info, file model)
         """
         try:
-            if file_id:
-                file_model = await self.find_by_id(file_id)
-            elif object_name:
-                file_model = await self.find_by_object_name(object_name)
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="File ID atau Object Name harus diisi",
-                )
+            if db_check:
+                if file_id:
+                    file_model = await self.find_by_id(file_id)
+                elif object_name:
+                    file_model = await self.find_by_object_name(object_name)
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="File ID atau Object Name harus diisi",
+                    )
 
-            if not file_model:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="File tidak ditemukan"
-                )
+                if not file_model:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="File tidak ditemukan",
+                    )
 
-            object_content, object_info = await self.minio_client.get_file(
-                file_model.object_name
-            )
+                object_name = file_model.object_name
 
-            return object_content, object_info, file_model
+            object_content, object_info = await self.minio_client.get_file(object_name=object_name)
+
+            return object_content, object_info
 
         except HTTPException as e:
             raise e
@@ -158,9 +157,7 @@ class FileService(BaseService[FileModel, FileRepository]):
         try:
             file_model = await self.find_by_id(file_id)
             if not file_model:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="File tidak ditemukan"
-                )
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File tidak ditemukan")
 
             if str(file_model.uploaded_by) != user_id:
                 raise HTTPException(
@@ -182,9 +179,7 @@ class FileService(BaseService[FileModel, FileRepository]):
                 detail=f"Gagal menghapus file",
             )
 
-    async def get_files_by_user(
-        self, user_id: str, limit: int = 100, offset: int = 0
-    ) -> Tuple[List[FileModel], int]:
+    async def get_files_by_user(self, user_id: str, limit: int = 100, offset: int = 0) -> Tuple[List[FileModel], int]:
         """
         Ambil daftar file yang diupload oleh user tertentu.
 

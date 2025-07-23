@@ -1,15 +1,6 @@
 from typing import Optional
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    File,
-    Form,
-    HTTPException,
-    Response,
-    UploadFile,
-    status,
-)
+from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
 from fastapi.responses import StreamingResponse
 
 from app.api.dependencies.auth import get_current_active_user
@@ -51,10 +42,20 @@ async def get_files(
     )
 
 
-@router.get("/files/{id}", response_model=FileSchema)
-async def get_file(id: UUID7Field, service: FileService = Depends(Factory().get_file_service)):
-    file = await service.find_by_id(id)
-    return file
+@router.get("/files/{object_name}", summary="Get file content")
+async def get_file_content(object_name: str, service: FileService = Depends(Factory().get_file_service)):
+    file_content, object_info = await service.get_file_content(object_name=object_name)
+
+    return StreamingResponse(
+        content=iterfile(file_content),
+        media_type=object_info["_content_type"],
+        headers={"Content-Disposition": f'attachment; filename="{object_info["_metadata"]["x-amz-meta-filename"]}"'},
+    )
+
+
+@router.get("/files/{id}/metadata", response_model=FileSchema)
+async def get_file_info(id: str, service: FileService = Depends(Factory().get_file_service)):
+    return await service.find_by_id(id)
 
 
 @router.post("/files", response_model=FileSchema, status_code=status.HTTP_201_CREATED)
@@ -66,28 +67,6 @@ async def upload_file(
 ):
     result = await service.upload_file(file=file, description=description, user_id=current_user.id)
     return result
-
-
-@router.get("/files/{file_id}", response_model=FileSchema, summary="Dapatkan metadata file")
-async def get_file_info(file_id: UUID7Field, service: FileService = Depends(Factory().get_file_service)):
-    file = await service.find_by_id(file_id)
-    if not file:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File tidak ditemukan")
-    return file
-
-
-@router.get("/files/{file_id}/download", summary="Download file")
-async def download_file(file_id: str, service: FileService = Depends(Factory().get_file_service)):
-    if file_id.isdigit():
-        file_content, object_info, file_model = await service.get_file_content(file_id=file_id)
-    else:
-        file_content, object_info, file_model = await service.get_file_content(object_name=file_id)
-
-    return StreamingResponse(
-        content=iterfile(file_content),
-        media_type=file_model.content_type,
-        headers={"Content-Disposition": f'attachment; filename="{file_model.filename}"'},
-    )
 
 
 @router.delete("/files/{file_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Hapus file")
