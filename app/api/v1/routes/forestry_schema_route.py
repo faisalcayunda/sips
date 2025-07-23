@@ -11,7 +11,7 @@ from app.schemas.forestry_schema_schema import (
     forestrySchemaSchema,
     forestrySchemaUpdateSchema,
 )
-from app.services import forestrySchemaService
+from app.services import ForestrySchemaService
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ router = APIRouter()
 @router.get("/forestry-schemas", response_model=PaginatedResponse[forestrySchemaSchema])
 async def get_forestry_schemas(
     params: CommonParams = Depends(),
-    service: forestrySchemaService = Depends(Factory().get_forestry_schema_service),
+    service: ForestrySchemaService = Depends(Factory().get_forestry_schema_service),
 ) -> PaginatedResponse[forestrySchemaSchema]:
     filter = params.filter
     sort = params.sort
@@ -48,7 +48,7 @@ async def get_forestry_schemas(
 @router.get("/forestry-schemas/{id}", response_model=forestrySchemaSchema)
 async def get_forestry_schemas(
     id: str,
-    service: forestrySchemaService = Depends(Factory().get_forestry_schema_service),
+    service: ForestrySchemaService = Depends(Factory().get_forestry_schema_service),
 ) -> Any | forestrySchemaSchema:
     return await service.find_by_id(id)
 
@@ -61,7 +61,7 @@ async def get_forestry_schemas(
 )
 async def create_forestry_schema(
     data: forestrySchemaCreateSchema,
-    service: forestrySchemaService = Depends(Factory().get_forestry_schema_service),
+    service: ForestrySchemaService = Depends(Factory().get_forestry_schema_service),
 ):
     return await service.create(data.dict())
 
@@ -74,7 +74,7 @@ async def create_forestry_schema(
 async def update_forestry_schema(
     id: str,
     data: forestrySchemaUpdateSchema,
-    service: forestrySchemaService = Depends(Factory().get_forestry_schema_service),
+    service: ForestrySchemaService = Depends(Factory().get_forestry_schema_service),
 ):
     return await service.update(id, data.dict(exclude_unset=True))
 
@@ -86,6 +86,6 @@ async def update_forestry_schema(
 )
 async def delete_forestry_schema(
     id: str,
-    service: forestrySchemaService = Depends(Factory().get_forestry_schema_service),
+    service: ForestrySchemaService = Depends(Factory().get_forestry_schema_service),
 ):
     await service.delete(id)

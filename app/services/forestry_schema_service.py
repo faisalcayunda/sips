@@ -1,9 +1,9 @@
-from app.models import forestrySchemaModel
-from app.repositories import forestrySchemaRepository
+from app.models import ForestrySchemaModel
+from app.repositories import ForestrySchemaRepository
 
 from . import BaseService
 
 
-class forestrySchemaService(BaseService[forestrySchemaModel, forestrySchemaRepository]):
-    def __init__(self, repository: forestrySchemaRepository):
-        super().__init__(forestrySchemaModel, repository)
+class ForestrySchemaService(BaseService[ForestrySchemaModel, ForestrySchemaRepository]):
+    def __init__(self, repository: ForestrySchemaRepository):
+        super().__init__(ForestrySchemaModel, repository)

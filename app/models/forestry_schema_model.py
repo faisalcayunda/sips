@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String
 from . import Base
 
 
-class forestrySchemaModel(Base):
+class ForestrySchemaModel(Base):
     __tablename__ = "stat_forestry_skema"  # Ganti dengan nama tabel sebenarnya
 
     id = Column("id_skem", String(11), primary_key=True, nullable=False)

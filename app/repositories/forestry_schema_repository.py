@@ -1,8 +1,8 @@
-from app.models import forestrySchemaModel
+from app.models import ForestrySchemaModel
 
 from . import BaseRepository
 
 
-class forestrySchemaRepository(BaseRepository[forestrySchemaModel]):
+class ForestrySchemaRepository(BaseRepository[ForestrySchemaModel]):
     def __init__(self, model):
         super().__init__(model)

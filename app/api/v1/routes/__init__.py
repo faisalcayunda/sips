@@ -1,6 +1,7 @@
 from .attachment_route import router as attachment_router
 from .auth_route import router as auth_router
 from .file_route import router as file_router
+from .forestry_land_route import router as forestry_land_router
 from .forestry_schema_route import router as forestry_schema_router
 from .piaps_route import router as piaps_router
 from .proposal_forestry_route import router as proposal_forestry_router
@@ -18,4 +19,5 @@ __all__ = [
     "piaps_router",
     "proposal_forestry_router",
     "attachment_router",
+    "forestry_land_router",
 ]
