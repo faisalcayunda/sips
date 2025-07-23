@@ -2,7 +2,6 @@ from functools import lru_cache
 from typing import Any, Dict, Generic, List, Tuple, Type, TypeVar, Union
 
 from sqlalchemy import or_
-from uuid6 import UUID
 
 from app.core.database import Base
 from app.core.exceptions import NotFoundException, UnprocessableEntity
@@ -28,9 +27,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
             col, value = filter_item.split("=", 1)
             return col.strip(), value.strip()
         except ValueError:
-            raise UnprocessableEntity(
-                f"Invalid filter {filter_item} must be 'name=value'"
-            )
+            raise UnprocessableEntity(f"Invalid filter {filter_item} must be 'name=value'")
 
     @lru_cache(maxsize=256)
     def _parse_sort_item(self, sort_item: str) -> Tuple[str, str]:
@@ -39,9 +36,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
             col, order = sort_item.split(":", 1)
             return col.strip(), order.strip().lower()
         except ValueError:
-            raise UnprocessableEntity(
-                f"Invalid sort {sort_item}. Must be 'name:asc' or 'name:desc'"
-            )
+            raise UnprocessableEntity(f"Invalid sort {sort_item}. Must be 'name:asc' or 'name:desc'")
 
     def _validate_column(self, col: str) -> None:
         """Validate column dengan cache."""
@@ -52,9 +47,9 @@ class BaseService(Generic[ModelType, RepositoryType]):
         """Convert value ke tipe yang sesuai."""
         if col == "id":
             try:
-                return UUID(value)
+                return str(value)
             except ValueError:
-                raise UnprocessableEntity(f"Invalid UUID value: {value}")
+                raise UnprocessableEntity(f"Invalid id value: {value}")
 
         if isinstance(value, str) and value.lower() in {"true", "false", "t", "f"}:
             return value.lower() in {"true", "t"}
@@ -86,13 +81,9 @@ class BaseService(Generic[ModelType, RepositoryType]):
                     converted_value = self._convert_value(col, value)
 
                     if isinstance(converted_value, bool):
-                        or_conditions.append(
-                            getattr(self.model_class, col).is_(converted_value)
-                        )
+                        or_conditions.append(getattr(self.model_class, col).is_(converted_value))
                     else:
-                        or_conditions.append(
-                            getattr(self.model_class, col) == converted_value
-                        )
+                        or_conditions.append(getattr(self.model_class, col) == converted_value)
 
                 if or_conditions:
                     list_model_filters.append(or_(*or_conditions))
@@ -102,13 +93,9 @@ class BaseService(Generic[ModelType, RepositoryType]):
                 converted_value = self._convert_value(col, value)
 
                 if isinstance(converted_value, bool):
-                    list_model_filters.append(
-                        getattr(self.model_class, col).is_(converted_value)
-                    )
+                    list_model_filters.append(getattr(self.model_class, col).is_(converted_value))
                 else:
-                    list_model_filters.append(
-                        getattr(self.model_class, col) == converted_value
-                    )
+                    list_model_filters.append(getattr(self.model_class, col) == converted_value)
 
         return list_model_filters
 
@@ -135,13 +122,11 @@ class BaseService(Generic[ModelType, RepositoryType]):
 
         return list_sort
 
-    async def find_by_id(self, id: UUID, relationships: List[str] = None) -> ModelType:
+    async def find_by_id(self, id: str, relationships: List[str] = None) -> ModelType:
         """Find record by ID dengan optional eager loading."""
         record = await self.repository.find_by_id(id, relationships=relationships)
         if not record:
-            raise NotFoundException(
-                f"{self.model_class.__name__} with UUID {id} not found."
-            )
+            raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
         return record
 
     async def find_all(
@@ -178,30 +163,22 @@ class BaseService(Generic[ModelType, RepositoryType]):
         """Create new record."""
         return await self.repository.create(data)
 
-    async def update(
-        self, id: UUID, data: Dict[str, Any], refresh: bool = True
-    ) -> ModelType:
+    async def update(self, id: str, data: Dict[str, Any], refresh: bool = True) -> ModelType:
         """Update existing record."""
         # Check existence first
         if not await self.repository.exists(id):
-            raise NotFoundException(
-                f"{self.model_class.__name__} with UUID {id} not found."
-            )
+            raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
 
         updated = await self.repository.update(id, data, refresh=refresh)
         if not updated:
-            raise NotFoundException(
-                f"{self.model_class.__name__} with UUID {id} not found."
-            )
+            raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
 
         return updated
 
-    async def delete(self, id: UUID, permanent: bool = False) -> None:
+    async def delete(self, id: str, permanent: bool = False) -> None:
         """Delete record dengan soft delete support."""
         if not await self.repository.exists(id):
-            raise NotFoundException(
-                f"{self.model_class.__name__} with UUID {id} not found."
-            )
+            raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
 
         if self._has_soft_delete and not permanent:
             delete_data = {"is_deleted": True}
@@ -212,15 +189,11 @@ class BaseService(Generic[ModelType, RepositoryType]):
             await self.repository.delete(id)
 
     # Bulk operations
-    async def bulk_create(
-        self, data_list: List[Dict[str, Any]], batch_size: int = 1000
-    ) -> List[ModelType]:
+    async def bulk_create(self, data_list: List[Dict[str, Any]], batch_size: int = 1000) -> List[ModelType]:
         """Bulk create dengan validation."""
-        return await self.repository.bulk_create(
-            data_list, batch_size=batch_size, return_records=True
-        )
+        return await self.repository.bulk_create(data_list, batch_size=batch_size, return_records=True)
 
-    async def exists_by_id(self, id: UUID) -> bool:
+    async def exists_by_id(self, id: str) -> bool:
         """Check existence tanpa fetch object."""
         return await self.repository.exists(id)
 
