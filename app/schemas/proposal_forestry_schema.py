@@ -1,13 +1,9 @@
 from datetime import datetime
-from enum import Enum
 from typing import List, Optional
 
+from app.core.data_types import YesNoEnum
+
 from .base import BaseSchema
-
-
-class YesNoEnum(str, Enum):
-    Y = "Y"
-    N = "N"
 
 
 class ProposalForestrySchema(BaseSchema):
@@ -31,10 +27,10 @@ class ProposalForestrySchema(BaseSchema):
     is_valid: YesNoEnum
     menlhk_year: Optional[int] = None
     is_kps_valid: YesNoEnum
-    create_by: str
-    update_by: Optional[str] = None
-    create_at: datetime
-    update_at: Optional[datetime] = None
+    created_by: str
+    updated_by: Optional[str] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
 
 class ProposalForestryCreateSchema(BaseSchema):
@@ -57,7 +53,6 @@ class ProposalForestryCreateSchema(BaseSchema):
     is_valid: YesNoEnum
     menlhk_year: Optional[int] = None
     is_kps_valid: YesNoEnum
-    create_by: str
 
 
 class ProposalForestryUpdateSchema(BaseSchema):
@@ -80,5 +75,3 @@ class ProposalForestryUpdateSchema(BaseSchema):
     is_valid: Optional[YesNoEnum] = None
     menlhk_year: Optional[int] = None
     is_kps_valid: Optional[YesNoEnum] = None
-    update_by: Optional[str] = None
-    update_at: Optional[datetime] = None

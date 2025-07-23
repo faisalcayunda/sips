@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pytz import timezone
-from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy import CHAR, Column, DateTime, Integer, String
 
 from app.core.config import settings
 
@@ -22,7 +22,7 @@ class UserModel(Base):
     avatar = Column("acc_avatar", String, nullable=True)
     email = Column("acc_email", String, unique=True, nullable=False)
     password = Column("acc_password", String, nullable=False)
-    enable = Column("acc_enable", Boolean, default=True)
+    enable = Column("acc_enable", CHAR(1), default=True)
     role_id = Column(Integer)
     last_login = Column(
         DateTime(timezone=True),

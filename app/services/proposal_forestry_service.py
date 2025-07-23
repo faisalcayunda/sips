@@ -15,7 +15,7 @@ class ForestyProposalService(BaseService[ForestryProposalModel, ForestryProposal
     async def create(
         self, forestry_data: Dict[str, Union[str, int]], current_user: UserSchema
     ) -> ForestryProposalModel:
-        forestry_data["create_by"] = current_user.id
+        forestry_data["created_by"] = current_user.id
         return await super().create(forestry_data)
 
     @override
@@ -25,5 +25,5 @@ class ForestyProposalService(BaseService[ForestryProposalModel, ForestryProposal
         forestry_data: Dict[str, Union[str, int]],
         current_user: UserSchema,
     ) -> ForestryProposalModel:
-        forestry_data["update_by"] = current_user.id
+        forestry_data["updated_by"] = current_user.id
         return await super().update(id, forestry_data)

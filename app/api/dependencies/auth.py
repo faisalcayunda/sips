@@ -13,7 +13,6 @@ from app.core.config import settings
 from app.core.security import decode_token
 from app.models import UserModel
 from app.schemas.token_schema import TokenPayload
-from app.schemas.user_schema import UserSchema
 from app.services import UserService
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -48,17 +47,13 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
 
-    if not user.enable:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
-        )
+    if not user.enable.lower() == "y":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
 
     return user
 
 
-async def get_only_payload(
-    request: Request, user_service: UserService = Depends(Factory().get_user_service)
-):
+async def get_only_payload(request: Request, user_service: UserService = Depends(Factory().get_user_service)):
     authorization: str = request.headers.get("Authorization")
     if not authorization:
         return None
@@ -93,8 +88,6 @@ async def get_current_active_user(
     current_user: UserModel = Depends(get_current_user),
 ) -> UserModel:
     """Check if current user is active."""
-    if not current_user.enable:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
-        )
+    if not current_user.enable.lower() == "y":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
     return current_user

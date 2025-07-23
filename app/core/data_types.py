@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any
 
 from pydantic import GetCoreSchemaHandler
@@ -22,7 +23,12 @@ class UUID7Field(UUID):
     ) -> CoreSchema:
         return json_or_python_schema(
             json_schema=str_schema(),
-            python_schema=union_schema([is_instance_schema(cls), no_info_plain_validator_function(cls.validate)]),
+            python_schema=union_schema(
+                [
+                    is_instance_schema(cls),
+                    no_info_plain_validator_function(cls.validate),
+                ]
+            ),
             serialization=plain_serializer_function_ser_schema(
                 lambda x: str(x),
                 return_schema=str_schema(),
@@ -37,3 +43,8 @@ class UUID7Field(UUID):
             return UUID(str(v))
         except ValueError as e:
             raise PydanticCustomError("uuid_parsing", "Invalid UUID format") from e
+
+
+class YesNoEnum(str, Enum):
+    Y = "Y"
+    N = "N"

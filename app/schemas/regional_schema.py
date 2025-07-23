@@ -9,8 +9,8 @@ class RegionalSchema(BaseSchema):
     name: str
     parent: str
     group: str
-    create_by: Optional[str]
-    create_at: datetime
+    createdby: Optional[str]
+    created_at: datetime
 
 
 class RegionalCreateSchema(BaseSchema):

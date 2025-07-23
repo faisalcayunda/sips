@@ -13,5 +13,5 @@ class RegionalService(BaseService[RegionalModel, RegionalRepository]):
 
     @override
     async def create(self, regional_data: Dict[str, Union[str, int]], current_user: UserSchema) -> RegionalModel:
-        regional_data["create_by"] = current_user.id
+        regional_data["created_by"] = current_user.id
         return await super().create(regional_data)
