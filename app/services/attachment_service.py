@@ -4,7 +4,7 @@ from app.models import AttachmentModel
 from app.repositories import AttachmentRepository
 from app.schemas.user_schema import UserSchema
 
-from . import BaseService
+from .base import BaseService
 
 
 class AttachmentService(BaseService[AttachmentModel, AttachmentRepository]):

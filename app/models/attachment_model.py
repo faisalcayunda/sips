@@ -5,7 +5,7 @@ from sqlalchemy import CHAR, Column, DateTime, Integer, String
 
 from app.core.config import settings
 
-from . import Base
+from .base import Base
 
 
 class AttachmentModel(Base):

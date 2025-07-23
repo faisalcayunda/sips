@@ -1,6 +1,6 @@
 from app.models import AttachmentModel
 
-from . import BaseRepository
+from .base import BaseRepository
 
 
 class AttachmentRepository(BaseRepository[AttachmentModel]):
