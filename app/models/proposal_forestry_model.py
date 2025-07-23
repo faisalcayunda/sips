@@ -36,12 +36,17 @@ class ForestryProposalModel(Base):
     is_valid = Column("fore_pps_valid", Enum("Y", "N"), nullable=False, default="N")
     menlhk_year = Column("fore_kps_menlhk", String, nullable=True)
     is_kps_valid = Column("fore_kps_valid", Enum("Y", "N"), nullable=False, default="N")
-    create_by = Column("create_by", CHAR(36), nullable=False)
-    update_by = Column("update_by", CHAR(36), nullable=True)
-    create_at = Column(
+    created_by = Column("create_by", CHAR(36), nullable=False)
+    updated_by = Column("update_by", CHAR(36), nullable=True)
+    created_at = Column(
         "create_at",
         DateTime,
         nullable=False,
         default=datetime.now(timezone(settings.TIMEZONE)),
     )
-    update_at = Column("update_at", DateTime, nullable=True)
+    updated_at = Column(
+        "update_at",
+        DateTime,
+        nullable=True,
+        onupdate=datetime.now(timezone(settings.TIMEZONE)),
+    )

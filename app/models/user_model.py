@@ -1,18 +1,7 @@
-from datetime import date, datetime
+from datetime import datetime
 
-import uuid6
 from pytz import timezone
-from sqlalchemy import (
-    UUID,
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    BigInteger,
-    String,
-    Integer,
-)
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 
 from app.core.config import settings
 
@@ -40,12 +29,10 @@ class UserModel(Base):
         nullable=True,
         default=datetime.now(timezone(settings.TIMEZONE)),
     )
-    create_by = Column(String(36), nullable=True)
-    update_by = Column(String(36), nullable=True)
-    create_at = Column(
-        DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE))
-    )
-    update_at = Column(
+    created_by = Column(String(36), nullable=True)
+    updated_by = Column(String(36), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE)))
+    updated_at = Column(
         DateTime(timezone=True),
         default=datetime.now(timezone(settings.TIMEZONE)),
         onupdate=datetime.now(timezone(settings.TIMEZONE)),
