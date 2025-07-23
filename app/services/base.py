@@ -17,7 +17,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
     def __init__(self, model: Type[ModelType], repository: Type[RepositoryType]):
         self.model_class = model
         self.repository = repository
-        self._valid_columns = set(self.model_class.__table__.columns.keys())
+        self._valid_columns = set(self.repository.inspector.c.keys())
         self._has_soft_delete = hasattr(self.model_class, "is_deleted")
 
     @lru_cache(maxsize=256)
