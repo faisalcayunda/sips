@@ -29,10 +29,15 @@ class UserModel(Base):
         nullable=True,
         default=datetime.now(timezone(settings.TIMEZONE)),
     )
-    created_by = Column(String(36), nullable=True)
-    updated_by = Column(String(36), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE)))
+    created_by = Column("create_by", String(36), nullable=True)
+    updated_by = Column("update_by", String(36), nullable=True)
+    created_at = Column(
+        "create_at",
+        DateTime(timezone=True),
+        default=datetime.now(timezone(settings.TIMEZONE)),
+    )
     updated_at = Column(
+        "update_at",
         DateTime(timezone=True),
         default=datetime.now(timezone(settings.TIMEZONE)),
         onupdate=datetime.now(timezone(settings.TIMEZONE)),

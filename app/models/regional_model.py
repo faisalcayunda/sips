@@ -15,5 +15,10 @@ class RegionalModel(Base):
     name = Column("reg_name", String(512), nullable=False)
     parent = Column("reg_parent", CHAR(36), nullable=False)
     group = Column("reg_group", String(50), nullable=False)
-    created_by = Column(CHAR(36), nullable=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.now(timezone(settings.TIMEZONE)))
+    created_by = Column("create_by", CHAR(36), nullable=True)
+    created_at = Column(
+        "create_at",
+        DateTime,
+        nullable=False,
+        default=datetime.now(timezone(settings.TIMEZONE)),
+    )
