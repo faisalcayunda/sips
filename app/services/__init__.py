@@ -4,6 +4,7 @@ from .base import BaseService
 from .file_service import FileService
 from .forestry_land_service import ForestryLandService
 from .forestry_schema_service import ForestrySchemaService
+from .navigation_service import NavigationService
 from .permit_service import PermitService
 from .piaps_service import PiapsService
 from .proposal_forestry_service import ForestyProposalService
@@ -25,4 +26,5 @@ __all__ = [
     "AttachmentService",
     "ForestryLandService",
     "PermitService",
+    "NavigationService",
 ]

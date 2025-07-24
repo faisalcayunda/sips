@@ -3,6 +3,7 @@ from .base import Base
 from .file_model import FileModel
 from .forestry_land_model import ForestryLandModel
 from .forestry_schema_model import ForestrySchemaModel
+from .navigation_model import NavigationModel
 from .permit_model import PermitModel
 from .piaps_model import PiapsModel
 from .proposal_forestry_model import ForestryProposalModel
@@ -25,4 +26,5 @@ __all__ = [
     "AttachmentModel",
     "ForestryLandModel",
     "PermitModel",
+    "NavigationModel",
 ]

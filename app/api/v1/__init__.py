@@ -6,6 +6,7 @@ from app.api.v1.routes import (
     file_router,
     forestry_land_router,
     forestry_schema_router,
+    navigation_router,
     permit_router,
     piaps_router,
     proposal_forestry_router,
@@ -20,6 +21,7 @@ router.include_router(attachment_router, tags=["Attachment"])
 router.include_router(file_router, tags=["Files"])
 router.include_router(forestry_land_router, tags=["Forestry Land"])
 router.include_router(forestry_schema_router, tags=["Forestry Schema"])
+router.include_router(navigation_router, tags=["Navigation"])
 router.include_router(regional_router, tags=["Regional"])
 router.include_router(permit_router, tags=["Permission"])
 router.include_router(piaps_router, tags=["Piaps"])

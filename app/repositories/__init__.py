@@ -3,6 +3,7 @@ from .base import BaseRepository
 from .file_repository import FileRepository
 from .forestry_land_repository import ForestryLandRepository
 from .forestry_schema_repository import ForestrySchemaRepository
+from .navigation_repository import NavigationRepository
 from .permit_repository import PermitRepository
 from .piaps_repository import PiapsRepository
 from .proposal_forestry_repository import ForestryProposalRepository
@@ -24,4 +25,5 @@ __all__ = [
     "AttachmentRepository",
     "ForestryLandRepository",
     "PermitRepository",
+    "NavigationRepository",
 ]

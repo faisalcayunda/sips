@@ -7,6 +7,7 @@ from app.models import (
     ForestryLandModel,
     ForestryProposalModel,
     ForestrySchemaModel,
+    NavigationModel,
     PermitModel,
     PiapsModel,
     ProposalforestryStatusModel,
@@ -20,6 +21,7 @@ from app.repositories import (
     ForestryLandRepository,
     ForestryProposalRepository,
     ForestrySchemaRepository,
+    NavigationRepository,
     PermitRepository,
     PiapsRepository,
     ProposalforestryStatusRepository,
@@ -34,6 +36,7 @@ from app.services import (
     ForestryLandService,
     ForestrySchemaService,
     ForestyProposalService,
+    NavigationService,
     PermitService,
     PiapsService,
     ProposalforestryStatusService,
@@ -56,6 +59,7 @@ class Factory:
     attachment_repository = staticmethod(partial(AttachmentRepository, AttachmentModel))
     forestry_land_repository = staticmethod(partial(ForestryLandRepository, ForestryLandModel))
     permit_repository = staticmethod(partial(PermitRepository, PermitModel))
+    navigation_repository = staticmethod(partial(NavigationRepository, NavigationModel))
 
     def get_auth_service(
         self,
@@ -114,3 +118,8 @@ class Factory:
         self,
     ):
         return PermitService(self.permit_repository())
+
+    def get_navigation_service(
+        self,
+    ):
+        return NavigationService(self.navigation_repository())
