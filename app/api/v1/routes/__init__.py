@@ -3,6 +3,7 @@ from .auth_route import router as auth_router
 from .file_route import router as file_router
 from .forestry_land_route import router as forestry_land_router
 from .forestry_schema_route import router as forestry_schema_router
+from .permit_route import router as permit_router
 from .piaps_route import router as piaps_router
 from .proposal_forestry_route import router as proposal_forestry_router
 from .proposal_forestry_status_route import router as proposal_forestry_status_router
@@ -20,4 +21,5 @@ __all__ = [
     "proposal_forestry_router",
     "attachment_router",
     "forestry_land_router",
+    "permit_router",
 ]
