@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pytz import timezone
-from sqlalchemy import CHAR, Column, DateTime, Integer, String
+from sqlalchemy import CHAR, Boolean, Column, DateTime, Integer, String
 
 from app.core.config import settings
 
@@ -42,3 +42,4 @@ class UserModel(Base):
         default=datetime.now(timezone(settings.TIMEZONE)),
         onupdate=datetime.now(timezone(settings.TIMEZONE)),
     )
+    is_verified = Column(Boolean, default=False)

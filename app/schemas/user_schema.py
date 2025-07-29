@@ -28,6 +28,7 @@ class UserSchema(BaseSchema):
     updated_by: Optional[int] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    is_verified: Optional[bool] = None
 
 
 class UserCreateSchema(BaseSchema):
@@ -44,6 +45,7 @@ class UserCreateSchema(BaseSchema):
     password: str = Field(..., min_length=8, max_length=128)
     enable: YesNoEnum
     role_id: Optional[int] = Field(None)
+    is_verified: Optional[bool] = Field(None)
 
     @field_validator("password")
     @classmethod
@@ -86,6 +88,7 @@ class UserUpdateSchema(BaseSchema):
     password: Optional[str] = Field(None, min_length=8, max_length=128)
     enable: Optional[YesNoEnum] = None
     role_id: Optional[int] = Field(None)
+    is_verified: Optional[bool] = Field(None)
 
     @field_validator("password")
     @classmethod
