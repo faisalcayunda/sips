@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from fastapi import HTTPException, status
 from pytz import timezone
@@ -10,6 +10,7 @@ from app.core.security import (
     create_access_token,
     create_refresh_token,
     decode_token,
+    get_password_hash,
     verify_password,
 )
 from app.models.user_model import UserModel
@@ -25,6 +26,25 @@ class AuthService:
     def __init__(self, user_repository: UserRepository, token_repository: TokenRepository):
         self.user_repository = user_repository
         self.token_repository = token_repository
+
+    async def register(self, user: Dict[str, Any]) -> UserModel:
+        """Register user."""
+        user["password"] = get_password_hash(user["password"])
+        if await self.user_repository.find_by_email(user["email"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email address already registered",
+            )
+
+        if await self.user_repository.find_by_username(user["name"]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Name already registered",
+            )
+
+        user["role_id"] = 4
+        user = await self.user_repository.create(user)
+        return user
 
     async def authenticate_user(self, email: str, password: str) -> Optional[UserModel]:
         """Autentikasi user dengan username dan password."""
