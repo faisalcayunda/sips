@@ -1,8 +1,7 @@
 from datetime import datetime
 
 from pytz import timezone
-from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy import BigInteger, Column, DateTime, Integer, String, Text
 
 from app.core.config import settings
 
@@ -19,15 +18,11 @@ class FileModel(Base):
     size = Column(Integer, nullable=False)
     description = Column(Text, nullable=True)
     url = Column(String(1024), nullable=False)
-    try:
-        user_id = Column(String(36), ForeignKey("user_account.acc_id"), nullable=False)
-    except Exception:
-        user_id = None
+    user_id = Column(String(36))
+
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE)))
     modified_at = Column(
         DateTime(timezone=True),
         default=datetime.now(timezone(settings.TIMEZONE)),
         onupdate=datetime.now(timezone(settings.TIMEZONE)),
     )
-
-    uploaded_by = relationship("UserModel", lazy="selectin", uselist=False)

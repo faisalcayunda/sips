@@ -1,9 +1,12 @@
 from datetime import datetime
 from typing import List, Optional
 
+from pydantic import Field
+
 from app.core.data_types import YesNoEnum
 
 from .base import BaseSchema
+from .regional_schema import RegionalSchema
 
 
 class ProposalForestrySchema(BaseSchema):
@@ -31,6 +34,8 @@ class ProposalForestrySchema(BaseSchema):
     updated_by: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
+
+    regional: Optional[RegionalSchema] = Field(default={})
 
 
 class ProposalForestryCreateSchema(BaseSchema):

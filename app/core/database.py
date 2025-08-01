@@ -12,7 +12,7 @@ import sys
 from app.core.config import settings
 from app.models import Base
 
-engine = create_async_engine(settings.DATABASE_URL, echo=True)
+engine = create_async_engine(settings.DATABASE_URL, echo=True, pool_pre_ping=True, pool_recycle=3600)
 
 
 async def create_tables():
@@ -20,5 +20,13 @@ async def create_tables():
         await conn.run_sync(Base.metadata.create_all)
 
 
+async def dispose_engine():
+    """Properly dispose the engine to prevent connection leaks"""
+    await engine.dispose()
+
+
 if __name__ == "__main__":
-    asyncio.run(create_tables())
+    try:
+        asyncio.run(create_tables())
+    finally:
+        asyncio.run(dispose_engine())

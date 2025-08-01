@@ -4,13 +4,11 @@ from typing import Optional
 from pydantic import Field
 
 from .base import BaseSchema
-from .user_schema import UserSchema
 
 
 class FileSchema(BaseSchema):
     id: int
     object_name: str
-    uploaded_by: UserSchema
     created_at: datetime
     modified_at: Optional[datetime] = None
 

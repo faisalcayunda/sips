@@ -9,7 +9,7 @@ class RegionalSchema(BaseSchema):
     name: str
     parent: str
     group: str
-    createdby: Optional[str]
+    created_by: Optional[str]
     created_at: datetime
 
 

@@ -1,29 +1,44 @@
 import asyncio
 import os
 import shutil
+import sys
 
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine
+from dotenv import load_dotenv
+
+# Add the app directory to the path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from app.utils.db_manager import full_migration_process
+
+load_dotenv()
 
 
-async def drop_alembic_version_table():
-    engine = create_async_engine(os.getenv("DATABASE_URL"))
-    async with engine.begin() as conn:
-        await conn.execute(text("DROP TABLE IF EXISTS alembic_version CASCADE"))
+async def main():
+    """Main async function with proper error handling"""
+    version_folder = "migrations/versions"
 
+    # Create versions directory if it doesn't exist
+    if not os.path.exists(version_folder):
+        os.makedirs(version_folder)
 
-def migrate():
-    os.system("alembic revision --autogenerate -m 'auto generated migration'")
-    os.system("alembic upgrade head")
+    try:
+        print("Starting migration process...")
+        success = await full_migration_process()
+
+        if not success:
+            print("Migration failed")
+            sys.exit(1)
+        else:
+            print("Migration completed successfully")
+
+    except Exception as e:
+        print(f"Error during migration: {e}")
+        sys.exit(1)
+    finally:
+        # Clean up version folder
+        if os.path.exists(version_folder):
+            shutil.rmtree(version_folder)
 
 
 if __name__ == "__main__":
-    version_folder = "migrations/versions"
-    if not os.path.exists(version_folder):
-        os.mkdir(version_folder)
-    try:
-        asyncio.run(drop_alembic_version_table())
-        migrate()
-    finally:
-        if os.path.exists(version_folder):
-            shutil.rmtree(version_folder)
+    asyncio.run(main())
