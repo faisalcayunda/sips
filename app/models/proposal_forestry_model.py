@@ -38,7 +38,7 @@ class ForestryProposalModel(Base):
     map_ps = Column("fore_peta_ps", String(256), nullable=False)
     pps_id = Column("fore_pps_id", CHAR(11), nullable=True)
     year_klhk = Column("fore_pps_klhk", CHAR(4), nullable=False)
-    vertex_status = Column("fore_pps_vertek", CHAR(4), nullable=False)
+    vertex = Column("fore_pps_vertek", CHAR(4), nullable=False)
     status = Column("fore_pps_status", CHAR(4), nullable=True)
     nagari_status = Column("fore_pps_sknagari", String(256), nullable=False)
     regent_sk = Column("fore_sk_bupati", String(256), nullable=False)

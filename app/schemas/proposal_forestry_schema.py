@@ -27,6 +27,8 @@ class ProposalForestrySchema(BaseSchema):
     year_klhk: int
     regent_sk: str
     forestry_sk: str
+    vertex: Optional[str]
+    status: Optional[str]
     is_valid: YesNoEnum
     menlhk_year: Optional[int] = None
     is_kps_valid: YesNoEnum
@@ -55,6 +57,8 @@ class ProposalForestryCreateSchema(BaseSchema):
     year_klhk: int
     regent_sk: str
     forestry_sk: str
+    vertex: Optional[str]
+    status: Optional[str]
     is_valid: YesNoEnum
     menlhk_year: Optional[int] = None
     is_kps_valid: YesNoEnum
@@ -74,6 +78,8 @@ class ProposalForestryUpdateSchema(BaseSchema):
     head_contact: Optional[str] = None
     map_ps: Optional[str] = None
     pps_id: Optional[str] = None
+    vertex: Optional[str]
+    status: Optional[str]
     year_klhk: Optional[int] = None
     regent_sk: Optional[str] = None
     forestry_sk: Optional[str] = None
