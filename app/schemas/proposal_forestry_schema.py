@@ -16,7 +16,7 @@ class ProposalForestrySchema(BaseSchema):
     name: Optional[str] = None
     schema_id: str
     kph_account_id: str
-    kh_id: str
+    kh_id: Optional[List[str]] = None
     akps_id: str
     area: float
     household_count: int
@@ -46,7 +46,7 @@ class ProposalForestryCreateSchema(BaseSchema):
     name: Optional[str] = None
     schema_id: str
     kph_account_id: str
-    kh_id: str
+    kh_id: Optional[List[str]] = None
     akps_id: str
     area: float
     household_count: int
@@ -70,7 +70,7 @@ class ProposalForestryUpdateSchema(BaseSchema):
     name: Optional[str] = None
     schema_id: Optional[str] = None
     kph_account_id: Optional[str] = None
-    kh_id: Optional[str] = None
+    kh_id: Optional[List[str]] = None
     akps_id: Optional[str] = None
     area: Optional[float] = None
     household_count: Optional[int] = None

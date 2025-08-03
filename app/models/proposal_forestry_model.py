@@ -29,7 +29,7 @@ class ForestryProposalModel(Base):
     name = Column("fore_name", String(256), nullable=True)
     schema_id = Column("fore_skema_id", CHAR(4), nullable=False)
     kph_account_id = Column("kph_acc_id", CHAR(36), nullable=False)
-    kh_id = Column("fore_kh_id", CHAR(128), nullable=False)
+    kh_id = Column("fore_kh_id", JSON, nullable=False)
     akps_id = Column("fore_akps_id", CHAR(32), nullable=False)
     area = Column("fore_luas", Float(precision=2), nullable=False)
     household_count = Column("fore_jumlah_kk", Integer, nullable=False)
