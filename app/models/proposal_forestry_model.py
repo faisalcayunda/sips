@@ -40,7 +40,7 @@ class ForestryProposalModel(Base):
     year_klhk = Column("fore_pps_klhk", CHAR(4), nullable=False)
     vertex = Column("fore_pps_vertek", CHAR(4), nullable=False)
     status = Column("fore_pps_status", CHAR(4), nullable=True)
-    nagari_status = Column("fore_pps_sknagari", String(256), nullable=False)
+    nagari_sk = Column("fore_pps_sknagari", String(256), nullable=False)
     regent_sk = Column("fore_sk_bupati", String(256), nullable=False)
     forestry_sk = Column("fore_sk_menlhk", String(256), nullable=False)
     is_valid = Column("fore_pps_valid", Enum("Y", "N"), nullable=False, default="N")
