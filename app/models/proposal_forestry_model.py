@@ -4,6 +4,7 @@ from pytz import timezone
 from sqlalchemy import (
     CHAR,
     JSON,
+    BigInteger,
     Column,
     DateTime,
     Enum,
@@ -12,7 +13,6 @@ from sqlalchemy import (
     Integer,
     String,
 )
-from sqlalchemy.orm import relationship
 
 from app.core.config import settings
 
@@ -22,7 +22,7 @@ from . import Base
 class ForestryProposalModel(Base):
     __tablename__ = "forestry"
 
-    id = Column("fore_kps_id", CHAR(11), primary_key=True, nullable=False)
+    id = Column("fore_kps_id", BigInteger, primary_key=True, nullable=False, autoincrement=True)
     regional_id = Column("reg_id", CHAR(10), ForeignKey("regional.reg_id"), nullable=False)
 
     assist_account_id = Column("assist_acc_id", JSON, nullable=True)
@@ -37,7 +37,11 @@ class ForestryProposalModel(Base):
     head_contact = Column("fore_kontak_ketua", CHAR(16), nullable=False)
     map_ps = Column("fore_peta_ps", String(256), nullable=False)
     pps_id = Column("fore_pps_id", CHAR(11), nullable=True)
-    vertex = Column("fore_pps_vertek", CHAR(4), nullable=False)
+    vertex = Column(
+        "fore_pps_vertek",
+        CHAR(4),
+        nullable=False,
+    )
     status = Column("fore_pps_status", CHAR(4), nullable=True)
     nagari_sk = Column("fore_pps_sknagari", String(256), nullable=False)
     regent_sk = Column("fore_sk_bupati", String(256), nullable=False)
@@ -60,5 +64,3 @@ class ForestryProposalModel(Base):
         nullable=True,
         onupdate=datetime.now(timezone(settings.TIMEZONE)),
     )
-
-    regional = relationship("RegionalModel", lazy="selectin")

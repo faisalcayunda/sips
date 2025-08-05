@@ -7,15 +7,15 @@ from app.core.data_types import YesNoEnum
 
 from .base import BaseSchema
 from .regional_schema import RegionalSchema
+from .user_schema import UserSchema
 
 
 class ProposalForestrySchema(BaseSchema):
-    id: str
-    assist_account_id: Optional[List[str]] = None
+    id: int
+    assist_accounts: Optional[List[UserSchema]] = Field(default=[])
     name: Optional[str] = None
     schema_id: str
     kph_account_id: str
-    kh_id: Optional[List[str]] = None
     akps_id: str
     area: float
     household_count: int
@@ -26,8 +26,10 @@ class ProposalForestrySchema(BaseSchema):
     request_year: str
     release_year: Optional[str] = None
     regent_sk: str
+    regional: Optional[RegionalSchema] = Field(default={})
+    vertex_detail: Optional[dict] = Field(default={})
+    kh_detail: Optional[List] = Field(default=[])
     forestry_sk: str
-    vertex: Optional[str]
     nagari_sk: Optional[str] = None
     status: Optional[str]
     is_valid: YesNoEnum
@@ -36,8 +38,6 @@ class ProposalForestrySchema(BaseSchema):
     updated_by: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-
-    regional: Optional[RegionalSchema] = Field(default={})
 
 
 class ProposalForestryCreateSchema(BaseSchema):

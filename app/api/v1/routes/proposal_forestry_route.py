@@ -11,6 +11,7 @@ from app.schemas.proposal_forestry_schema import (
     ProposalForestrySchema,
     ProposalForestryUpdateSchema,
 )
+from app.schemas.user_schema import UserSchema
 from app.services import ForestyProposalService
 
 router = APIRouter()
@@ -37,7 +38,10 @@ async def get_proposal_list(
     )
 
     return PaginatedResponse(
-        items=[ProposalForestrySchema.model_validate(proposal) for proposal in forestry_proposals],
+        items=[
+            ProposalForestrySchema.model_validate(proposal, by_alias=False, by_name=True)
+            for proposal in forestry_proposals
+        ],
         total=total,
         limit=limit,
         offset=offset,
@@ -57,23 +61,23 @@ async def get_proposal(
     "/proposal-forestry",
     response_model=ProposalForestrySchema,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def create_proposal(
     data: ProposalForestryCreateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: ForestyProposalService = Depends(Factory().get_proposal_forestry_service),
 ):
-    return await service.create(data.dict())
+    return await service.create(data.dict(), current_user)
 
 
 @router.patch(
     "/proposal-forestry/{id}",
     response_model=ProposalForestrySchema,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def update_proposal(
     id: str,
     data: ProposalForestryUpdateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: ForestyProposalService = Depends(Factory().get_proposal_forestry_service),
 ):
     return await service.update(id, data.dict(exclude_unset=True))
