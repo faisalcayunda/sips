@@ -4,6 +4,7 @@ from app.core.minio_client import MinioClient
 from app.models import (
     AttachmentModel,
     FileModel,
+    ForestryAreaModel,
     ForestryLandModel,
     ForestryProposalModel,
     ForestrySchemaModel,
@@ -13,11 +14,13 @@ from app.models import (
     ProposalforestryStatusModel,
     RefreshTokenModel,
     RegionalModel,
+    RolesModel,
     UserModel,
 )
 from app.repositories import (
     AttachmentRepository,
     FileRepository,
+    ForestryAreaRepository,
     ForestryLandRepository,
     ForestryProposalRepository,
     ForestrySchemaRepository,
@@ -26,6 +29,7 @@ from app.repositories import (
     PiapsRepository,
     ProposalforestryStatusRepository,
     RegionalRepository,
+    RolesRepository,
     TokenRepository,
     UserRepository,
 )
@@ -33,6 +37,7 @@ from app.services import (
     AttachmentService,
     AuthService,
     FileService,
+    ForestryAreaService,
     ForestryLandService,
     ForestrySchemaService,
     ForestyProposalService,
@@ -41,6 +46,7 @@ from app.services import (
     PiapsService,
     ProposalforestryStatusService,
     RegionalService,
+    RolesService,
     UserService,
 )
 
@@ -60,6 +66,8 @@ class Factory:
     forestry_land_repository = staticmethod(partial(ForestryLandRepository, ForestryLandModel))
     permit_repository = staticmethod(partial(PermitRepository, PermitModel))
     navigation_repository = staticmethod(partial(NavigationRepository, NavigationModel))
+    roles_repository = staticmethod(partial(RolesRepository, RolesModel))
+    forestry_area_repository = staticmethod(partial(ForestryAreaRepository, ForestryAreaModel))
 
     def get_auth_service(
         self,
@@ -123,3 +131,13 @@ class Factory:
         self,
     ):
         return NavigationService(self.navigation_repository())
+
+    def get_roles_service(
+        self,
+    ):
+        return RolesService(self.roles_repository())
+
+    def get_forestry_area_service(
+        self,
+    ):
+        return ForestryAreaService(self.forestry_area_repository())

@@ -11,7 +11,6 @@ from .regional_schema import RegionalSchema
 
 class ProposalForestrySchema(BaseSchema):
     id: str
-    regional_id: str
     assist_account_id: Optional[List[str]] = None
     name: Optional[str] = None
     schema_id: str
@@ -24,14 +23,14 @@ class ProposalForestrySchema(BaseSchema):
     head_contact: str
     map_ps: str
     pps_id: Optional[str] = None
-    year_klhk: int
+    request_year: str
+    release_year: Optional[str] = None
     regent_sk: str
     forestry_sk: str
     vertex: Optional[str]
     nagari_sk: Optional[str] = None
     status: Optional[str]
     is_valid: YesNoEnum
-    menlhk_year: Optional[int] = None
     is_kps_valid: YesNoEnum
     created_by: str
     updated_by: Optional[str] = None
@@ -55,14 +54,14 @@ class ProposalForestryCreateSchema(BaseSchema):
     head_contact: str
     map_ps: str
     pps_id: Optional[str] = None
-    year_klhk: int
     regent_sk: str
     forestry_sk: str
     nagari_sk: Optional[str] = None
     vertex: Optional[str]
     status: Optional[str]
     is_valid: YesNoEnum
-    menlhk_year: Optional[int] = None
+    request_year: str
+    release_year: Optional[str] = None
     is_kps_valid: YesNoEnum
 
 
@@ -83,9 +82,9 @@ class ProposalForestryUpdateSchema(BaseSchema):
     nagari_sk: Optional[str] = None
     vertex: Optional[str]
     status: Optional[str]
-    year_klhk: Optional[int] = None
+    request_year: Optional[str] = None
+    release_year: Optional[str] = None
     regent_sk: Optional[str] = None
     forestry_sk: Optional[str] = None
     is_valid: Optional[YesNoEnum] = None
-    menlhk_year: Optional[int] = None
     is_kps_valid: Optional[YesNoEnum] = None
