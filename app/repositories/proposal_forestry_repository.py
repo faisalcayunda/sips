@@ -87,6 +87,48 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                     func.json_quote(area_alias.abbreviation),
                 )
             )
+            .where(ForestryProposalModel.id == self.model.id)
+            .scalar_subquery()
+        )
+
+        kph_accounts = (
+            select(
+                func.coalesce(
+                    func.json_arrayagg(
+                        func.json_object(
+                            "id",
+                            user_alias.id,
+                            "name",
+                            user_alias.name,
+                            "email",
+                            user_alias.email,
+                            "phone",
+                            user_alias.phone,
+                            "agency_name",
+                            user_alias.agency_name,
+                            "agency_type",
+                            user_alias.agency_type,
+                            "avatar",
+                            user_alias.avatar,
+                            "enable",
+                            user_alias.enable,
+                            "role_id",
+                            user_alias.role_id,
+                            "is_verified",
+                            user_alias.is_verified,
+                        )
+                    ),
+                    func.cast("[]", JSON),
+                ).label("kph_accounts")
+            )
+            .select_from(user_alias)
+            .where(
+                func.json_contains(
+                    ForestryProposalModel.kph_account_id,
+                    func.json_quote(user_alias.id),
+                )
+            )
+            .where(ForestryProposalModel.id == self.model.id)
             .scalar_subquery()
         )
 
@@ -131,20 +173,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                     "description",
                     ProposalforestryStatusModel.description,
                 ).label("vertex_detail"),
-                func.json_object(
-                    "id",
-                    RegionalModel.id,
-                    "name",
-                    RegionalModel.name,
-                    "parent",
-                    RegionalModel.parent,
-                    "group",
-                    RegionalModel.group,
-                    "created_by",
-                    RegionalModel.created_by,
-                    "created_at",
-                    RegionalModel.created_at,
-                ).label("regional"),
+                kph_accounts.label("kph_accounts"),
             )
             .select_from(self.model)
             .outerjoin(
@@ -170,6 +199,9 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                 result["vertex_detail"] = json.loads(result["vertex_detail"])
             if result.get("kh_detail"):
                 result["kh_detail"] = json.loads(result["kh_detail"])
+            if result.get("kph_accounts"):
+                result["kph_accounts"] = json.loads(result["kph_accounts"])
+
         return result
 
     @override
@@ -193,10 +225,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                 for col in searchable_columns:
                     if hasattr(self.model, col):
                         search_conditions.append(cast(getattr(self.model, col), String).ilike(f"%{search}%"))
-                    else:
-                        model_field = self.get_model_field(col)
-                        if model_field:
-                            search_conditions.append(cast(model_field, String).ilike(f"%{search}%"))
+
             else:
                 searchable_fields = [
                     self.model.id,
@@ -248,6 +277,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
 
         records = result.mappings().all()
         results_dict = []
+        print("RECORDS", records)
         for record in records:
             temp = dict(record)
             if temp.get("regional"):
@@ -256,6 +286,9 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                 temp["vertex_detail"] = json.loads(temp["vertex_detail"])
             if temp.get("kh_detail"):
                 temp["kh_detail"] = json.loads(temp["kh_detail"])
+            if temp.get("kph_accounts"):
+                temp["kph_accounts"] = json.loads(temp["kph_accounts"])
+
             results_dict.append(temp)
 
         return results_dict, total

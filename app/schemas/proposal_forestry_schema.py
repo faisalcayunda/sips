@@ -13,6 +13,7 @@ from .user_schema import UserSchema
 class ProposalForestrySchema(BaseSchema):
     id: int
     assist_accounts: Optional[List[UserSchema]] = Field(default=[])
+    kph_accounts: Optional[List[UserSchema]] = Field(default=[])
     name: Optional[str] = None
     schema_id: str
     kph_account_id: str
