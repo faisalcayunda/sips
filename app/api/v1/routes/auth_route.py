@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.api.dependencies.auth import get_current_active_user
+from app.api.dependencies.auth import (
+    get_current_active_user,
+    get_current_user_with_permissions,
+)
 from app.api.dependencies.factory import Factory
 from app.schemas.token_schema import RefreshTokenSchema, Token
 from app.schemas.user_schema import UserCreateSchema, UserSchema
@@ -49,6 +52,8 @@ async def register(
     return await auth_service.register(user.dict(exclude=None))
 
 
-@router.get("/me", response_model=UserSchema)
-async def read_users_me(current_user: UserSchema = Depends(get_current_active_user)):
+@router.get("/me")
+async def read_users_me(
+    current_user: dict = Depends(get_current_user_with_permissions),
+):
     return current_user

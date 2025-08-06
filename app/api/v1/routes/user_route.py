@@ -1,6 +1,4 @@
-from typing import List
-
-from fastapi import APIRouter, Body, Depends, status
+from fastapi import APIRouter, Depends, status
 
 from app.api.dependencies.auth import get_current_active_user
 from app.api.dependencies.factory import Factory
@@ -44,7 +42,7 @@ async def get_users(
 
 @router.get("/users/{id}", response_model=UserSchema)
 async def get_user(
-    id: int,
+    id: str,
     user: UserSchema = Depends(get_current_active_user),
     service: UserService = Depends(Factory().get_user_service),
 ):
@@ -78,7 +76,5 @@ async def update_user(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(get_current_active_user)],
 )
-async def delete_user(
-    id: int, service: UserService = Depends(Factory().get_user_service)
-):
+async def delete_user(id: int, service: UserService = Depends(Factory().get_user_service)):
     await service.delete(id)

@@ -14,7 +14,7 @@ class AttachmentModel(Base):
     id = Column("attach_id", Integer, primary_key=True, autoincrement=True, nullable=False)
     name = Column("attach_name", String(128), nullable=False)
     attach_string = Column("attach_string", String(256), nullable=False)
-    attach_type = Column("attach_type", CHAR(4), nullable=False)
+    attach_type = Column("attach_type", String(4), nullable=False)
     attach_sign = Column("attach_sign", CHAR(16), nullable=False)
     created_by = Column("create_by", CHAR(36), nullable=False)
     created_at = Column(

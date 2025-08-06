@@ -51,3 +51,6 @@ class UserService(BaseService[UserModel, UserRepository]):
 
         user_data["updated_by"] = current_user.id
         return await self.repository.update(id, user_data)
+
+    async def find_by_id_with_permissions(self, id: str):
+        return await self.repository.find_by_id_with_permissions(id=id)

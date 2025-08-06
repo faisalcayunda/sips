@@ -7,6 +7,7 @@ from app.core.data_types import YesNoEnum
 from app.core.exceptions import UnprocessableEntity
 
 from .base import BaseSchema
+from .roles_schema import RolesWithPermission
 
 
 # Disesuaikan dengan struktur user_model.py
@@ -28,6 +29,23 @@ class UserSchema(BaseSchema):
     updated_by: Optional[int] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    is_verified: Optional[bool] = None
+
+
+class UserWithPermission(BaseSchema):
+    id: str
+    name: str
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    gender: Optional[str] = None
+    agency_name: Optional[str] = None
+    agency_type: Optional[str] = None
+    file: Optional[str] = None
+    avatar: Optional[str] = None
+    email: EmailStr
+    enable: YesNoEnum
+    role: Optional[RolesWithPermission] = None
+    last_login: Optional[datetime] = None
     is_verified: Optional[bool] = None
 
 
