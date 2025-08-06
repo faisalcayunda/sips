@@ -11,6 +11,7 @@ from app.schemas.attachment_schema import (
     AttachmentUpdateSchema,
 )
 from app.schemas.base import PaginatedResponse
+from app.schemas.user_schema import UserSchema
 from app.services import AttachmentService
 
 router = APIRouter()
@@ -57,26 +58,26 @@ async def get_attachment(
     "/attachment",
     response_model=AttachmentSchema,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def create_attachment(
     data: AttachmentCreateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: AttachmentService = Depends(Factory().get_attachment_service),
 ):
-    return await service.create(data.dict())
+    return await service.create(data.dict(), current_user)
 
 
 @router.patch(
     "/attachment/{id}",
     response_model=AttachmentSchema,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def update_attachment(
     id: str,
     data: AttachmentUpdateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: AttachmentService = Depends(Factory().get_attachment_service),
 ):
-    return await service.update(id, data.dict(exclude_unset=True))
+    return await service.update(id, data.dict(exclude_unset=True), current_user)
 
 
 @router.delete(

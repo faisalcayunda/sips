@@ -11,6 +11,7 @@ from app.schemas.navigation_schema import (
     NavigationSchema,
     NavigationUpdateSchema,
 )
+from app.schemas.user_schema import UserSchema
 from app.services import NavigationService
 
 router = APIRouter()
@@ -61,26 +62,26 @@ async def get_navigation(
     "/navigations",
     response_model=NavigationSchema,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def create_navigation(
     data: NavigationCreateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: NavigationService = Depends(Factory().get_navigation_service),
 ):
-    return await service.create(data.dict())
+    return await service.create(data.dict(), current_user)
 
 
 @router.patch(
     "/navigations/{id}",
     response_model=NavigationSchema,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def update_navigation(
     id: str,
     data: NavigationUpdateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: NavigationService = Depends(Factory().get_navigation_service),
 ):
-    return await service.update(id, data.dict(exclude_unset=True))
+    return await service.update(id, data.dict(exclude_unset=True), current_user)
 
 
 @router.delete(

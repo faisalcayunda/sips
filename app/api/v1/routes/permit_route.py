@@ -11,6 +11,7 @@ from app.schemas.permit_schema import (
     PermitSchema,
     PermitUpdateSchema,
 )
+from app.schemas.user_schema import UserSchema
 from app.services import PermitService
 
 router = APIRouter()
@@ -57,26 +58,26 @@ async def get_permission(
     "/permissions",
     response_model=PermitSchema,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def create_permission(
     data: PermitCreateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: PermitService = Depends(Factory().get_permit_service),
 ):
-    return await service.create(data.dict())
+    return await service.create(data.dict(), current_user)
 
 
 @router.patch(
     "/permissions/{id}",
     response_model=PermitSchema,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def update_permission(
     id: str,
     data: PermitUpdateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: PermitService = Depends(Factory().get_permit_service),
 ):
-    return await service.update(id, data.dict(exclude_unset=True))
+    return await service.update(id, data.dict(exclude_unset=True), current_user)
 
 
 @router.delete(
