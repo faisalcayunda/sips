@@ -174,6 +174,20 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                     ProposalforestryStatusModel.description,
                 ).label("vertex_detail"),
                 kph_accounts.label("kph_accounts"),
+                func.json_object(
+                    "id",
+                    RegionalModel.id,
+                    "name",
+                    RegionalModel.name,
+                    "parent",
+                    RegionalModel.parent,
+                    "group",
+                    RegionalModel.group,
+                    "created_at",
+                    RegionalModel.created_at,
+                    "created_by",
+                    RegionalModel.created_by,
+                ).label("regional"),
             )
             .select_from(self.model)
             .outerjoin(
