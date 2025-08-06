@@ -6,6 +6,7 @@ from pydantic import Field
 from app.core.data_types import YesNoEnum
 
 from .base import BaseSchema
+from .forestry_schema_schema import ForestrySchemaJoinSchema
 from .regional_schema import RegionalSchema
 from .user_schema import UserSchema
 
@@ -13,9 +14,9 @@ from .user_schema import UserSchema
 class ProposalForestrySchema(BaseSchema):
     id: int
     assist_accounts: Optional[List[UserSchema]] = Field(default=[])
-    kph_accounts: Optional[List[UserSchema]] = Field(default=[])
+    kph_account: Optional[UserSchema] = Field(default={})
     name: Optional[str] = None
-    schema_id: str
+    schema: ForestrySchemaJoinSchema
     kph_account_id: str
     akps_id: str
     area: float

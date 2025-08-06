@@ -4,9 +4,16 @@ from .base import BaseSchema
 
 
 class forestrySchemaSchema(BaseSchema):
-    id: str
+    id: Optional[str]
     schema_id: str
     name: str
+    description: Optional[str] = None
+    ord: Optional[int] = None
+
+
+class ForestrySchemaJoinSchema(BaseSchema):
+    schema_id: Optional[str]
+    name: Optional[str]
     description: Optional[str] = None
     ord: Optional[int] = None
 

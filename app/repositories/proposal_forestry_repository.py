@@ -13,6 +13,7 @@ from app.models import (
     RegionalModel,
     UserModel,
 )
+from app.models.forestry_schema_model import ForestrySchemaModel
 
 from . import BaseRepository
 
@@ -20,6 +21,29 @@ from . import BaseRepository
 class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
     def __init__(self, model):
         super().__init__(model)
+
+    def _mapping(self, record: dict) -> dict:
+        if not record:
+            return {}
+
+        json_fields = [
+            "regional",
+            "vertex_detail",
+            "kh_detail",
+            "kph_account",
+            "schema",
+        ]
+
+        temp = dict(record)
+        for field in json_fields:
+            value = temp.get(field)
+            if isinstance(value, str):
+                try:
+                    temp[field] = json.loads(value)
+                except (json.JSONDecodeError, TypeError):
+                    temp[field] = value
+
+        return temp
 
     def _build_query(self) -> Select:
         user_alias = aliased(UserModel)
@@ -53,17 +77,17 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                         )
                     ),
                     func.cast("[]", JSON),
-                ).label("assist_accounts")
+                )
             )
             .select_from(user_alias)
             .where(
                 func.json_search(
-                    ForestryProposalModel.assist_account_id,
+                    self.model.assist_account_id,
                     "one",
                     func.cast(user_alias.id, String),
                 ).isnot(None)
             )
-            .where(ForestryProposalModel.id == self.model.id)
+            .correlate(self.model)
             .scalar_subquery()
         )
 
@@ -78,116 +102,106 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                         "abbreviation",
                         area_alias.abbreviation,
                     )
-                ).label("kh_detail"),
+                )
             )
             .select_from(area_alias)
             .where(
                 func.json_contains(
-                    ForestryProposalModel.kh_id,
+                    self.model.kh_id,
                     func.json_quote(area_alias.abbreviation),
                 )
             )
-            .where(ForestryProposalModel.id == self.model.id)
-            .scalar_subquery()
-        )
-
-        kph_accounts = (
-            select(
-                func.coalesce(
-                    func.json_arrayagg(
-                        func.json_object(
-                            "id",
-                            user_alias.id,
-                            "name",
-                            user_alias.name,
-                            "email",
-                            user_alias.email,
-                            "phone",
-                            user_alias.phone,
-                            "agency_name",
-                            user_alias.agency_name,
-                            "agency_type",
-                            user_alias.agency_type,
-                            "avatar",
-                            user_alias.avatar,
-                            "enable",
-                            user_alias.enable,
-                            "role_id",
-                            user_alias.role_id,
-                            "is_verified",
-                            user_alias.is_verified,
-                        )
-                    ),
-                    func.cast("[]", JSON),
-                ).label("kph_accounts")
-            )
-            .select_from(user_alias)
-            .where(
-                func.json_contains(
-                    ForestryProposalModel.kph_account_id,
-                    func.json_quote(user_alias.id),
-                )
-            )
-            .where(ForestryProposalModel.id == self.model.id)
+            .correlate(self.model)
             .scalar_subquery()
         )
 
         return (
             select(
                 self.model.id.label("id"),
-                self.model.regional_id.label("regional_id"),
-                self.model.assist_account_id.label("assist_account_id"),
-                self.model.name.label("name"),
-                self.model.schema_id.label("schema_id"),
-                self.model.kph_account_id.label("kph_account_id"),
-                self.model.kh_id.label("kh_id"),
-                self.model.akps_id.label("akps_id"),
-                self.model.area.label("area"),
-                self.model.household_count.label("household_count"),
-                self.model.head_name.label("head_name"),
-                self.model.head_contact.label("head_contact"),
-                self.model.map_ps.label("map_ps"),
-                self.model.pps_id.label("pps_id"),
-                self.model.vertex.label("vertex"),
-                self.model.status.label("status"),
-                self.model.nagari_sk.label("nagari_sk"),
-                self.model.regent_sk.label("regent_sk"),
-                self.model.forestry_sk.label("forestry_sk"),
-                self.model.is_valid.label("is_valid"),
-                self.model.request_year.label("request_year"),
-                self.model.release_year.label("release_year"),
-                self.model.is_kps_valid.label("is_kps_valid"),
-                self.model.created_by.label("created_by"),
-                self.model.updated_by.label("updated_by"),
-                self.model.created_at.label("created_at"),
-                self.model.updated_at.label("updated_at"),
+                func.min(self.model.regional_id).label("regional_id"),
+                func.min(self.model.assist_account_id).label("assist_account_id"),
+                func.min(self.model.name).label("name"),
+                func.min(self.model.schema_id).label("schema_id"),
+                func.min(self.model.kph_account_id).label("kph_account_id"),
+                func.min(self.model.kh_id).label("kh_id"),
+                func.min(self.model.akps_id).label("akps_id"),
+                func.min(self.model.area).label("area"),
+                func.min(self.model.household_count).label("household_count"),
+                func.min(self.model.head_name).label("head_name"),
+                func.min(self.model.head_contact).label("head_contact"),
+                func.min(self.model.map_ps).label("map_ps"),
+                func.min(self.model.pps_id).label("pps_id"),
+                func.min(self.model.vertex).label("vertex"),
+                func.min(self.model.status).label("status"),
+                func.min(self.model.nagari_sk).label("nagari_sk"),
+                func.min(self.model.regent_sk).label("regent_sk"),
+                func.min(self.model.forestry_sk).label("forestry_sk"),
+                func.min(self.model.is_valid).label("is_valid"),
+                func.min(self.model.request_year).label("request_year"),
+                func.min(self.model.release_year).label("release_year"),
+                func.min(self.model.is_kps_valid).label("is_kps_valid"),
+                func.min(self.model.created_by).label("created_by"),
+                func.min(self.model.updated_by).label("updated_by"),
+                func.min(self.model.created_at).label("created_at"),
+                func.min(self.model.updated_at).label("updated_at"),
                 assist_users_subq.label("assist_accounts"),
                 area_subq.label("kh_detail"),
                 func.json_object(
                     "id",
-                    ProposalforestryStatusModel.id,
+                    func.min(ProposalforestryStatusModel.id),
                     "name",
-                    ProposalforestryStatusModel.name,
+                    func.min(ProposalforestryStatusModel.name),
                     "proposal_forestry_vertex",
-                    ProposalforestryStatusModel.proposal_forestry_vertex,
+                    func.min(ProposalforestryStatusModel.proposal_forestry_vertex),
                     "description",
-                    ProposalforestryStatusModel.description,
+                    func.min(ProposalforestryStatusModel.description),
                 ).label("vertex_detail"),
-                kph_accounts.label("kph_accounts"),
                 func.json_object(
                     "id",
-                    RegionalModel.id,
+                    func.min(user_alias.id),
                     "name",
-                    RegionalModel.name,
+                    func.min(user_alias.name),
+                    "email",
+                    func.min(user_alias.email),
+                    "phone",
+                    func.min(user_alias.phone),
+                    "agency_name",
+                    func.min(user_alias.agency_name),
+                    "agency_type",
+                    func.min(user_alias.agency_type),
+                    "avatar",
+                    func.min(user_alias.avatar),
+                    "enable",
+                    func.min(user_alias.enable),
+                    "role_id",
+                    func.min(user_alias.role_id),
+                    "is_verified",
+                    func.min(user_alias.is_verified),
+                ).label("kph_account"),
+                func.json_object(
+                    "id",
+                    func.min(RegionalModel.id),
+                    "name",
+                    func.min(RegionalModel.name),
                     "parent",
-                    RegionalModel.parent,
+                    func.min(RegionalModel.parent),
                     "group",
-                    RegionalModel.group,
+                    func.min(RegionalModel.group),
                     "created_at",
-                    RegionalModel.created_at,
+                    func.min(RegionalModel.created_at),
                     "created_by",
-                    RegionalModel.created_by,
+                    func.min(RegionalModel.created_by),
                 ).label("regional"),
+                func.json_object(
+                    "schema_id",
+                    func.min(ForestrySchemaModel.schema_id),
+                    "name",
+                    func.min(ForestrySchemaModel.name),
+                    "description",
+                    func.min(ForestrySchemaModel.description),
+                    "ord",
+                    func.min(ForestrySchemaModel.ord),
+                ).label("schema"),
             )
             .select_from(self.model)
             .outerjoin(
@@ -198,6 +212,15 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                 RegionalModel,
                 self.model.regional_id == RegionalModel.id,
             )
+            .outerjoin(
+                ForestrySchemaModel,
+                self.model.schema_id == ForestrySchemaModel.schema_id,
+            )
+            .outerjoin(
+                user_alias,
+                self.model.kph_account_id == user_alias.id,
+            )
+            .group_by(self.model.id)
         )
 
     @override
@@ -205,18 +228,8 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
         query = self._build_query()
         result = await db.session.execute(query.where(self.model.id == id))
         result = result.mappings().first()
-        if result:
-            result = dict(result)
-            if result.get("regional"):
-                result["regional"] = json.loads(result["regional"])
-            if result.get("vertex_detail"):
-                result["vertex_detail"] = json.loads(result["vertex_detail"])
-            if result.get("kh_detail"):
-                result["kh_detail"] = json.loads(result["kh_detail"])
-            if result.get("kph_accounts"):
-                result["kph_accounts"] = json.loads(result["kph_accounts"])
 
-        return result
+        return self._mapping(result)
 
     @override
     async def find_all(
@@ -290,20 +303,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
         result = await db.session.execute(query)
 
         records = result.mappings().all()
-        results_dict = []
-        print("RECORDS", records)
-        for record in records:
-            temp = dict(record)
-            if temp.get("regional"):
-                temp["regional"] = json.loads(temp["regional"])
-            if temp.get("vertex_detail"):
-                temp["vertex_detail"] = json.loads(temp["vertex_detail"])
-            if temp.get("kh_detail"):
-                temp["kh_detail"] = json.loads(temp["kh_detail"])
-            if temp.get("kph_accounts"):
-                temp["kph_accounts"] = json.loads(temp["kph_accounts"])
-
-            results_dict.append(temp)
+        results_dict = [self._mapping(record) for record in records]
 
         return results_dict, total
 
