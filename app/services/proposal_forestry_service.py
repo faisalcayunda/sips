@@ -24,6 +24,7 @@ class ForestyProposalService(BaseService[ForestryProposalModel, ForestryProposal
         id: str,
         forestry_data: Dict[str, Union[str, int]],
         current_user: UserSchema,
+        refresh: bool = True,
     ) -> ForestryProposalModel:
         forestry_data["updated_by"] = current_user.id
-        return await super().update(id, forestry_data)
+        return await super().update(id, forestry_data, refresh)

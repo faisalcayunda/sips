@@ -80,7 +80,7 @@ async def update_proposal(
     current_user: UserSchema = Depends(get_current_active_user),
     service: ForestyProposalService = Depends(Factory().get_proposal_forestry_service),
 ):
-    return await service.update(id, data.dict(exclude_unset=True))
+    return await service.update(id, data.dict(exclude_unset=True), current_user)
 
 
 @router.delete(
