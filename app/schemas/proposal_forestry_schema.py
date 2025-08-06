@@ -59,8 +59,8 @@ class ProposalForestryCreateSchema(BaseSchema):
     regent_sk: str
     forestry_sk: str
     nagari_sk: Optional[str] = None
-    vertex: Optional[str]
-    status: Optional[str]
+    vertex: Optional[str] = None
+    status: Optional[str] = None
     is_valid: YesNoEnum
     request_year: str
     release_year: Optional[str] = None
@@ -82,8 +82,8 @@ class ProposalForestryUpdateSchema(BaseSchema):
     map_ps: Optional[str] = None
     pps_id: Optional[str] = None
     nagari_sk: Optional[str] = None
-    vertex: Optional[str]
-    status: Optional[str]
+    vertex: Optional[str] = None
+    status: Optional[str] = None
     request_year: Optional[str] = None
     release_year: Optional[str] = None
     regent_sk: Optional[str] = None

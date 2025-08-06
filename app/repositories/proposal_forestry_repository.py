@@ -315,6 +315,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
 
     @override
     async def update(self, id: int, data: dict, refresh: bool = True) -> ForestryProposalModel:
-        result = await super().update(id, data)
+        print("Data to update", data)
+        result = await super().update(id, data, refresh)
 
         return await self.find_by_id(result["id"])
