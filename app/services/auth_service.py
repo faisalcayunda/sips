@@ -55,7 +55,7 @@ class AuthService:
             return None
         return user
 
-    async def create_tokens(self, user_id: str) -> Dict[str, str]:
+    async def create_tokens(self, user_id: str) -> Dict[str, Any]:
         """Buat access dan refresh token."""
         access_token = create_access_token(user_id)
         refresh_token = create_refresh_token(user_id)
