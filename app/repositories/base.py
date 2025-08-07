@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Sequence, Tuple, Type, TypeVar
 
 from fastapi_async_sqlalchemy import db
 from sqlalchemy import String, cast
@@ -26,7 +26,7 @@ class BaseRepository(Generic[ModelType]):
             query = query.where(self.model.is_deleted.is_(False))
         return query
 
-    async def find_by_id(self, id: int, relationships: List[str] = None) -> Optional[ModelType]:
+    async def find_by_id(self, id: str, relationships: Optional[List[str]] = None) -> Optional[ModelType]:
         """Find record by ID dengan optional eager loading."""
         query = self.build_base_query().where(self.model.id == id)
 
@@ -44,16 +44,21 @@ class BaseRepository(Generic[ModelType]):
 
     async def find_all(
         self,
-        filters: list = [],
-        sort: list = [],
+        filters: Optional[List[Any]] = None,
+        sort: Optional[List[Any]] = None,
         search: str = "",
-        group_by: str = None,
+        group_by: Optional[str] = None,
         limit: int = 100,
         offset: int = 0,
-        relationships: List[str] = None,
-        searchable_columns: List[str] = None,
+        relationships: Optional[List[str]] = None,
+        searchable_columns: Optional[List[str]] = None,
     ) -> Tuple[List[ModelType], int]:
         """Optimized find_all method."""
+
+        filters = filters or []
+        sort = sort or []
+        relationships = relationships or []
+        searchable_columns = searchable_columns or []
 
         query = self.build_base_query().filter(*filters)
 
@@ -66,7 +71,10 @@ class BaseRepository(Generic[ModelType]):
                     if hasattr(self.model, col)
                 ]
             else:
-                search_conditions = [cast(col, String).ilike(f"%{search}%") for col in self.inspector.c]
+                search_conditions = [
+                    cast(getattr(self.model, col_name), String).ilike(f"%{search}%")
+                    for col_name in self.inspector.c.keys()
+                ]
 
             if search_conditions:
                 query = query.where(or_(*search_conditions))
@@ -77,6 +85,8 @@ class BaseRepository(Generic[ModelType]):
         # Count query
         count_query = select(func.count()).select_from(query.subquery())
         total = await db.session.scalar(count_query)
+        if total is None:
+            total = 0
 
         # Data query
         if sort:
@@ -95,7 +105,8 @@ class BaseRepository(Generic[ModelType]):
 
         query = query.limit(limit).offset(offset)
         result = await db.session.execute(query)
-        records = result.scalars().all()
+        records_seq: Sequence[ModelType] = result.scalars().all()
+        records: List[ModelType] = list(records_seq)
 
         return records, total
 
@@ -117,7 +128,7 @@ class BaseRepository(Generic[ModelType]):
         if not data:
             return [] if return_records else None
 
-        created_records = []
+        created_records: List[ModelType] = []
 
         for i in range(0, len(data), batch_size):
             batch = data[i : i + batch_size]
@@ -138,7 +149,7 @@ class BaseRepository(Generic[ModelType]):
 
         return None
 
-    async def update(self, id: int, data: Dict[str, Any], refresh: bool = True) -> Optional[ModelType]:
+    async def update(self, id: str, data: Dict[str, Any], refresh: bool = True) -> Optional[ModelType]:
         """Update record dengan optimization."""
         clean_data = {k: v for k, v in data.items() if v is not None}
 
@@ -160,14 +171,14 @@ class BaseRepository(Generic[ModelType]):
 
         return await self.find_by_id(id) if refresh else None
 
-    async def delete(self, id: int) -> bool:
+    async def delete(self, id: str) -> bool:
         """Delete record."""
         query = sqlalchemy_delete(self.model).where(self.model.id == id)
         result = await db.session.execute(query)
         await db.session.commit()
         return result.rowcount > 0
 
-    async def exists(self, id: int) -> bool:
+    async def exists(self, id: str) -> bool:
         """Check if record exists."""
         query = select(1).where(self.model.id == id)
         if hasattr(self.model, "is_deleted"):

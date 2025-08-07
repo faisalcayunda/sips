@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Any, Dict, Generic, List, Tuple, Type, TypeVar, Union
+from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union
 
 from sqlalchemy import or_
 
@@ -14,14 +14,19 @@ RepositoryType = TypeVar("RepositoryType", bound=BaseRepository)
 class BaseService(Generic[ModelType, RepositoryType]):
     """Optimized base service dengan caching dan performance improvements."""
 
-    def __init__(self, model: Type[ModelType], repository: Type[RepositoryType]):
+    def __init__(self, model: Type[ModelType], repository: RepositoryType):
         self.model_class = model
         self.repository = repository
-        self._valid_columns = set(self.repository.inspector.c.keys())
+        # inspector sebaiknya diakses dari instance repository, bukan class
+        if hasattr(self.repository, "inspector"):
+            self._valid_columns = set(self.repository.inspector.c.keys())
+        else:
+            self._valid_columns = set()
         self._has_soft_delete = hasattr(self.model_class, "is_deleted")
 
+    @staticmethod
     @lru_cache(maxsize=256)
-    def _parse_filter_item(self, filter_item: str) -> Tuple[str, str, str]:
+    def _parse_filter_item(filter_item: str) -> Tuple[str, str, str]:
         """Cache parsing filter. Mendukung operator '=', '>=', '<='."""
         for op in ("!=", ">=", "<=", "="):
             if op in filter_item:
@@ -32,8 +37,9 @@ class BaseService(Generic[ModelType, RepositoryType]):
                     raise UnprocessableEntity(f"Invalid filter {filter_item} must be 'name{op}value'")
         raise UnprocessableEntity(f"Invalid filter {filter_item}. Must use '=', '>=', or '<=' as separator.")
 
+    @staticmethod
     @lru_cache(maxsize=256)
-    def _parse_sort_item(self, sort_item: str) -> Tuple[str, str]:
+    def _parse_sort_item(sort_item: str) -> Tuple[str, str]:
         """Cache parsing sort."""
         try:
             col, order = sort_item.split(":", 1)
@@ -49,56 +55,57 @@ class BaseService(Generic[ModelType, RepositoryType]):
     def _convert_value(self, col: str, value: str) -> Any:
         """Convert value ke tipe yang sesuai."""
         if col == "id":
-            try:
-                return str(value)
-            except ValueError:
-                raise UnprocessableEntity(f"Invalid id value: {value}")
+            return str(value)
 
         if isinstance(value, str) and value.lower() in {"true", "false", "t", "f"}:
             return value.lower() in {"true", "t"}
 
-        if value.isdigit():
+        if isinstance(value, str) and value.isdigit():
             return int(value)
 
         try:
             return float(value)
-        except ValueError:
+        except (ValueError, TypeError):
             return value
 
-    def _build_filters(self, filters: Union[str, list[str]]) -> List:
+    def _build_filters(self, filters: Union[str, List[str], None]) -> List[Any]:
         """Build filters dengan optimization."""
-        list_model_filters = []
+        list_model_filters: List[Any] = []
 
-        if isinstance(filters, str):
+        # Pastikan filters adalah list
+        if filters is None:
+            filters = []
+        elif isinstance(filters, str):
             filters = [filters]
 
-        if self._has_soft_delete:
+        # Soft delete: tambahkan filter is_deleted jika ada kolomnya
+        if self._has_soft_delete and "is_deleted" not in [
+            f.split("=")[0].strip() if isinstance(f, str) else "" for f in filters
+        ]:
             filters.append("is_deleted=false")
 
         for filter_item in filters:
+            # Mendukung OR: filter_item bisa berupa list
             if isinstance(filter_item, list):
                 or_conditions = []
-                for values in filter_item:
-                    col, operator, value = self._parse_filter_item(values)
+                for value_item in filter_item:
+                    col, operator, value = self._parse_filter_item(value_item)
                     self._validate_column(col)
                     converted_value = self._convert_value(col, value)
 
                     if isinstance(converted_value, bool):
                         or_conditions.append(getattr(self.model_class, col).is_(converted_value))
-
                     else:
-                        match operator:
-                            case "=":
-                                or_conditions.append(getattr(self.model_class, col) == converted_value)
-                            case "!=":
-                                or_conditions.append(getattr(self.model_class, col) != converted_value)
-                            case ">=":
-                                or_conditions.append(getattr(self.model_class, col) >= converted_value)
-                            case "<=":
-                                or_conditions.append(getattr(self.model_class, col) <= converted_value)
-                            case _:
-                                raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
-
+                        if operator == "=":
+                            or_conditions.append(getattr(self.model_class, col) == converted_value)
+                        elif operator == "!=":
+                            or_conditions.append(getattr(self.model_class, col) != converted_value)
+                        elif operator == ">=":
+                            or_conditions.append(getattr(self.model_class, col) >= converted_value)
+                        elif operator == "<=":
+                            or_conditions.append(getattr(self.model_class, col) <= converted_value)
+                        else:
+                            raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
                 if or_conditions:
                     list_model_filters.append(or_(*or_conditions))
             else:
@@ -108,28 +115,26 @@ class BaseService(Generic[ModelType, RepositoryType]):
 
                 if isinstance(converted_value, bool):
                     list_model_filters.append(getattr(self.model_class, col).is_(converted_value))
-
                 else:
-                    match operator:
-                        case "=":
-                            list_model_filters.append(getattr(self.model_class, col) == converted_value)
-                        case "!=":
-                            list_model_filters.append(getattr(self.model_class, col) != converted_value)
-                        case ">=":
-                            list_model_filters.append(getattr(self.model_class, col) >= converted_value)
-                        case "<=":
-                            list_model_filters.append(getattr(self.model_class, col) <= converted_value)
-                        case _:
-                            raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
+                    if operator == "=":
+                        list_model_filters.append(getattr(self.model_class, col) == converted_value)
+                    elif operator == "!=":
+                        list_model_filters.append(getattr(self.model_class, col) != converted_value)
+                    elif operator == ">=":
+                        list_model_filters.append(getattr(self.model_class, col) >= converted_value)
+                    elif operator == "<=":
+                        list_model_filters.append(getattr(self.model_class, col) <= converted_value)
+                    else:
+                        raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
 
         return list_model_filters
 
-    def _build_sort(self, sort: Union[str, list[str]]) -> List:
+    def _build_sort(self, sort: Union[str, List[str], None]) -> List[Any]:
         """Build sort dengan optimization."""
         if not sort:
             return []
 
-        list_sort = []
+        list_sort: List[Any] = []
 
         if isinstance(sort, str):
             sort = [sort]
@@ -147,31 +152,31 @@ class BaseService(Generic[ModelType, RepositoryType]):
 
         return list_sort
 
-    async def find_by_id(self, id: str, relationships: List[str] = None) -> ModelType:
+    async def find_by_id(self, id: str, relationships: Optional[List[str]] = None) -> ModelType:
         """Find record by ID dengan optional eager loading."""
-        record = await self.repository.find_by_id(id, relationships=relationships)
+        record = await self.repository.find_by_id(id, relationships=relationships or [])
         if not record:
             raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
         return record
 
     async def find_all(
         self,
-        filters: Union[str, list[str]] = None,
-        sort: Union[str, list[str]] = None,
+        filters: Optional[Union[str, List[str]]] = None,
+        sort: Optional[Union[str, List[str]]] = None,
         search: str = "",
-        group_by: str = None,
+        group_by: Optional[str] = None,
         limit: int = 100,
         offset: int = 0,
-        relationships: List[str] = None,
-        searchable_columns: List[str] = None,
+        relationships: Optional[List[str]] = None,
+        searchable_columns: Optional[List[str]] = None,
     ) -> Tuple[List[ModelType], int]:
         """Optimized find_all."""
 
         if group_by:
             self._validate_column(group_by)
 
-        list_model_filters = self._build_filters(filters or [])
-        list_sort = self._build_sort(sort or [])
+        list_model_filters = self._build_filters(filters)
+        list_sort = self._build_sort(sort)
 
         return await self.repository.find_all(
             filters=list_model_filters,
@@ -180,8 +185,8 @@ class BaseService(Generic[ModelType, RepositoryType]):
             group_by=group_by,
             limit=limit,
             offset=offset,
-            relationships=relationships,
-            searchable_columns=searchable_columns,
+            relationships=relationships or [],
+            searchable_columns=searchable_columns or [],
         )
 
     async def create(self, data: Dict[str, Any]) -> ModelType:
@@ -213,7 +218,6 @@ class BaseService(Generic[ModelType, RepositoryType]):
         else:
             await self.repository.delete(id)
 
-    # Bulk operations
     async def bulk_create(self, data_list: List[Dict[str, Any]], batch_size: int = 1000) -> List[ModelType]:
         """Bulk create dengan validation."""
         return await self.repository.bulk_create(data_list, batch_size=batch_size, return_records=True)
@@ -222,7 +226,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
         """Check existence tanpa fetch object."""
         return await self.repository.exists(id)
 
-    async def count_by_filters(self, filters: Union[str, list[str]] = None) -> int:
+    async def count_by_filters(self, filters: Optional[Union[str, List[str]]] = None) -> int:
         """Count records dengan filters."""
-        list_model_filters = self._build_filters(filters or [])
+        list_model_filters = self._build_filters(filters)
         return await self.repository.count(list_model_filters)

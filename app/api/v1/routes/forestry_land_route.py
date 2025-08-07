@@ -11,6 +11,7 @@ from app.schemas.forestry_land_schema import (
     ForestryLandSchema,
     ForestryLandUpdateSchema,
 )
+from app.schemas.user_schema import UserSchema
 from app.services import ForestryLandService
 
 router = APIRouter()
@@ -57,26 +58,32 @@ async def get_land(
     "/forestry-land",
     response_model=ForestryLandSchema,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def create_land(
     data: ForestryLandCreateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: ForestryLandService = Depends(Factory().get_forestry_land_service),
 ):
-    return await service.create(data.dict())
+    return await service.create(data.dict(), current_user)
 
 
 @router.patch(
     "/forestry-land/{id}",
     response_model=ForestryLandSchema,
-    dependencies=[Depends(get_current_active_user)],
 )
 async def update_land(
     id: str,
     data: ForestryLandUpdateSchema,
+    current_user: UserSchema = Depends(get_current_active_user),
     service: ForestryLandService = Depends(Factory().get_forestry_land_service),
 ):
-    return await service.update(id, data.dict(exclude_unset=True))
+    return await service.update(
+        id,
+        data.dict(
+            exclude_unset=True,
+        ),
+        current_user,
+    )
 
 
 @router.delete(
