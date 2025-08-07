@@ -10,7 +10,9 @@ from app.api.dependencies.factory import Factory
 from app.core.security import decode_token
 from app.models import UserModel
 from app.schemas.token_schema import TokenPayload
+from app.schemas.user_schema import UserSchema
 from app.services import UserService
+from app.utils.cache import get_user_cache
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -88,12 +90,16 @@ class AuthManager:
                 raise credentials_exception
             return None
 
-        user = await user_service.find_by_id(user_id)
+        user = await get_user_cache(user_id)
+        if not user:
+            user = await user_service.find_by_id(user_id)
+
         if user is None:
             if error and credentials_exception:
                 raise credentials_exception
             return None
-
+        if isinstance(user, dict):
+            user = UserSchema(**user)
         if not (isinstance(user.enable, str) and user.enable.lower() == "y"):
             if error:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
@@ -102,7 +108,6 @@ class AuthManager:
         if not with_permissions:
             return user
 
-        # Kembalikan user beserta permission
         return await user_service.find_by_id_with_permissions(user.id)
 
 

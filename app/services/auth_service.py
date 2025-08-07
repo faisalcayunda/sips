@@ -16,6 +16,7 @@ from app.core.security import (
 from app.models.user_model import UserModel
 from app.repositories.token_repository import TokenRepository
 from app.repositories.user_repository import UserRepository
+from app.utils.cache import delete_user_cache, set_user_cache
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,8 @@ class AuthService:
             return None
         if not verify_password(password, user.password):
             return None
+        if user:
+            await set_user_cache(user.id, user.to_dict(), ttl=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60)
         return user
 
     async def create_tokens(self, user_id: str) -> Dict[str, Any]:
@@ -117,4 +120,6 @@ class AuthService:
 
     async def logout(self, refresh_token: str) -> bool:
         """Logout user dengan merevoke refresh token."""
+        user_id = decode_token(refresh_token).get("sub")
+        await delete_user_cache(user_id)
         return await self.token_repository.revoke_token(refresh_token)
