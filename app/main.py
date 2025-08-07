@@ -7,11 +7,14 @@ from fastapi.exceptions import HTTPException, RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, ORJSONResponse
 from fastapi_async_sqlalchemy import SQLAlchemyMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from sqlalchemy.exc import IntegrityError
 
 from app.api.v1 import router as api_router
 from app.core.config import settings
 from app.core.exceptions import APIException, prepare_error_response
+from app.utils.limiter import limiter
 from app.utils.system import optimize_system
 
 
@@ -32,6 +35,8 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url="/openapi.json",
 )
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,

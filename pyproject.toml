@@ -29,6 +29,7 @@ colour = "^0.1.5"
 httpx = {extras = ["http2"], version = "^0.28.1"}
 psutil = "^7.0.0"
 aiomysql = "^0.2.0"
+slowapi = "^0.1.9"
 
 
 

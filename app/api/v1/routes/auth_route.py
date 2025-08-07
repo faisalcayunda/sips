@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.dependencies.auth import (
@@ -9,12 +9,15 @@ from app.api.dependencies.factory import Factory
 from app.schemas.token_schema import RefreshTokenSchema, Token
 from app.schemas.user_schema import UserCreateSchema, UserSchema
 from app.services.auth_service import AuthService
+from app.utils.limiter import limiter
 
 router = APIRouter()
 
 
 @router.post("/auth/login", response_model=Token)
+@limiter.limit("3/minute")
 async def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(Factory().get_auth_service),
 ):
@@ -45,7 +48,9 @@ async def refresh_token(
 
 
 @router.post("/auth/register", response_model=UserSchema)
+@limiter.limit("3/minute")
 async def register(
+    request: Request,
     user: UserCreateSchema,
     auth_service: AuthService = Depends(Factory().get_auth_service),
 ) -> UserSchema:
