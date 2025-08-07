@@ -115,7 +115,7 @@ class UserRepository(BaseRepository[UserModel]):
             role = {
                 "id": role_row["id"],
                 "name": role_row["name"],
-                "permissions": permissions,
+                "navigations": permissions,
             }
 
         user_dict = dict(user_row)
