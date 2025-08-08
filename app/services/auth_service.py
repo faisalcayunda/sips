@@ -1,3 +1,4 @@
+import contextlib
 import logging
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional
@@ -120,6 +121,8 @@ class AuthService:
 
     async def logout(self, refresh_token: str) -> bool:
         """Logout user dengan merevoke refresh token."""
-        user_id = decode_token(refresh_token).get("sub")
-        await delete_user_cache(user_id)
-        return await self.token_repository.revoke_token(refresh_token)
+        with contextlib.suppress(Exception):
+            user_id = decode_token(refresh_token).get("sub")
+            await delete_user_cache(user_id)
+
+        return await self.token_repository.revoke_token(refresh_token, exclude_revoke=True)

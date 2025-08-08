@@ -74,9 +74,7 @@ class Settings(BaseSettings):
     TIMEZONE: str = Field(default="Asia/Jakarta")
 
     # Settings config
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="allow"
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="allow")
 
 
 @lru_cache

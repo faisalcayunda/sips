@@ -3,7 +3,6 @@ from datetime import datetime
 from fastapi_async_sqlalchemy import db
 from pytz import timezone
 from sqlalchemy import select
-from uuid6 import UUID
 
 from app.core.config import settings
 from app.models import RefreshTokenModel
@@ -24,16 +23,20 @@ class TokenRepository(BaseRepository[RefreshTokenModel]):
         result = await db.session.execute(query)
         return result.scalars().first()
 
-    async def revoke_token(self, token: str):
-        token_obj = await self.find_by_token(token)
+    async def revoke_token(self, token: str, exclude_revoke: bool = False):
+        token_obj = await self.find_by_token(token, exclude_revoke)
         if token_obj:
             token_obj.revoked = True
             db.session.add(token_obj)
             await db.session.commit()
             return True
+
         return False
 
-    async def find_by_token(self, token: str):
+    async def find_by_token(self, token: str, exclude_revoke: bool = False):
         query = select(self.model).where(self.model.token == token)
+        if not exclude_revoke:
+            query = query.where(self.model.revoked.is_(False))
+
         result = await db.session.execute(query)
         return result.scalars().first()

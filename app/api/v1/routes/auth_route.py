@@ -1,10 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.api.dependencies.auth import (
-    get_current_active_user,
-    get_current_user_with_permissions,
-)
+from app.api.dependencies.auth import get_current_user_with_permissions
 from app.api.dependencies.factory import Factory
 from app.schemas.token_schema import RefreshTokenSchema, Token
 from app.schemas.user_schema import UserCreateSchema, UserSchema
@@ -31,12 +28,14 @@ async def login(
     return await auth_service.create_tokens(user.id)
 
 
-@router.post("/auth/logout")
+@router.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
-    current_user: UserSchema = Depends(get_current_active_user),
+    refresh_token: RefreshTokenSchema,
     auth_service: AuthService = Depends(Factory().get_auth_service),
 ):
-    await auth_service.logout(current_user.id)
+    success = await auth_service.logout(refresh_token=refresh_token.refresh_token)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot logout")
 
 
 @router.post("/auth/refresh", response_model=Token)
