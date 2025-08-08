@@ -4,7 +4,11 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Uni
 from sqlalchemy import or_
 
 from app.core.database import Base
-from app.core.exceptions import NotFoundException, UnprocessableEntity
+from app.core.exceptions import (
+    DuplicateValueException,
+    NotFoundException,
+    ValidationException,
+)
 from app.repositories import BaseRepository
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -34,8 +38,8 @@ class BaseService(Generic[ModelType, RepositoryType]):
                     col, value = filter_item.split(op, 1)
                     return col.strip(), op, value.strip()
                 except ValueError:
-                    raise UnprocessableEntity(f"Invalid filter {filter_item} must be 'name{op}value'")
-        raise UnprocessableEntity(f"Invalid filter {filter_item}. Must use '=', '>=', or '<=' as separator.")
+                    raise ValidationException(f"Invalid filter {filter_item} must be 'name{op}value'")
+        raise ValidationException(f"Invalid filter {filter_item}. Must use '=', '>=', or '<=' as separator.")
 
     @staticmethod
     @lru_cache(maxsize=256)
@@ -45,12 +49,12 @@ class BaseService(Generic[ModelType, RepositoryType]):
             col, order = sort_item.split(":", 1)
             return col.strip(), order.strip().lower()
         except ValueError:
-            raise UnprocessableEntity(f"Invalid sort {sort_item}. Must be 'name:asc' or 'name:desc'")
+            raise ValidationException(f"Invalid sort {sort_item}. Must be 'name:asc' or 'name:desc'")
 
     def _validate_column(self, col: str) -> None:
         """Validate column dengan cache."""
         if col not in self._valid_columns:
-            raise UnprocessableEntity(f"Invalid column: {col}")
+            raise ValidationException(f"Invalid column: {col}")
 
     def _convert_value(self, col: str, value: str) -> Any:
         """Convert value ke tipe yang sesuai."""
@@ -105,7 +109,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
                         elif operator == "<=":
                             or_conditions.append(getattr(self.model_class, col) <= converted_value)
                         else:
-                            raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
+                            raise ValidationException(f"Invalid operator '{operator}' for {col}")
                 if or_conditions:
                     list_model_filters.append(or_(*or_conditions))
             else:
@@ -125,7 +129,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
                     elif operator == "<=":
                         list_model_filters.append(getattr(self.model_class, col) <= converted_value)
                     else:
-                        raise UnprocessableEntity(f"Invalid operator '{operator}' for {col}")
+                        raise ValidationException(f"Invalid operator '{operator}' for {col}")
 
         return list_model_filters
 
@@ -148,7 +152,7 @@ class BaseService(Generic[ModelType, RepositoryType]):
             elif order == "desc":
                 list_sort.append(getattr(self.model_class, col).desc())
             else:
-                raise UnprocessableEntity(f"Invalid sort order '{order}' for {col}")
+                raise ValidationException(f"Invalid sort order '{order}' for {col}")
 
         return list_sort
 
@@ -191,7 +195,13 @@ class BaseService(Generic[ModelType, RepositoryType]):
 
     async def create(self, data: Dict[str, Any]) -> ModelType:
         """Create new record."""
-        return await self.repository.create(data)
+        try:
+            return await self.repository.create(data)
+        except Exception as e:
+            # Handle duplicate key errors
+            if "duplicate" in str(e).lower() or "unique" in str(e).lower():
+                raise DuplicateValueException(f"Record already exists: {str(e)}")
+            raise
 
     async def update(self, id: str, data: Dict[str, Any], refresh: bool = True) -> ModelType:
         """Update existing record."""
@@ -199,11 +209,16 @@ class BaseService(Generic[ModelType, RepositoryType]):
         if not await self.repository.exists(id):
             raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
 
-        updated = await self.repository.update(id, data, refresh=refresh)
-        if not updated:
-            raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
-
-        return updated
+        try:
+            updated = await self.repository.update(id, data, refresh=refresh)
+            if not updated:
+                raise NotFoundException(f"{self.model_class.__name__} with id {id} not found.")
+            return updated
+        except Exception as e:
+            # Handle duplicate key errors
+            if "duplicate" in str(e).lower() or "unique" in str(e).lower():
+                raise DuplicateValueException(f"Update would create duplicate: {str(e)}")
+            raise
 
     async def delete(self, id: str, permanent: bool = False) -> None:
         """Delete record dengan soft delete support."""

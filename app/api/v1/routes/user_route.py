@@ -16,12 +16,14 @@ async def get_users(
     user_active: UserSchema = Depends(get_current_active_user),
     service: UserService = Depends(Factory().get_user_service),
 ):
+    """Get paginated list of users."""
     filter = params.filter
     sort = params.sort
     search = params.search
     group_by = params.group_by
     limit = params.limit
     offset = params.offset
+
     users, total = await service.find_all(
         filters=filter,
         sort=sort,
@@ -46,6 +48,7 @@ async def get_user(
     user: UserSchema = Depends(get_current_active_user),
     service: UserService = Depends(Factory().get_user_service),
 ):
+    """Get user by ID."""
     user = await service.find_by_id(id)
     return user
 
@@ -56,18 +59,20 @@ async def create_user(
     current_user: UserSchema = Depends(get_current_active_user),
     service: UserService = Depends(Factory().get_user_service),
 ):
-    user = await service.create(data.dict(), current_user)
+    """Create new user."""
+    user = await service.create(data.model_dump(), current_user)
     return user
 
 
 @router.patch("/users/{id}", response_model=UserSchema)
 async def update_user(
-    id: int,
+    id: str,
     data: UserUpdateSchema,
     current_user: UserSchema = Depends(get_current_active_user),
     service: UserService = Depends(Factory().get_user_service),
 ):
-    user = await service.update(id, data.dict(exclude_unset=True), current_user)
+    """Update existing user."""
+    user = await service.update(id, data.model_dump(exclude_unset=True), current_user)
     return user
 
 
@@ -76,5 +81,6 @@ async def update_user(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(get_current_active_user)],
 )
-async def delete_user(id: int, service: UserService = Depends(Factory().get_user_service)):
+async def delete_user(id: str, service: UserService = Depends(Factory().get_user_service)):
+    """Delete user by ID."""
     await service.delete(id)

@@ -5,6 +5,7 @@ from sqlalchemy import String, cast
 from sqlalchemy import delete as sqlalchemy_delete
 from sqlalchemy import func, inspect, or_, select
 from sqlalchemy import update as sqlalchemy_update
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.database import Base
@@ -15,9 +16,15 @@ ModelType = TypeVar("ModelType", bound=Base)
 class BaseRepository(Generic[ModelType]):
     """Optimized base repository with fastapi-async-sqlalchemy."""
 
-    def __init__(self, model: Type[ModelType]):
+    def __init__(self, model: Type[ModelType], session: Optional[AsyncSession] = None):
         self.model: Type[ModelType] = model
         self.inspector = inspect(self.model)
+        self._session = session or db.session
+
+    @property
+    def session(self) -> AsyncSession:
+        """Get database session."""
+        return self._session
 
     def build_base_query(self, include_deleted: bool = False):
         """Build base query dengan soft delete handling."""
@@ -39,7 +46,7 @@ class BaseRepository(Generic[ModelType]):
                     else:
                         query = query.options(joinedload(attr))
 
-        result = await db.session.execute(query)
+        result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
     async def find_all(
@@ -84,7 +91,7 @@ class BaseRepository(Generic[ModelType]):
 
         # Count query
         count_query = select(func.count()).select_from(query.subquery())
-        total = await db.session.scalar(count_query)
+        total = await self.session.scalar(count_query)
         if total is None:
             total = 0
 
@@ -104,7 +111,7 @@ class BaseRepository(Generic[ModelType]):
                         query = query.options(joinedload(attr))
 
         query = query.limit(limit).offset(offset)
-        result = await db.session.execute(query)
+        result = await self.session.execute(query)
         records_seq: Sequence[ModelType] = result.scalars().all()
         records: List[ModelType] = list(records_seq)
 
@@ -113,9 +120,9 @@ class BaseRepository(Generic[ModelType]):
     async def create(self, data: Dict[str, Any]) -> ModelType:
         """Create new record."""
         new_record = self.model(**data)
-        db.session.add(new_record)
-        await db.session.commit()
-        await db.session.refresh(new_record)
+        self.session.add(new_record)
+        await self.session.commit()
+        await self.session.refresh(new_record)
         return new_record
 
     async def bulk_create(
@@ -135,16 +142,16 @@ class BaseRepository(Generic[ModelType]):
 
             if return_records:
                 batch_records = [self.model(**item) for item in batch]
-                db.session.add_all(batch_records)
+                self.session.add_all(batch_records)
                 created_records.extend(batch_records)
             else:
-                await db.session.execute(self.model.__table__.insert(), batch)
+                await self.session.execute(self.model.__table__.insert(), batch)
 
-        await db.session.commit()
+        await self.session.commit()
 
         if return_records:
             for record in created_records:
-                await db.session.refresh(record)
+                await self.session.refresh(record)
             return created_records
 
         return None
@@ -163,8 +170,8 @@ class BaseRepository(Generic[ModelType]):
             .execution_options(synchronize_session="fetch")
         )
 
-        result = await db.session.execute(query)
-        await db.session.commit()
+        result = await self.session.execute(query)
+        await self.session.commit()
 
         if result.rowcount == 0:
             return None
@@ -174,8 +181,8 @@ class BaseRepository(Generic[ModelType]):
     async def delete(self, id: str) -> bool:
         """Delete record."""
         query = sqlalchemy_delete(self.model).where(self.model.id == id)
-        result = await db.session.execute(query)
-        await db.session.commit()
+        result = await self.session.execute(query)
+        await self.session.commit()
         return result.rowcount > 0
 
     async def exists(self, id: str) -> bool:
@@ -184,5 +191,5 @@ class BaseRepository(Generic[ModelType]):
         if hasattr(self.model, "is_deleted"):
             query = query.where(self.model.is_deleted.is_(False))
 
-        result = await db.session.scalar(query)
+        result = await self.session.scalar(query)
         return result is not None

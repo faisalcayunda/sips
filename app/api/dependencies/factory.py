@@ -51,93 +51,152 @@ from app.services import (
 )
 
 
-class Factory:
-    user_repository = staticmethod(partial(UserRepository, UserModel))
-    token_repository = staticmethod(partial(TokenRepository, RefreshTokenModel))
-    file_repository = staticmethod(partial(FileRepository, FileModel))
-    regional_repository = staticmethod(partial(RegionalRepository, RegionalModel))
-    forestry_schema_repository = staticmethod(partial(ForestrySchemaRepository, ForestrySchemaModel))
-    proposal_forestry_status_repository = staticmethod(
-        partial(ProposalforestryStatusRepository, ProposalforestryStatusModel)
-    )
-    piaps_repository = staticmethod(partial(PiapsRepository, PiapsModel))
-    forestry_proposal_repository = staticmethod(partial(ForestryProposalRepository, ForestryProposalModel))
-    attachment_repository = staticmethod(partial(AttachmentRepository, AttachmentModel))
-    forestry_land_repository = staticmethod(partial(ForestryLandRepository, ForestryLandModel))
-    permit_repository = staticmethod(partial(PermitRepository, PermitModel))
-    navigation_repository = staticmethod(partial(NavigationRepository, NavigationModel))
-    roles_repository = staticmethod(partial(RolesRepository, RolesModel))
-    forestry_area_repository = staticmethod(partial(ForestryAreaRepository, ForestryAreaModel))
+class RepositoryFactory:
+    """Factory untuk membuat repository instances dengan dependency injection."""
 
-    def get_auth_service(
-        self,
-    ):
+    @staticmethod
+    def create_user_repository() -> UserRepository:
+        return UserRepository(UserModel)
+
+    @staticmethod
+    def create_token_repository() -> TokenRepository:
+        return TokenRepository(RefreshTokenModel)
+
+    @staticmethod
+    def create_file_repository() -> FileRepository:
+        return FileRepository(FileModel)
+
+    @staticmethod
+    def create_regional_repository() -> RegionalRepository:
+        return RegionalRepository(RegionalModel)
+
+    @staticmethod
+    def create_forestry_schema_repository() -> ForestrySchemaRepository:
+        return ForestrySchemaRepository(ForestrySchemaModel)
+
+    @staticmethod
+    def create_proposal_forestry_status_repository() -> ProposalforestryStatusRepository:
+        return ProposalforestryStatusRepository(ProposalforestryStatusModel)
+
+    @staticmethod
+    def create_piaps_repository() -> PiapsRepository:
+        return PiapsRepository(PiapsModel)
+
+    @staticmethod
+    def create_forestry_proposal_repository() -> ForestryProposalRepository:
+        return ForestryProposalRepository(ForestryProposalModel)
+
+    @staticmethod
+    def create_attachment_repository() -> AttachmentRepository:
+        return AttachmentRepository(AttachmentModel)
+
+    @staticmethod
+    def create_forestry_land_repository() -> ForestryLandRepository:
+        return ForestryLandRepository(ForestryLandModel)
+
+    @staticmethod
+    def create_permit_repository() -> PermitRepository:
+        return PermitRepository(PermitModel)
+
+    @staticmethod
+    def create_navigation_repository() -> NavigationRepository:
+        return NavigationRepository(NavigationModel)
+
+    @staticmethod
+    def create_roles_repository() -> RolesRepository:
+        return RolesRepository(RolesModel)
+
+    @staticmethod
+    def create_forestry_area_repository() -> ForestryAreaRepository:
+        return ForestryAreaRepository(ForestryAreaModel)
+
+
+class ServiceFactory:
+    """Factory untuk membuat service instances."""
+
+    def __init__(self):
+        self.repository_factory = RepositoryFactory()
+
+    def get_auth_service(self) -> AuthService:
+        """Get AuthService instance."""
         return AuthService(
-            user_repository=self.user_repository(),
-            token_repository=self.token_repository(),
+            user_repository=self.repository_factory.create_user_repository(),
+            token_repository=self.repository_factory.create_token_repository(),
         )
 
-    def get_user_service(
-        self,
-    ):
-        return UserService(self.user_repository())
+    def get_user_service(self) -> UserService:
+        """Get UserService instance."""
+        return UserService(self.repository_factory.create_user_repository())
 
-    def get_file_service(
-        self,
-    ):
-        return FileService(self.file_repository(), MinioClient())
+    def get_file_service(self) -> FileService:
+        """Get FileService instance."""
+        return FileService(self.repository_factory.create_file_repository(), MinioClient())
 
-    def get_regional_service(
-        self,
-    ):
-        return RegionalService(self.regional_repository())
+    def get_regional_service(self) -> RegionalService:
+        """Get RegionalService instance."""
+        return RegionalService(self.repository_factory.create_regional_repository())
 
-    def get_forestry_schema_service(
-        self,
-    ):
-        return ForestrySchemaService(self.forestry_schema_repository())
+    def get_forestry_schema_service(self) -> ForestrySchemaService:
+        """Get ForestrySchemaService instance."""
+        return ForestrySchemaService(self.repository_factory.create_forestry_schema_repository())
 
-    def get_proposal_forestry_status_service(
-        self,
-    ):
-        return ProposalforestryStatusService(self.proposal_forestry_status_repository())
+    def get_proposal_forestry_status_service(self) -> ProposalforestryStatusService:
+        """Get ProposalforestryStatusService instance."""
+        return ProposalforestryStatusService(self.repository_factory.create_proposal_forestry_status_repository())
 
-    def get_piaps_service(
-        self,
-    ):
-        return PiapsService(self.piaps_repository())
+    def get_piaps_service(self) -> PiapsService:
+        """Get PiapsService instance."""
+        return PiapsService(self.repository_factory.create_piaps_repository())
 
-    def get_proposal_forestry_service(
-        self,
-    ):
-        return ForestyProposalService(self.forestry_proposal_repository())
+    def get_proposal_forestry_service(self) -> ForestyProposalService:
+        """Get ForestyProposalService instance."""
+        return ForestyProposalService(self.repository_factory.create_forestry_proposal_repository())
 
-    def get_attachment_service(
-        self,
-    ):
-        return AttachmentService(self.attachment_repository())
+    def get_attachment_service(self) -> AttachmentService:
+        """Get AttachmentService instance."""
+        return AttachmentService(self.repository_factory.create_attachment_repository())
 
-    def get_forestry_land_service(
-        self,
-    ):
-        return ForestryLandService(self.forestry_land_repository())
+    def get_forestry_land_service(self) -> ForestryLandService:
+        """Get ForestryLandService instance."""
+        return ForestryLandService(self.repository_factory.create_forestry_land_repository())
 
-    def get_permit_service(
-        self,
-    ):
-        return PermitService(self.permit_repository())
+    def get_permit_service(self) -> PermitService:
+        """Get PermitService instance."""
+        return PermitService(self.repository_factory.create_permit_repository())
 
-    def get_navigation_service(
-        self,
-    ):
-        return NavigationService(self.navigation_repository())
+    def get_navigation_service(self) -> NavigationService:
+        """Get NavigationService instance."""
+        return NavigationService(self.repository_factory.create_navigation_repository())
 
-    def get_roles_service(
-        self,
-    ):
-        return RolesService(self.roles_repository())
+    def get_roles_service(self) -> RolesService:
+        """Get RolesService instance."""
+        return RolesService(self.repository_factory.create_roles_repository())
 
-    def get_forestry_area_service(
-        self,
-    ):
-        return ForestryAreaService(self.forestry_area_repository())
+    def get_forestry_area_service(self) -> ForestryAreaService:
+        """Get ForestryAreaService instance."""
+        return ForestryAreaService(self.repository_factory.create_forestry_area_repository())
+
+
+# Backward compatibility - maintain existing interface
+class Factory(ServiceFactory):
+    """Legacy Factory class for backward compatibility."""
+
+    def __init__(self):
+        super().__init__()
+        # Keep static methods for backward compatibility
+        self.user_repository = staticmethod(partial(UserRepository, UserModel))
+        self.token_repository = staticmethod(partial(TokenRepository, RefreshTokenModel))
+        self.file_repository = staticmethod(partial(FileRepository, FileModel))
+        self.regional_repository = staticmethod(partial(RegionalRepository, RegionalModel))
+        self.forestry_schema_repository = staticmethod(partial(ForestrySchemaRepository, ForestrySchemaModel))
+        self.proposal_forestry_status_repository = staticmethod(
+            partial(ProposalforestryStatusRepository, ProposalforestryStatusModel)
+        )
+        self.piaps_repository = staticmethod(partial(PiapsRepository, PiapsModel))
+        self.forestry_proposal_repository = staticmethod(partial(ForestryProposalRepository, ForestryProposalModel))
+        self.attachment_repository = staticmethod(partial(AttachmentRepository, AttachmentModel))
+        self.forestry_land_repository = staticmethod(partial(ForestryLandRepository, ForestryLandModel))
+        self.permit_repository = staticmethod(partial(PermitRepository, PermitModel))
+        self.navigation_repository = staticmethod(partial(NavigationRepository, NavigationModel))
+        self.roles_repository = staticmethod(partial(RolesRepository, RolesModel))
+        self.forestry_area_repository = staticmethod(partial(ForestryAreaRepository, ForestryAreaModel))
