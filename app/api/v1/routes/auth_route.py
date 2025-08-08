@@ -60,4 +60,6 @@ async def register(
 async def read_users_me(
     current_user: dict = Depends(get_current_user_with_permissions),
 ):
-    return current_user
+    user = current_user
+    user.pop("password")
+    return user
