@@ -1,5 +1,6 @@
 from .attachment_route import router as attachment_router
 from .auth_route import router as auth_router
+from .businesses_route import router as businesses_router
 from .file_route import router as file_router
 from .forestry_area_route import router as forestry_area_router
 from .forestry_land_route import router as forestry_land_router
@@ -15,6 +16,7 @@ from .user_route import router as user_router
 
 __all__ = [
     "auth_router",
+    "businesses_router",
     "file_router",
     "user_router",
     "regional_router",

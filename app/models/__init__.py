@@ -1,5 +1,6 @@
 from .attachment_model import AttachmentModel
 from .base import Base
+from .businesses_model import BusinessesModel
 from .file_model import FileModel
 from .forestry_area import ForestryAreaModel
 from .forestry_land_model import ForestryLandModel
@@ -16,6 +17,7 @@ from .user_model import UserModel
 
 __all__ = [
     "Base",
+    "BusinessesModel",
     "FileModel",
     "OrganizationModel",
     "ForestrySchemaModel",
