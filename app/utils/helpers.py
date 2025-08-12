@@ -1,6 +1,9 @@
 from typing import Any, AsyncGenerator, BinaryIO, Dict, Optional
 
 import orjson
+from fastapi import Request
+
+from app.core.security import decode_token
 
 
 def orm_to_dict(orm_instance: Any) -> Optional[Dict[str, Any]]:
@@ -61,3 +64,30 @@ def validate_required_fields(data: Dict[str, Any], required_fields: list) -> Non
     missing_fields = [field for field in required_fields if field not in data or data[field] is None]
     if missing_fields:
         raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
+
+
+def generate_incremental_id(existing_ids: list[str]) -> str:
+    """
+    Generate a new incremental numeric ID based on the largest existing numeric ID in the list.
+    Assumes IDs are numeric strings. Returns the next ID as a string.
+    """
+    if not existing_ids:
+        return "1"
+    numeric_ids = [int(i) for i in existing_ids if i.isdigit()]
+    if not numeric_ids:
+        return "1"
+    max_id = max(numeric_ids)
+    return str(max_id + 1)
+
+
+def auth_from_jwt(request: Request):
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        return  # guest
+    token = auth.split(" ", 1)[1]
+    try:
+        payload = decode_token(token)
+        request.state.user_id = str(payload.get("sub"))
+    except:
+        # Token jelek → tetap dianggap guest (biar rate limit jatuh ke IP)
+        return

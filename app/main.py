@@ -14,6 +14,7 @@ from sqlalchemy.exc import IntegrityError
 from app.api.v1 import router as api_router
 from app.core.config import settings
 from app.core.exceptions import APIException, prepare_error_response
+from app.utils.helpers import auth_from_jwt
 from app.utils.limiter import limiter
 from app.utils.system import optimize_system
 
@@ -54,6 +55,13 @@ app.add_middleware(
     BrotliMiddleware,
     minimum_size=1000,
 )
+
+
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    auth_from_jwt(request)
+    return await call_next(request)
+
 
 app.include_router(api_router)
 
