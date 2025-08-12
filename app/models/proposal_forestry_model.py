@@ -1,18 +1,7 @@
 from datetime import datetime
 
 from pytz import timezone
-from sqlalchemy import (
-    CHAR,
-    JSON,
-    BigInteger,
-    Column,
-    DateTime,
-    Enum,
-    Float,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import CHAR, JSON, Column, DateTime, Enum, Float, Integer, String
 
 from app.core.config import settings
 
@@ -22,15 +11,14 @@ from . import Base
 class ForestryProposalModel(Base):
     __tablename__ = "forestry"
 
-    id = Column("fore_kps_id", BigInteger, primary_key=True, nullable=False, autoincrement=True)
-    regional_id = Column("reg_id", CHAR(10), ForeignKey("regional.reg_id"), nullable=False)
+    id = Column("fore_kps_id", Integer, primary_key=True, nullable=False)
+    regional_id = Column("reg_id", CHAR(10), nullable=False)
 
     assist_account_id = Column("assist_acc_id", JSON, nullable=True)
     name = Column("fore_name", String(256), nullable=True)
     schema_id = Column("fore_skema_id", CHAR(4), nullable=False)
     kph_account_id = Column("kph_acc_id", CHAR(36), nullable=False)
     kh_id = Column("fore_kh_id", JSON, nullable=False)
-    akps_id = Column("fore_akps_id", CHAR(32), nullable=False)
     area = Column("fore_luas", Float(precision=2), nullable=False)
     household_count = Column("fore_jumlah_kk", Integer, nullable=False)
     head_name = Column("fore_nama_ketua", String(256), nullable=False)

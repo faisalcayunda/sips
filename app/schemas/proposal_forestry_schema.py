@@ -12,13 +12,12 @@ from .user_schema import UserSchema
 
 
 class ProposalForestrySchema(BaseSchema):
-    id: int
+    id: str
     assist_accounts: Optional[List[UserSchema]] = Field(default=[])
     kph_account: Optional[UserSchema] = Field(default={})
     name: Optional[str] = None
     schema: ForestrySchemaJoinSchema
     kph_account_id: str
-    akps_id: str
     area: float
     household_count: int
     head_name: str
@@ -49,7 +48,6 @@ class ProposalForestryCreateSchema(BaseSchema):
     schema_id: str
     kph_account_id: str
     kh_id: Optional[List[str]] = None
-    akps_id: str
     area: float
     household_count: int
     head_name: str
@@ -74,7 +72,6 @@ class ProposalForestryUpdateSchema(BaseSchema):
     schema_id: Optional[str] = None
     kph_account_id: Optional[str] = None
     kh_id: Optional[List[str]] = None
-    akps_id: Optional[str] = None
     area: Optional[float] = None
     household_count: Optional[int] = None
     head_name: Optional[str] = None

@@ -32,6 +32,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
             "kh_detail",
             "kph_account",
             "schema",
+            "assist_accounts",
         ]
 
         temp = dict(record)
@@ -124,7 +125,6 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                 func.min(self.model.schema_id).label("schema_id"),
                 func.min(self.model.kph_account_id).label("kph_account_id"),
                 func.min(self.model.kh_id).label("kh_id"),
-                func.min(self.model.akps_id).label("akps_id"),
                 func.min(self.model.area).label("area"),
                 func.min(self.model.household_count).label("household_count"),
                 func.min(self.model.head_name).label("head_name"),
