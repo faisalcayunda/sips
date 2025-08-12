@@ -80,7 +80,7 @@ def generate_incremental_id(existing_ids: list[str]) -> str:
     return str(max_id + 1)
 
 
-def auth_from_jwt(request: Request):
+async def auth_from_jwt(request: Request):
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
         return  # guest

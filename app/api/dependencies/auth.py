@@ -12,7 +12,7 @@ from app.models import UserModel
 from app.schemas.token_schema import TokenPayload
 from app.schemas.user_schema import UserSchema
 from app.services import UserService
-from app.utils.cache import get_user_cache
+from app.utils.cache import cache_manager
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -30,7 +30,7 @@ class TokenValidator:
     async def validate_token(self, token: str) -> Optional[Dict[str, Any]]:
         """Validasi token dan return payload jika valid."""
         try:
-            payload = decode_token(token)
+            payload = await decode_token(token)
             token_data = TokenPayload(**payload)
             if token_data.type != "access":
                 return None
@@ -51,7 +51,7 @@ class UserValidator:
 
     async def get_user_from_cache_or_db(self, user_id: str, user_service: UserService) -> Optional[UserSchema]:
         """Ambil user dari cache atau database."""
-        user = await get_user_cache(user_id)
+        user = await cache_manager.get(f"user:{user_id}")
         if not user:
             user = await user_service.find_by_id(user_id)
 

@@ -2,23 +2,27 @@ import os
 
 from aiocache import SimpleMemoryCache
 
-CACHE_TTL = int(os.getenv("USER_CACHE_TTL", 300))  # default 5 menit
 
-# Singleton memory cache instance
-cache = SimpleMemoryCache()
+class CacheManager:
+    """
+    Class agnostik untuk handle operasi cache: get, set, delete.
+    Menggunakan SimpleMemoryCache sebagai backend.
+    """
+
+    def __init__(self, ttl: int = None):
+        self.ttl = ttl or int(os.getenv("CACHE_TTL", 300))  # default 5 menit
+        self.cache = SimpleMemoryCache()
+
+    async def get(self, key: str):
+        return await self.cache.get(key)
+
+    async def set(self, key: str, value, ttl: int = None):
+        ttl = ttl or self.ttl
+        await self.cache.set(key, value, ttl=ttl)
+
+    async def delete(self, key: str):
+        await self.cache.delete(key)
 
 
-def user_cache_key(user_id: str) -> str:
-    return f"user:{user_id}"
-
-
-async def get_user_cache(user_id: str):
-    return await cache.get(user_cache_key(user_id))
-
-
-async def set_user_cache(user_id: str, user_data: dict, ttl: int = CACHE_TTL):
-    await cache.set(user_cache_key(user_id), user_data, ttl=ttl)
-
-
-async def delete_user_cache(user_id: str):
-    await cache.delete(user_cache_key(user_id))
+# Singleton instance
+cache_manager = CacheManager()

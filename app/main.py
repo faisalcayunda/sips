@@ -59,7 +59,7 @@ app.add_middleware(
 
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
-    auth_from_jwt(request)
+    await auth_from_jwt(request)
     return await call_next(request)
 
 
