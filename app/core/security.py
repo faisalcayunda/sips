@@ -1,6 +1,5 @@
 # app/core/security.py
 from datetime import datetime, timedelta
-from time import time
 from typing import Any, Dict, Optional, Union
 
 from fastapi import HTTPException
@@ -64,7 +63,6 @@ def create_refresh_token(subject: Union[str, Any]) -> str:
 
 
 async def decode_token(token: str, ttl: int = 30) -> Dict[str, Any]:
-    now = int(time())
     key = f"token:{token}"
     payload = await cache_manager.get(key)
     if payload:
@@ -80,7 +78,7 @@ async def decode_token(token: str, ttl: int = 30) -> Dict[str, Any]:
                 "verify_iat": True,
             },
         )
-        await cache_manager.set(key, payload, ttl=now + ttl)
+        await cache_manager.set(key, payload, ttl=ttl)
         return payload
     except ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
