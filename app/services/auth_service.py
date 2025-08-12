@@ -17,9 +17,25 @@ from app.core.security import (
 from app.models.user_model import UserModel
 from app.repositories.token_repository import TokenRepository
 from app.repositories.user_repository import UserRepository
-from app.utils.cache import delete_user_cache, set_user_cache
+from app.utils.cache import cache_manager
 
 logger = logging.getLogger(__name__)
+
+
+def user_cache_key(user_id: str) -> str:
+    return f"user:{user_id}"
+
+
+async def get_user_cache(user_id: str):
+    return await cache_manager.get(user_cache_key(user_id))
+
+
+async def set_user_cache(user_id: str, user_data: dict, ttl: int = 300):
+    await cache_manager.set(user_cache_key(user_id), user_data, ttl=ttl)
+
+
+async def delete_user_cache(user_id: str):
+    await cache_manager.delete(user_cache_key(user_id))
 
 
 class AuthService:
@@ -86,7 +102,7 @@ class AuthService:
     async def refresh_token(self, refresh_token: str) -> Dict[str, str]:
         """Refresh access token menggunakan refresh token."""
         try:
-            payload = decode_token(refresh_token)
+            payload = await decode_token(refresh_token)
 
             if payload.get("type") != "refresh":
                 raise HTTPException(
@@ -122,7 +138,7 @@ class AuthService:
     async def logout(self, refresh_token: str) -> bool:
         """Logout user dengan merevoke refresh token."""
         with contextlib.suppress(Exception):
-            user_id = decode_token(refresh_token).get("sub")
+            user_id = await decode_token(refresh_token).get("sub")
             await delete_user_cache(user_id)
 
         return await self.token_repository.revoke_token(refresh_token, exclude_revoke=True)

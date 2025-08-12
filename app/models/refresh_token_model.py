@@ -1,9 +1,7 @@
 from datetime import datetime
 
-import uuid6
 from pytz import timezone
-from sqlalchemy import UUID, BigInteger, Boolean, Column, DateTime, ForeignKey, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, String
 
 from app.core.config import settings
 
@@ -21,7 +19,5 @@ class RefreshTokenModel(Base):
     )
     token = Column(String(255), nullable=False, index=True)
     expires_at = Column(DateTime(timezone=True), nullable=False)
-    revoked = Column(Boolean, default=False, server_default="false")
-    created_at = Column(
-        DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE))
-    )
+    revoked = Column(Boolean, nullable=True, server_default="0")
+    created_at = Column(DateTime(timezone=True), default=datetime.now(timezone(settings.TIMEZONE)))
