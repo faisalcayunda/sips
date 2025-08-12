@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.dependencies.auth import get_current_user_with_permissions
@@ -50,7 +50,7 @@ async def refresh_token(
 @limiter.limit("3/minute")
 async def register(
     request: Request,
-    user: UserCreateSchema,
+    user: UserCreateSchema = Body(...),
     auth_service: AuthService = Depends(Factory().get_auth_service),
 ) -> UserSchema:
     return await auth_service.register(user.dict(exclude=None))
