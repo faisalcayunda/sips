@@ -28,7 +28,8 @@ class UserService(BaseService[UserModel, UserRepository]):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username already exists",
             )
-
+        if await self.repository.find_by_id(user_data["id"]):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="ID already exists")
         # Check email uniqueness
         if await self.repository.find_by_email(user_data["email"]):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
