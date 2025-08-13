@@ -2,7 +2,7 @@ import json
 from typing import List, Tuple, override
 
 from fastapi_async_sqlalchemy import db
-from sqlalchemy import Select, String, cast, func, or_, select
+from sqlalchemy import Integer, Select, String, cast, func, or_, select
 from sqlalchemy.dialects.mysql import JSON
 from sqlalchemy.orm import aliased, joinedload, selectinload
 
@@ -309,8 +309,11 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
 
     @override
     async def create(self, data: dict) -> ForestryProposalModel:
+        stmt = select(func.max(cast(self.model.id, Integer))).where(self.model.id.op("regexp")("^[0-9]+$"))
+        result = await db.session.execute(stmt)
+        max_id = result.scalar() or 0
+        data["id"] = str(max_id + 1)
         result = await super().create(data)
-
         return await self.find_by_id(result.id)
 
     @override
