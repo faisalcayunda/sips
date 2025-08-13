@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pytz import timezone
-from sqlalchemy import CHAR, Column, DateTime, Enum, Integer, String
+from sqlalchemy import CHAR, JSON, Column, DateTime, Enum, Integer, String
 
 from app.core.config import settings
 from app.models.base import Base
@@ -21,41 +21,40 @@ class BusinessesModel(Base):
     status = Column(
         "kups_status",
         Enum("Y", "N", name="kups_status_enum"),
-        nullable=False,
         default="Y",
         comment="Status aktif KUPS",
     )
-    name = Column("kups_nama", String(256), nullable=False, comment="Nama KUPS")
+    name = Column("kups_nama", String(256), comment="Nama KUPS")
 
     # Foreign key ke forestry area
-    forestry_area_id = Column(
-        "fore_kps_id", CHAR(11), nullable=False, index=True, comment="ID kawasan perhutanan sosial"
-    )
+    forestry_area_id = Column("fore_kps_id", CHAR(11), comment="ID kawasan perhutanan sosial")
 
     # Informasi legal dan pembentukan
-    sk_number = Column("kups_sk_no", String(128), nullable=False, comment="Nomor SK pembentukan")
-    establishment_year = Column("kups_pembentukan", Integer, nullable=False, comment="Tahun pembentukan")
-    member_count = Column("kups_anggota", Integer, nullable=False, comment="Jumlah anggota")
+    sk_number = Column("kups_sk_no", String(128), comment="Nomor SK pembentukan")
+    establishment_year = Column("kups_pembentukan", Integer, comment="Tahun pembentukan")
+    member_count = Column("kups_anggota", Integer, comment="Jumlah anggota")
 
     # Informasi ketua
-    chairman_name = Column("kups_nama_ketua", String(128), nullable=False, comment="Nama ketua KUPS")
-    chairman_contact = Column("kups_kontak_ketua", CHAR(16), nullable=False, comment="Kontak ketua")
+    chairman_name = Column("kups_nama_ketua", String(128), comment="Nama ketua KUPS")
+    chairman_contact = Column("kups_kontak_ketua", CHAR(16), comment="Kontak ketua")
 
     # Informasi akun dan lokasi
-    account_id = Column("kups_acc_id", String(256), nullable=False, comment="ID akun")
-    latitude = Column("kups_latitude", String(256), nullable=False, comment="Latitude lokasi")
-    longitude = Column("kups_longitude", String(256), nullable=False, comment="Longitude lokasi")
+    # Kolom kups_acc_id diubah ke JSON, namun error terjadi jika data lama bukan format JSON valid.
+    # Pastikan data di database sudah valid JSON sebelum migrasi tipe kolom ke JSON.
+    # Jika belum, lakukan migrasi data: konversi string list ke array JSON.
+    # Setelah data valid, definisikan kolom sebagai JSON:
+    account_id = Column("kups_acc_id", JSON, comment="ID akun")
+    latitude = Column("kups_latitude", String(256), comment="Latitude lokasi")
+    longitude = Column("kups_longitude", String(256), comment="Longitude lokasi")
 
     # Informasi modal dan operasional
-    capital_id = Column("kups_modal_id", CHAR(128), nullable=False, comment="ID modal")
-    operational_status_id = Column("kups_status_op_id", CHAR(4), nullable=False, comment="ID status operasional")
-    operational_period_id = Column("kups_lama_op_id", CHAR(4), nullable=False, comment="ID lama operasional")
-    class_id = Column("kups_kelas_id", CHAR(4), nullable=False, comment="ID kelas")
+    capital_id = Column("kups_modal_id", CHAR(128), comment="ID modal")
+    operational_status_id = Column("kups_status_op_id", CHAR(4), comment="ID status operasional")
+    operational_period_id = Column("kups_lama_op_id", CHAR(4), comment="ID lama operasional")
+    class_id = Column("kups_kelas_id", CHAR(4), comment="ID kelas")
 
     # Status validasi
-    is_validated = Column(
-        "kups_valid", Enum("Y", "N", name="kups_valid_enum"), nullable=False, default="N", comment="Status validasi"
-    )
+    is_validated = Column("kups_valid", Enum("Y", "N", name="kups_valid_enum"), default="N", comment="Status validasi")
 
     # Informasi modal (opsional)
     capital_provider_name = Column("kups_nama_pemberi_modal", String(256), nullable=True, comment="Nama pemberi modal")
@@ -70,12 +69,11 @@ class BusinessesModel(Base):
     )
 
     # Audit fields
-    created_by = Column("create_by", CHAR(36), nullable=False, comment="User yang membuat record")
-    updated_by = Column("update_by", CHAR(36), nullable=False, comment="User yang mengupdate record")
+    created_by = Column("create_by", CHAR(36), comment="User yang membuat record")
+    updated_by = Column("update_by", CHAR(36), comment="User yang mengupdate record")
     created_at = Column(
         "create_at",
         DateTime,
-        nullable=False,
         default=datetime.now(timezone(settings.TIMEZONE)),
         comment="Waktu pembuatan record",
     )

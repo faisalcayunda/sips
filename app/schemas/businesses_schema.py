@@ -4,8 +4,12 @@ from typing import List, Optional
 from pydantic import Field
 
 from app.core.data_types import YesNoEnum
+from app.schemas.business_class_schema import BusinessClass
+from app.schemas.business_operational_status_schema import BusinessOperationalStatus
+from app.schemas.user_schema import UserSchema
 
 from .base import BaseSchema
+from .forestry_area_schema import ForestryAreaSchema
 
 
 class BusinessesSchema(BaseSchema):
@@ -14,26 +18,26 @@ class BusinessesSchema(BaseSchema):
     id: str
     status: YesNoEnum
     name: str
-    forestry_area_id: str
+    forestry_area: Optional[ForestryAreaSchema] = Field(default={}, name="forestry_area", alias="forestry_area")
     sk_number: str
     establishment_year: int
     member_count: int
     chairman_name: str
     chairman_contact: str
-    account_id: str
+    account_users: List[UserSchema]
     latitude: str
     longitude: str
     capital_id: str
-    operational_status_id: str
+    operational_status: Optional[BusinessOperationalStatus] = Field(
+        default={}, name="operational_status", alias="operational_status"
+    )
     operational_period_id: str
-    class_id: str
+    business_class: BusinessClass = Field(default={}, name="class", alias="class")
     is_validated: YesNoEnum
     capital_provider_name: Optional[str] = None
     capital_provision_type: Optional[str] = None
     capital_provision_type_other: Optional[str] = None
     capital_repayment_period: Optional[int] = None
-    created_by: str
-    updated_by: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
