@@ -88,10 +88,16 @@ class UserRepository(BaseRepository[UserModel]):
                     PermitModel.permit_content["create"].is_(True),
                     PermitModel.permit_content["update"].is_(True),
                     PermitModel.permit_content["delete"].is_(True),
+                    PermitModel.permit_content["upload"].is_(True),
+                    PermitModel.permit_content["download"].is_(True),
+                    PermitModel.permit_content["validate"].is_(True),
                     cast(PermitModel.permit_content["read"], String) == "true",
                     cast(PermitModel.permit_content["create"], String) == "true",
                     cast(PermitModel.permit_content["update"], String) == "true",
                     cast(PermitModel.permit_content["delete"], String) == "true",
+                    cast(PermitModel.permit_content["upload"], String) == "true",
+                    cast(PermitModel.permit_content["download"], String) == "true",
+                    cast(PermitModel.permit_content["validate"], String) == "true",
                 ),
             )
         )
@@ -117,6 +123,9 @@ class UserRepository(BaseRepository[UserModel]):
                 "create": normalize_permission(permit_content.get("create", False)),
                 "update": normalize_permission(permit_content.get("update", False)),
                 "delete": normalize_permission(permit_content.get("delete", False)),
+                "upload": normalize_permission(permit_content.get("upload", False)),
+                "download": normalize_permission(permit_content.get("download", False)),
+                "validate": normalize_permission(permit_content.get("validate", False)),
             }
             permissions.append(permission_dict)
 
