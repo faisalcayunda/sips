@@ -125,6 +125,9 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
             .scalar_subquery()
         )
 
+        def area_in_forestry_area_id_expr(forestry_area_id_col, abbreviation_col):
+            return func.find_in_set(abbreviation_col, forestry_area_id_col) > 0
+
         area_subq = (
             select(
                 func.coalesce(
@@ -140,12 +143,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                 )
             )
             .select_from(area_alias)
-            .where(
-                func.json_contains(
-                    self.model.forestry_area_id,
-                    func.json_quote(area_alias.abbreviation),
-                )
-            )
+            .where(area_in_forestry_area_id_expr(self.model.forestry_area_id, area_alias.abbreviation))
             .correlate(self.model)
             .scalar_subquery()
         )
