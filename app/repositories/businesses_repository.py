@@ -8,7 +8,7 @@ from app.models import (
     BusinessClassModel,
     BusinessesModel,
     BusinessOperationalStatusModel,
-    ForestryAreaModel,
+    ForestryProposalModel,
     UserModel,
 )
 
@@ -23,7 +23,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         if not record:
             return {}
 
-        json_fields = ["account_users", "business_class", "operational_status", "forestry_area"]
+        json_fields = ["account_users", "business_class", "operational_status", "forestry"]
 
         temp = dict(record)
         for field in json_fields:
@@ -40,7 +40,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         user_alias = aliased(UserModel)
         class_alias = aliased(BusinessClassModel)
         operational_status_alias = aliased(BusinessOperationalStatusModel)
-        area_alias = aliased(ForestryAreaModel)
+        forestry_alias = aliased(ForestryProposalModel)
 
         account_users_subq = (
             select(
@@ -128,22 +128,64 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         def area_in_forestry_area_id_expr(forestry_area_id_col, abbreviation_col):
             return func.find_in_set(abbreviation_col, forestry_area_id_col) > 0
 
-        area_subq = (
+        forestry_subq = (
             select(
                 func.coalesce(
                     func.json_object(
                         "id",
-                        area_alias.id,
+                        forestry_alias.id,
                         "name",
-                        area_alias.name,
-                        "abbreviation",
-                        area_alias.abbreviation,
+                        forestry_alias.name,
+                        "regional_id",
+                        forestry_alias.regional_id,
+                        "kph_account_id",
+                        forestry_alias.kph_account_id,
+                        "schema_id",
+                        forestry_alias.schema_id,
+                        "area",
+                        forestry_alias.area,
+                        "household_count",
+                        forestry_alias.household_count,
+                        "head_name",
+                        forestry_alias.head_name,
+                        "head_contact",
+                        forestry_alias.head_contact,
+                        "map_ps",
+                        forestry_alias.map_ps,
+                        "pps_id",
+                        forestry_alias.pps_id,
+                        "vertex",
+                        forestry_alias.vertex,
+                        "status",
+                        forestry_alias.status,
+                        "nagari_sk",
+                        forestry_alias.nagari_sk,
+                        "regent_sk",
+                        forestry_alias.regent_sk,
+                        "forestry_sk",
+                        forestry_alias.forestry_sk,
+                        "is_valid",
+                        forestry_alias.is_valid,
+                        "request_year",
+                        forestry_alias.request_year,
+                        "release_year",
+                        forestry_alias.release_year,
+                        "is_kps_valid",
+                        forestry_alias.is_kps_valid,
+                        "created_by",
+                        forestry_alias.created_by,
+                        "updated_by",
+                        forestry_alias.updated_by,
+                        "created_at",
+                        forestry_alias.created_at,
+                        "updated_at",
+                        forestry_alias.updated_at,
                     ),
                     func.cast("{}", JSON),
                 )
             )
-            .select_from(area_alias)
-            .where(area_in_forestry_area_id_expr(self.model.forestry_area_id, area_alias.abbreviation))
+            .select_from(forestry_alias)
+            .where(self.model.forestry_id == forestry_alias.id)
             .correlate(self.model)
             .scalar_subquery()
         )
@@ -153,7 +195,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                 self.model.id.label("id"),
                 self.model.status.label("status"),
                 self.model.name.label("name"),
-                self.model.forestry_area_id.label("forestry_area_id"),
+                self.model.forestry_id.label("forestry_id"),
                 self.model.sk_number.label("sk_number"),
                 self.model.establishment_year.label("establishment_year"),
                 self.model.member_count.label("member_count"),
@@ -177,7 +219,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                 account_users_subq.label("account_users"),
                 business_class_subq.label("business_class"),
                 operational_subq.label("operational_status"),
-                area_subq.label("forestry_area"),
+                forestry_subq.label("forestry"),
             )
             .select_from(self.model)
             .outerjoin(

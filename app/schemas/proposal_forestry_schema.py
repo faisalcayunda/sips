@@ -17,7 +17,7 @@ class ProposalForestrySchema(BaseSchema):
     kph_account: Optional[UserSchema] = Field(default={})
     name: Optional[str] = None
     schema: ForestrySchemaJoinSchema
-    kph_account_id: str
+    kph_account_id: Optional[str]
     area: float
     household_count: int
     head_name: str
@@ -35,9 +35,9 @@ class ProposalForestrySchema(BaseSchema):
     status: Optional[str]
     is_valid: YesNoEnum
     is_kps_valid: YesNoEnum
-    created_by: str
+    created_by: Optional[str]
     updated_by: Optional[str] = None
-    created_at: datetime
+    created_at: Optional[datetime]
     updated_at: Optional[datetime] = None
 
 

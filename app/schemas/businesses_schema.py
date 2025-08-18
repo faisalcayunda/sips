@@ -6,10 +6,10 @@ from pydantic import Field
 from app.core.data_types import YesNoEnum
 from app.schemas.business_class_schema import BusinessClass
 from app.schemas.business_operational_status_schema import BusinessOperationalStatus
+from app.schemas.proposal_forestry_schema import ProposalForestrySchema
 from app.schemas.user_schema import UserSchema
 
 from .base import BaseSchema
-from .forestry_area_schema import ForestryAreaSchema
 
 
 class BusinessesSchema(BaseSchema):
@@ -18,7 +18,7 @@ class BusinessesSchema(BaseSchema):
     id: str
     status: YesNoEnum
     name: str
-    forestry_area: Optional[ForestryAreaSchema] = Field(default={}, name="forestry_area", alias="forestry_area")
+    forestry: Optional[ProposalForestrySchema] = Field(default={}, name="forestry", alias="forestry")
     sk_number: str
     establishment_year: int
     member_count: int

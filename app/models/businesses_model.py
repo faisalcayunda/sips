@@ -27,7 +27,7 @@ class BusinessesModel(Base):
     name = Column("kups_nama", String(256), comment="Nama KUPS")
 
     # Foreign key ke forestry area
-    forestry_area_id = Column("fore_kps_id", CHAR(11), comment="ID kawasan perhutanan sosial")
+    forestry_id = Column("fore_kps_id", CHAR(11), comment="ID kawasan perhutanan sosial")
 
     # Informasi legal dan pembentukan
     sk_number = Column("kups_sk_no", String(128), comment="Nomor SK pembentukan")
@@ -38,11 +38,7 @@ class BusinessesModel(Base):
     chairman_name = Column("kups_nama_ketua", String(128), comment="Nama ketua KUPS")
     chairman_contact = Column("kups_kontak_ketua", CHAR(16), comment="Kontak ketua")
 
-    # Informasi akun dan lokasi
-    # Kolom kups_acc_id diubah ke JSON, namun error terjadi jika data lama bukan format JSON valid.
-    # Pastikan data di database sudah valid JSON sebelum migrasi tipe kolom ke JSON.
-    # Jika belum, lakukan migrasi data: konversi string list ke array JSON.
-    # Setelah data valid, definisikan kolom sebagai JSON:
+    # account dan latitude
     account_id = Column("kups_acc_id", JSON, comment="ID akun")
     latitude = Column("kups_latitude", String(256), comment="Latitude lokasi")
     longitude = Column("kups_longitude", String(256), comment="Longitude lokasi")
