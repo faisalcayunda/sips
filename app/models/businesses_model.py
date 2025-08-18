@@ -39,7 +39,7 @@ class BusinessesModel(Base):
     chairman_contact = Column("kups_kontak_ketua", CHAR(16), comment="Kontak ketua")
 
     # account dan latitude
-    account_id = Column("kups_acc_id", JSON, comment="ID akun")
+    account_ids = Column("kups_acc_id", JSON, comment="ID akun")
     latitude = Column("kups_latitude", String(256), comment="Latitude lokasi")
     longitude = Column("kups_longitude", String(256), comment="Longitude lokasi")
 

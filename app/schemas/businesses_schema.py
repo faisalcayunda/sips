@@ -53,7 +53,7 @@ class BusinessesCreateSchema(BaseSchema):
     member_count: int
     chairman_name: str
     chairman_contact: str
-    account_id: str
+    account_ids: List[str]
     latitude: str
     longitude: str
     capital_id: str
@@ -78,7 +78,7 @@ class BusinessesUpdateSchema(BaseSchema):
     member_count: Optional[int] = None
     chairman_name: Optional[str] = None
     chairman_contact: Optional[str] = None
-    account_id: Optional[str] = None
+    account_ids: Optional[List[str]] = None
     latitude: Optional[str] = None
     longitude: Optional[str] = None
     capital_id: Optional[str] = None

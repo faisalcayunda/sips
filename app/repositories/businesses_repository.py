@@ -125,9 +125,6 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
             .scalar_subquery()
         )
 
-        def area_in_forestry_area_id_expr(forestry_area_id_col, abbreviation_col):
-            return func.find_in_set(abbreviation_col, forestry_area_id_col) > 0
-
         forestry_subq = (
             select(
                 func.coalesce(
