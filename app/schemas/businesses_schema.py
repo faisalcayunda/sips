@@ -47,7 +47,7 @@ class BusinessesCreateSchema(BaseSchema):
 
     status: YesNoEnum = YesNoEnum.Y
     name: str
-    forestry_area_id: str
+    forestry_id: str
     sk_number: str
     establishment_year: int
     member_count: int
@@ -72,7 +72,7 @@ class BusinessesUpdateSchema(BaseSchema):
 
     status: Optional[YesNoEnum] = None
     name: Optional[str] = None
-    forestry_area_id: Optional[str] = None
+    forestry_id: Optional[str] = None
     sk_number: Optional[str] = None
     establishment_year: Optional[int] = None
     member_count: Optional[int] = None
