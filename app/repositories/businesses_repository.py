@@ -73,13 +73,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                 )
             )
             .select_from(user_alias)
-            .where(
-                func.json_search(
-                    self.model.account_id,
-                    "one",
-                    func.cast(user_alias.id, String),
-                ).isnot(None)
-            )
+            .where(func.json_contains(self.model.account_ids, func.json_quote(func.cast(user_alias.id, String))))
             .correlate(self.model)
             .scalar_subquery()
         )
