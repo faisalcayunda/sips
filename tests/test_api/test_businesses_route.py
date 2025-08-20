@@ -96,21 +96,15 @@ class TestBusinessesRoute:
         """Test BusinessesCreateSchema validation."""
         valid_data = {
             "name": "Test Business",
-            "forestry_area_id": "area_123",
-            "address": "Test Address",
-            "phone": "08123456789",
-            "email": "test@business.com",
-            "pic_name": "Test PIC",
-            "pic_phone": "08123456789",
-            "pic_email": "pic@business.com",
+            "forestry_id": "area_123",
             "sk_number": "SK-001/2024",
             "establishment_year": 2020,
             "member_count": 50,
             "chairman_name": "Test Chairman",
             "chairman_contact": "08123456789",
-            "account_id": "acc_123",
-            "latitude": "-6.2088",  # Changed from float to string
-            "longitude": "106.8456",  # Changed from float to string
+            "account_ids": ["acc_123", "acc_456"],
+            "latitude": "-6.2088",
+            "longitude": "106.8456",
             "capital_id": "cap_123",
             "operational_status_id": "status_123",
             "operational_period_id": "period_123",
@@ -119,7 +113,7 @@ class TestBusinessesRoute:
 
         schema = BusinessesCreateSchema(**valid_data)
         assert schema.name == "Test Business"
-        assert schema.forestry_area_id == "area_123"
+        assert schema.forestry_id == "area_123"
         assert schema.latitude == "-6.2088"
         assert schema.longitude == "106.8456"
 
@@ -135,7 +129,25 @@ class TestBusinessesRoute:
         """Test BusinessesSchema validation."""
         from app.schemas.businesses_schema import BusinessesSchema
 
-        schema = BusinessesSchema(**sample_business_data)
+        data = {
+            "id": "test_id_123",
+            "status": "Y",
+            "name": "Test Business",
+            "sk_number": "SK-001/2024",
+            "establishment_year": 2020,
+            "member_count": 50,
+            "chairman_name": "Test Chairman",
+            "chairman_contact": "08123456789",
+            "account_users": [],
+            "latitude": "-6.2088",
+            "longitude": "106.8456",
+            "capital_id": "cap_123",
+            "operational_period_id": "period_123",
+            "is_validated": "N",
+            "created_at": "2024-01-01T00:00:00",
+        }
+
+        schema = BusinessesSchema(**data)
         assert schema.id == "test_id_123"
         assert schema.name == "Test Business"
         assert schema.status == YesNoEnum.Y
@@ -159,7 +171,28 @@ class TestBusinessesRoute:
             BusinessesSchema,
         )
 
-        items = [BusinessesSchema(**business) for business in sample_businesses_list]
+        items = [
+            BusinessesSchema(
+                **{
+                    "id": f"test_id_{i}",
+                    "status": "Y",
+                    "name": name,
+                    "sk_number": "SK-001/2024",
+                    "establishment_year": 2020,
+                    "member_count": 50,
+                    "chairman_name": "Chair",
+                    "chairman_contact": "08123456789",
+                    "account_users": [],
+                    "latitude": "-6.2088",
+                    "longitude": "106.8456",
+                    "capital_id": "cap_123",
+                    "operational_period_id": "period_123",
+                    "is_validated": "N",
+                    "created_at": "2024-01-01T00:00:00",
+                }
+            )
+            for i, name in [(123, "Test Business"), (456, "Another Business")]
+        ]
 
         response_data = {"items": items, "total": 2, "limit": 10, "offset": 0, "has_more": False}
 

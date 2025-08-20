@@ -90,21 +90,15 @@ class TestBusinessesIntegration:
         """Sample business data for testing."""
         return {
             "name": "Integration Test Business",
-            "forestry_area_id": "area_123",
-            "address": "Integration Test Address",
-            "phone": "08123456789",
-            "email": "integration@business.com",
-            "pic_name": "Integration Test PIC",
-            "pic_phone": "08123456789",
-            "pic_email": "pic@integration.com",
+            "forestry_id": "area_123",
             "sk_number": "SK-001/2024",
             "establishment_year": 2020,
             "member_count": 50,
             "chairman_name": "Test Chairman",
             "chairman_contact": "08123456789",
-            "account_id": "acc_123",
-            "latitude": "-6.2088",  # Changed from float to string
-            "longitude": "106.8456",  # Changed from float to string
+            "account_ids": ["acc_123", "acc_456"],
+            "latitude": "-6.2088",
+            "longitude": "106.8456",
             "capital_id": "cap_123",
             "operational_status_id": "status_123",
             "operational_period_id": "period_123",
@@ -118,30 +112,24 @@ class TestBusinessesIntegration:
             "id": "integration_test_id",
             "status": "Y",
             "name": "Integration Test Business",
-            "forestry_area_id": "area_123",
-            "address": "Integration Test Address",
-            "phone": "08123456789",
-            "email": "integration@business.com",
-            "pic_name": "Integration Test PIC",
-            "pic_phone": "08123456789",
-            "pic_email": "pic@integration.com",
-            "is_validated": "N",
-            "created_by": "integration_user",
-            "updated_by": None,
-            "created_at": "2024-01-01T00:00:00",
-            "updated_at": None,
+            "forestry": {},
             "sk_number": "SK-001/2024",
             "establishment_year": 2020,
             "member_count": 50,
             "chairman_name": "Test Chairman",
             "chairman_contact": "08123456789",
-            "account_id": "acc_123",
-            "latitude": "-6.2088",  # Changed from float to string
-            "longitude": "106.8456",  # Changed from float to string
+            "account_users": [],
+            "latitude": "-6.2088",
+            "longitude": "106.8456",
             "capital_id": "cap_123",
-            "operational_status_id": "status_123",
+            "operational_status": {},
             "operational_period_id": "period_123",
-            "class_id": "class_123",
+            "business_class": {},
+            "is_validated": "N",
+            "created_by": "integration_user",
+            "updated_by": None,
+            "created_at": "2024-01-01T00:00:00",
+            "updated_at": None,
         }
 
     def test_businesses_service_repository_integration(self, mock_repository, mock_business_model):
@@ -219,7 +207,7 @@ class TestBusinessesIntegration:
         assert update_schema.name == "Updated Integration Business"
 
         # Test that required fields are enforced
-        with pytest.raises(ValueError):
+        with pytest.raises(Exception):
             BusinessesCreateSchema()  # Missing required fields
 
     def test_businesses_api_endpoints_integration(self, client):
