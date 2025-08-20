@@ -1,8 +1,11 @@
 from .attachment_model import AttachmentModel
 from .base import Base
 from .business_class_model import BusinessClassModel
+from .business_harvest_model import BusinessHarvestModel
 from .business_operational_status_model import BusinessOperationalStatusModel
+from .business_product_model import BusinessProductModel
 from .businesses_model import BusinessesModel
+from .commodity_model import CommodityModel
 from .file_model import FileModel
 from .forestry_area import ForestryAreaModel
 from .forestry_land_model import ForestryLandModel
@@ -37,4 +40,7 @@ __all__ = [
     "NavigationModel",
     "RolesModel",
     "ForestryAreaModel",
+    "BusinessProductModel",
+    "BusinessHarvestModel",
+    "CommodityModel",
 ]

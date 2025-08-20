@@ -24,11 +24,6 @@ class UserSchema(BaseSchema):
     email: EmailStr
     enable: YesNoEnum
     role_id: Optional[int] = None
-    last_login: Optional[datetime] = None
-    created_by: Optional[str] = None
-    updated_by: Optional[int] = None
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
     is_verified: Optional[bool] = None
 
 

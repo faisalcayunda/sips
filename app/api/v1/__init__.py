@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.v1.routes import (
     attachment_router,
     auth_router,
+    business_product_router,
     businesses_router,
     file_router,
     forestry_area_router,
@@ -22,6 +23,7 @@ router = APIRouter()
 router.include_router(auth_router, tags=["Auth"])
 router.include_router(attachment_router, tags=["Attachment"])
 router.include_router(businesses_router, tags=["Businesses"])
+router.include_router(business_product_router, tags=["Business Products"])
 router.include_router(file_router, tags=["Files"])
 router.include_router(forestry_area_router, tags=["Forestry Area"])
 router.include_router(forestry_land_router, tags=["Forestry Land"])

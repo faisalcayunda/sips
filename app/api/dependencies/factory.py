@@ -4,6 +4,7 @@ from app.core.minio_client import MinioClient
 from app.models import (
     AttachmentModel,
     BusinessesModel,
+    BusinessProductModel,
     FileModel,
     ForestryAreaModel,
     ForestryLandModel,
@@ -21,6 +22,7 @@ from app.models import (
 from app.repositories import (
     AttachmentRepository,
     BusinessesRepository,
+    BusinessProductRepository,
     FileRepository,
     ForestryAreaRepository,
     ForestryLandRepository,
@@ -39,6 +41,7 @@ from app.services import (
     AttachmentService,
     AuthService,
     BusinessesService,
+    BusinessProductService,
     FileService,
     ForestryAreaService,
     ForestryLandService,
@@ -117,6 +120,10 @@ class RepositoryFactory:
     def create_businesses_repository() -> BusinessesRepository:
         return BusinessesRepository(BusinessesModel)
 
+    @staticmethod
+    def create_business_product_repository() -> BusinessProductRepository:
+        return BusinessProductRepository(BusinessProductModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -187,6 +194,10 @@ class ServiceFactory:
         """Get BusinessesService instance."""
         return BusinessesService(self.repository_factory.create_businesses_repository())
 
+    def get_business_product_service(self) -> BusinessProductService:
+        """Get BusinessProductService instance."""
+        return BusinessProductService(self.repository_factory.create_business_product_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -212,3 +223,4 @@ class Factory(ServiceFactory):
         self.roles_repository = staticmethod(partial(RolesRepository, RolesModel))
         self.forestry_area_repository = staticmethod(partial(ForestryAreaRepository, ForestryAreaModel))
         self.businesses_repository = staticmethod(partial(BusinessesRepository, BusinessesModel))
+        self.business_product_repository = staticmethod(partial(BusinessProductRepository, BusinessProductModel))

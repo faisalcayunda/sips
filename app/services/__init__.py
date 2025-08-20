@@ -1,6 +1,7 @@
 from .attachment_service import AttachmentService
 from .auth_service import AuthService
 from .base import BaseService
+from .business_product_service import BusinessProductService
 from .businesses_service import BusinessesService
 from .file_service import FileService
 from .forestry_area_service import ForestryAreaService
@@ -19,6 +20,7 @@ __all__ = [
     "BaseService",
     "AuthService",
     "BusinessesService",
+    "BusinessProductService",
     "FileService",
     "OrganizationService",
     "UserService",
