@@ -4,7 +4,9 @@ from app.core.minio_client import MinioClient
 from app.models import (
     AttachmentModel,
     BusinessesModel,
+    BusinessHarvestModel,
     BusinessProductModel,
+    CommodityModel,
     FileModel,
     ForestryAreaModel,
     ForestryLandModel,
@@ -22,7 +24,9 @@ from app.models import (
 from app.repositories import (
     AttachmentRepository,
     BusinessesRepository,
+    BusinessHarvestRepository,
     BusinessProductRepository,
+    CommodityRepository,
     FileRepository,
     ForestryAreaRepository,
     ForestryLandRepository,
@@ -41,7 +45,9 @@ from app.services import (
     AttachmentService,
     AuthService,
     BusinessesService,
+    BusinessHarvestService,
     BusinessProductService,
+    CommodityService,
     FileService,
     ForestryAreaService,
     ForestryLandService,
@@ -124,6 +130,14 @@ class RepositoryFactory:
     def create_business_product_repository() -> BusinessProductRepository:
         return BusinessProductRepository(BusinessProductModel)
 
+    @staticmethod
+    def create_business_harvest_repository() -> BusinessHarvestRepository:
+        return BusinessHarvestRepository(BusinessHarvestModel)
+
+    @staticmethod
+    def create_commodity_repository() -> CommodityRepository:
+        return CommodityRepository(CommodityModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -198,6 +212,14 @@ class ServiceFactory:
         """Get BusinessProductService instance."""
         return BusinessProductService(self.repository_factory.create_business_product_repository())
 
+    def get_business_harvest_service(self) -> BusinessHarvestService:
+        """Get BusinessHarvestService instance."""
+        return BusinessHarvestService(self.repository_factory.create_business_harvest_repository())
+
+    def get_commodity_service(self) -> CommodityService:
+        """Get CommodityService instance."""
+        return CommodityService(self.repository_factory.create_commodity_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -224,3 +246,5 @@ class Factory(ServiceFactory):
         self.forestry_area_repository = staticmethod(partial(ForestryAreaRepository, ForestryAreaModel))
         self.businesses_repository = staticmethod(partial(BusinessesRepository, BusinessesModel))
         self.business_product_repository = staticmethod(partial(BusinessProductRepository, BusinessProductModel))
+        self.business_harvest_repository = staticmethod(partial(BusinessHarvestRepository, BusinessHarvestModel))
+        self.commodity_repository = staticmethod(partial(CommodityRepository, CommodityModel))
