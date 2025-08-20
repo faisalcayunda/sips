@@ -5,6 +5,7 @@ from sqlalchemy import CHAR, JSON, Column, DateTime, Enum, Integer, String
 
 from app.core.config import settings
 from app.models.base import Base
+from app.utils.helpers import generate_code
 
 
 class BusinessesModel(Base):
@@ -15,7 +16,7 @@ class BusinessesModel(Base):
     __tablename__ = "businesses"
 
     # Primary Key
-    id = Column("kups_id", CHAR(36), primary_key=True, index=True, comment="ID unik KUPS")
+    id = Column("kups_id", CHAR(36), primary_key=True, index=True, default=generate_code(), comment="ID unik KUPS")
 
     # Status dan informasi dasar
     status = Column(
@@ -26,7 +27,6 @@ class BusinessesModel(Base):
     )
     name = Column("kups_nama", String(256), comment="Nama KUPS")
 
-    # Foreign key ke forestry area
     forestry_id = Column("fore_kps_id", CHAR(11), comment="ID kawasan perhutanan sosial")
 
     # Informasi legal dan pembentukan
@@ -65,11 +65,12 @@ class BusinessesModel(Base):
     )
 
     # Audit fields
-    created_by = Column("create_by", CHAR(36), comment="User yang membuat record")
-    updated_by = Column("update_by", CHAR(36), comment="User yang mengupdate record")
+    created_by = Column("create_by", CHAR(36), nullable=True, comment="User yang membuat record")
+    updated_by = Column("update_by", CHAR(36), nullable=True, comment="User yang mengupdate record")
     created_at = Column(
         "create_at",
         DateTime,
+        nullable=True,
         default=datetime.now(timezone(settings.TIMEZONE)),
         comment="Waktu pembuatan record",
     )
@@ -80,6 +81,3 @@ class BusinessesModel(Base):
         onupdate=datetime.now(timezone(settings.TIMEZONE)),
         comment="Waktu update record",
     )
-
-    def __repr__(self):
-        return f"<BusinessesModel(id='{self.id}', name='{self.name}')>"

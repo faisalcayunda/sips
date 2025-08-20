@@ -1,5 +1,5 @@
 import json
-from typing import Any, List, Optional, Tuple, override
+from typing import Any, Dict, List, Optional, Tuple, override
 
 from sqlalchemy import JSON, Select, String, cast, func, or_, select
 from sqlalchemy.orm import aliased, joinedload, selectinload
@@ -302,4 +302,16 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                         query = query.options(joinedload(attr))
 
         result = await self.session.execute(query)
-        return result.scalar_one_or_none()
+        result = result.mappings().first()
+
+        return self._mapping(result) if result else None
+
+    @override
+    async def create(self, data: Dict[str, Any]) -> BusinessesModel:
+        data = await super().create(data)
+        return await self.find_by_id(data.id)
+
+    @override
+    async def update(self, id: str, data: Dict[str, Any]) -> BusinessesModel:
+        data = await super().update(id, data)
+        return await self.find_by_id(data.id)

@@ -1,9 +1,19 @@
+import secrets
+import string
 from typing import Any, AsyncGenerator, BinaryIO, Dict, Optional
 
 import orjson
 from fastapi import Request
 
 from app.core.security import decode_token
+
+
+def generate_code(length: int = 12) -> str:
+    """
+    Generate random uppercase alphanumeric code.
+    """
+    alphabet = string.ascii_uppercase + string.digits  # A-Z + 0-9
+    return "".join(secrets.choice(alphabet) for _ in range(length))
 
 
 def orm_to_dict(orm_instance: Any) -> Optional[Dict[str, Any]]:
