@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 @router.get("/business-products", response_model=PaginatedResponse[BusinessProductSchema])
-async def get_businesses(
+async def get_business_product(
     params: CommonParams = Depends(),
     service: BusinessProductService = Depends(ServiceFactory().get_business_product_service),
 ) -> PaginatedResponse[BusinessProductSchema]:
@@ -47,7 +47,7 @@ async def get_businesses(
 
 
 @router.get("/business-products/{id}", response_model=BusinessProductSchema)
-async def get_business(
+async def get_business_product(
     id: str,
     service: BusinessProductService = Depends(ServiceFactory().get_business_product_service),
 ) -> Any | BusinessProductSchema:
@@ -55,7 +55,7 @@ async def get_business(
 
 
 @router.post("/business-products", response_model=BusinessProductSchema, status_code=status.HTTP_201_CREATED)
-async def create_business(
+async def create_business_product(
     data: BusinessProductCreate,
     current_user: UserSchema = Depends(get_current_active_user),
     service: BusinessProductService = Depends(ServiceFactory().get_business_product_service),
@@ -64,7 +64,7 @@ async def create_business(
 
 
 @router.patch("/business-products/{id}", response_model=BusinessProductSchema)
-async def update_business(
+async def update_business_product(
     id: str,
     data: BusinessProductUpdate,
     current_user: UserSchema = Depends(get_current_active_user),
@@ -78,7 +78,7 @@ async def update_business(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(get_current_active_user)],
 )
-async def delete_business(
+async def delete_business_product(
     id: str,
     service: BusinessProductService = Depends(ServiceFactory().get_business_product_service),
 ):
