@@ -454,6 +454,6 @@ class BusinessProductRepository(BaseRepository[BusinessProductModel]):
         return await self.find_by_id(data.id)
 
     @override
-    async def update(self, id: str, data: Dict[str, Any]) -> BusinessProductModel:
-        data = await super().update(id, data)
-        return await self.find_by_id(data.id)
+    async def update(self, id: str, data: Dict[str, Any], refresh: bool = True) -> BusinessProductModel:
+        data = await super().update(id, data, refresh=refresh)
+        return await self.find_by_id(data.get("id"))

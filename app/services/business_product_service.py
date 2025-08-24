@@ -17,6 +17,8 @@ class BusinessProductService(BaseService[BusinessProductModel, BusinessProductRe
         return await super().create(data)
 
     @override
-    async def update(self, id: str, data: Dict[str, Any], current_user: UserSchema) -> BusinessProductModel:
+    async def update(
+        self, id: str, data: Dict[str, Any], current_user: UserSchema, refresh: bool = True
+    ) -> BusinessProductModel:
         data["updated_by"] = current_user.id
-        return await super().update(id, data)
+        return await super().update(id, data, refresh=refresh)
