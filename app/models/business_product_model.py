@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from pytz import timezone
 from sqlalchemy import CHAR, Column, DateTime, Float, Integer, String, Text
 
 from app.core.config import settings
