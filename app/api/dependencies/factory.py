@@ -6,6 +6,7 @@ from app.models import (
     BusinessesModel,
     BusinessHarvestModel,
     BusinessProductModel,
+    BusinessServiceModel,
     CommodityModel,
     FileModel,
     ForestryAreaModel,
@@ -26,6 +27,7 @@ from app.repositories import (
     BusinessesRepository,
     BusinessHarvestRepository,
     BusinessProductRepository,
+    BusinessServiceRepository,
     CommodityRepository,
     FileRepository,
     ForestryAreaRepository,
@@ -47,6 +49,7 @@ from app.services import (
     BusinessesService,
     BusinessHarvestService,
     BusinessProductService,
+    BusinessServiceService,
     CommodityService,
     FileService,
     ForestryAreaService,
@@ -138,6 +141,10 @@ class RepositoryFactory:
     def create_commodity_repository() -> CommodityRepository:
         return CommodityRepository(CommodityModel)
 
+    @staticmethod
+    def create_business_service_repository() -> BusinessServiceRepository:
+        return BusinessServiceRepository(BusinessServiceModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -220,6 +227,10 @@ class ServiceFactory:
         """Get CommodityService instance."""
         return CommodityService(self.repository_factory.create_commodity_repository())
 
+    def get_business_service_service(self) -> BusinessServiceService:
+        """Get BusinessServiceService instance."""
+        return BusinessServiceService(self.repository_factory.create_business_service_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -248,3 +259,4 @@ class Factory(ServiceFactory):
         self.business_product_repository = staticmethod(partial(BusinessProductRepository, BusinessProductModel))
         self.business_harvest_repository = staticmethod(partial(BusinessHarvestRepository, BusinessHarvestModel))
         self.commodity_repository = staticmethod(partial(CommodityRepository, CommodityModel))
+        self.business_service_repository = staticmethod(partial(BusinessServiceRepository, BusinessServiceModel))

@@ -2,6 +2,7 @@ from .attachment_route import router as attachment_router
 from .auth_route import router as auth_router
 from .business_harvest_route import router as business_harvest_router
 from .business_product_route import router as business_product_router
+from .business_service_route import router as business_service_router
 from .businesses_route import router as businesses_router
 from .commodity_route import router as commodity_router
 from .file_route import router as file_router
@@ -22,6 +23,7 @@ __all__ = [
     "businesses_router",
     "business_product_router",
     "business_harvest_router",
+    "business_service_router",
     "file_router",
     "user_router",
     "regional_router",

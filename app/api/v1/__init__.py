@@ -5,6 +5,7 @@ from app.api.v1.routes import (
     auth_router,
     business_harvest_router,
     business_product_router,
+    business_service_router,
     businesses_router,
     commodity_router,
     file_router,
@@ -27,6 +28,7 @@ router.include_router(attachment_router, tags=["Attachment"])
 router.include_router(businesses_router, tags=["Businesses"])
 router.include_router(business_product_router, tags=["Business Products"])
 router.include_router(business_harvest_router, tags=["Business Harvest"])
+router.include_router(business_service_router, tags=["Business Service"])
 router.include_router(commodity_router, tags=["Commodity"])
 router.include_router(file_router, tags=["Files"])
 router.include_router(forestry_area_router, tags=["Forestry Area"])

@@ -3,6 +3,7 @@ from .auth_service import AuthService
 from .base import BaseService
 from .business_harvest_service import BusinessHarvestService
 from .business_product_service import BusinessProductService
+from .business_service_service import BusinessServiceService
 from .businesses_service import BusinessesService
 from .commodity_service import CommodityService
 from .file_service import FileService
@@ -24,6 +25,7 @@ __all__ = [
     "BusinessesService",
     "BusinessProductService",
     "BusinessHarvestService",
+    "BusinessServiceService",
     "FileService",
     "OrganizationService",
     "UserService",

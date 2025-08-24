@@ -4,6 +4,11 @@ from .business_product_schema import (
     BusinessProductSchema,
     BusinessProductUpdate,
 )
+from .business_service_schema import (
+    BusinessServiceCreate,
+    BusinessServiceSchema,
+    BusinessServiceUpdate,
+)
 from .businesses_schema import (
     BusinessesCreateSchema,
     BusinessesFilter,
@@ -21,6 +26,9 @@ __all__ = [
     "BusinessesListResponse",
     "BusinessesSchema",
     "BusinessesUpdateSchema",
+    "BusinessServiceCreate",
+    "BusinessServiceSchema",
+    "BusinessServiceUpdate",
     "FileSchema",
     "UserCreateSchema",
     "UserSchema",

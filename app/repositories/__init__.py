@@ -2,6 +2,7 @@ from .attachment_repository import AttachmentRepository
 from .base import BaseRepository
 from .business_harvest_repository import BusinessHarvestRepository
 from .business_product_repository import BusinessProductRepository
+from .business_service_repository import BusinessServiceRepository
 from .businesses_repository import BusinessesRepository
 from .commodity_repository import CommodityRepository
 from .file_repository import FileRepository
@@ -23,6 +24,7 @@ __all__ = [
     "BusinessesRepository",
     "BusinessProductRepository",
     "BusinessHarvestRepository",
+    "BusinessServiceRepository",
     "FileRepository",
     "TokenRepository",
     "UserRepository",

@@ -4,6 +4,7 @@ from .business_class_model import BusinessClassModel
 from .business_harvest_model import BusinessHarvestModel
 from .business_operational_status_model import BusinessOperationalStatusModel
 from .business_product_model import BusinessProductModel
+from .business_service_model import BusinessServiceModel
 from .businesses_model import BusinessesModel
 from .commodity_model import CommodityModel
 from .file_model import FileModel
@@ -25,6 +26,7 @@ __all__ = [
     "BusinessesModel",
     "BusinessClassModel",
     "BusinessOperationalStatusModel",
+    "BusinessServiceModel",
     "FileModel",
     "OrganizationModel",
     "ForestrySchemaModel",
