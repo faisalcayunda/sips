@@ -312,6 +312,6 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         return await self.find_by_id(data.id)
 
     @override
-    async def update(self, id: str, data: Dict[str, Any]) -> BusinessesModel:
-        data = await super().update(id, data)
-        return await self.find_by_id(data.id)
+    async def update(self, id: str, data: Dict[str, Any], refresh: bool = True) -> BusinessesModel:
+        data = await super().update(id, data, refresh)
+        return await self.find_by_id(data.get("id"))
