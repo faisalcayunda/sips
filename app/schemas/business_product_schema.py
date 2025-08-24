@@ -39,9 +39,7 @@ class BusinessProductSchema(BaseSchema):
     unit_price_label: Optional[str] = Field(default=None)
     unit_sold_label: Optional[str] = Field(default=None)
     buyer_target: Optional[str] = Field(default=None)
-    created_by: str
     created_at: Optional[datetime] = Field(default=None)
-    updated_by: Optional[str] = Field(default=None)
     updated_at: Optional[datetime] = Field(default=None)
 
 
