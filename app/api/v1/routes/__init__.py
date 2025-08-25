@@ -1,3 +1,4 @@
+from .article_route import router as article_router
 from .attachment_route import router as attachment_router
 from .auth_route import router as auth_router
 from .business_harvest_route import router as business_harvest_router
@@ -19,6 +20,7 @@ from .roles_route import router as roles_router
 from .user_route import router as user_router
 
 __all__ = [
+    "article_router",
     "auth_router",
     "businesses_router",
     "business_product_router",

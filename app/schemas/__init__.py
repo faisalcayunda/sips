@@ -1,3 +1,4 @@
+from .article_schema import ArticleCreateSchema, ArticleSchema, ArticleUpdateSchema
 from .business_harvest_schema import BusinessHarvestSchema
 from .business_product_schema import (
     BusinessProductCreate,
@@ -21,6 +22,9 @@ from .file_schema import FileSchema
 from .user_schema import UserCreateSchema, UserSchema, UserUpdateSchema
 
 __all__ = [
+    "ArticleCreateSchema",
+    "ArticleSchema",
+    "ArticleUpdateSchema",
     "BusinessesCreateSchema",
     "BusinessesFilter",
     "BusinessesListResponse",

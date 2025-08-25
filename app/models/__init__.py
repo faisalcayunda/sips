@@ -1,3 +1,4 @@
+from .article_model import ArticleModel
 from .attachment_model import AttachmentModel
 from .base import Base
 from .business_class_model import BusinessClassModel
@@ -23,6 +24,7 @@ from .user_model import UserModel
 
 __all__ = [
     "Base",
+    "ArticleModel",
     "BusinessesModel",
     "BusinessClassModel",
     "BusinessOperationalStatusModel",

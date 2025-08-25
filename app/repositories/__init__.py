@@ -1,3 +1,4 @@
+from .article_repository import ArticleRepository
 from .attachment_repository import AttachmentRepository
 from .base import BaseRepository
 from .business_harvest_repository import BusinessHarvestRepository
@@ -21,6 +22,7 @@ from .user_repository import UserRepository
 
 __all__ = [
     "BaseRepository",
+    "ArticleRepository",
     "BusinessesRepository",
     "BusinessProductRepository",
     "BusinessHarvestRepository",

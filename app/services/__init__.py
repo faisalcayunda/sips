@@ -1,3 +1,4 @@
+from .article_service import ArticleService
 from .attachment_service import AttachmentService
 from .auth_service import AuthService
 from .base import BaseService
@@ -22,6 +23,7 @@ from .user_service import UserService
 __all__ = [
     "BaseService",
     "AuthService",
+    "ArticleService",
     "BusinessesService",
     "BusinessProductService",
     "BusinessHarvestService",

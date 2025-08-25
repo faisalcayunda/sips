@@ -2,6 +2,7 @@ from functools import partial
 
 from app.core.minio_client import MinioClient
 from app.models import (
+    ArticleModel,
     AttachmentModel,
     BusinessesModel,
     BusinessHarvestModel,
@@ -23,6 +24,7 @@ from app.models import (
     UserModel,
 )
 from app.repositories import (
+    ArticleRepository,
     AttachmentRepository,
     BusinessesRepository,
     BusinessHarvestRepository,
@@ -44,6 +46,7 @@ from app.repositories import (
     UserRepository,
 )
 from app.services import (
+    ArticleService,
     AttachmentService,
     AuthService,
     BusinessesService,
@@ -145,6 +148,10 @@ class RepositoryFactory:
     def create_business_service_repository() -> BusinessServiceRepository:
         return BusinessServiceRepository(BusinessServiceModel)
 
+    @staticmethod
+    def create_article_repository() -> ArticleRepository:
+        return ArticleRepository(ArticleModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -231,6 +238,10 @@ class ServiceFactory:
         """Get BusinessServiceService instance."""
         return BusinessServiceService(self.repository_factory.create_business_service_repository())
 
+    def get_article_service(self) -> ArticleService:
+        """Get ArticleService instance."""
+        return ArticleService(self.repository_factory.create_article_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -260,3 +271,4 @@ class Factory(ServiceFactory):
         self.business_harvest_repository = staticmethod(partial(BusinessHarvestRepository, BusinessHarvestModel))
         self.commodity_repository = staticmethod(partial(CommodityRepository, CommodityModel))
         self.business_service_repository = staticmethod(partial(BusinessServiceRepository, BusinessServiceModel))
+        self.article_repository = staticmethod(partial(ArticleRepository, ArticleModel))
