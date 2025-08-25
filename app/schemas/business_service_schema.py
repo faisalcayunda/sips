@@ -24,7 +24,7 @@ class BusinessServiceSchema(BaseSchema):
     origin_visitor_id: str
     ticket_price: int
     parking_fee: int
-    other_item_price_id: int
+    other_item_price: int
     additional_info: Optional[str] = Field(default=None)
     created_at: Optional[datetime] = Field(default=None)
     updated_at: Optional[datetime] = Field(default=None)
@@ -40,7 +40,7 @@ class BusinessServiceCreate(BaseSchema):
     origin_visitor_id: str
     ticket_price: int
     parking_fee: int
-    other_item_price_id: str
+    other_item_price: int
     additional_info: Optional[str] = Field(default=None)
 
 
@@ -54,5 +54,5 @@ class BusinessServiceUpdate(BaseSchema):
     origin_visitor_id: Optional[str] = Field(default=None)
     ticket_price: Optional[int] = Field(default=None)
     parking_fee: Optional[int] = Field(default=None)
-    other_item_price_id: Optional[str] = Field(default=None)
+    other_item_price: Optional[str] = Field(default=None)
     additional_info: Optional[str] = Field(default=None)

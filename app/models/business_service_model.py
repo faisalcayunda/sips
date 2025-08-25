@@ -61,9 +61,9 @@ class BusinessServiceModel(Base):
         "jasa_harga_sewa_parkir",
         Integer,
     )
-    other_item_price_id = Column(
+    other_item_price = Column(
         "jasa_harga_item_lain",
-        CHAR(4),
+        Integer,
     )
 
     # Additional info

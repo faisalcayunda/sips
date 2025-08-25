@@ -300,7 +300,7 @@ class BusinessServiceRepository(BaseRepository[BusinessServiceModel]):
                 self.model.origin_visitor_id.label("origin_visitor_id"),
                 self.model.ticket_price.label("ticket_price"),
                 self.model.parking_fee.label("parking_fee"),
-                self.model.other_item_price_id.label("other_item_price_id"),
+                self.model.other_item_price.label("other_item_price"),
                 self.model.additional_info.label("additional_info"),
                 self.model.created_by.label("created_by"),
                 self.model.created_at.label("created_at"),
