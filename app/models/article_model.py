@@ -24,7 +24,7 @@ class ArticleModel(Base):
     )
 
     cover = Column("article_cover", String(128), nullable=True)
-    counter = Column("article_counter", BigInteger, nullable=True)
+    counter = Column("article_counter", BigInteger, default=0, nullable=True)
 
     created_by = Column("create_by", CHAR(16), nullable=False)
     updated_by = Column("update_by", CHAR(16), nullable=True)
