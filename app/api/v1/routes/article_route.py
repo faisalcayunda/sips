@@ -51,7 +51,7 @@ async def get_article(
     id: str,
     service: ArticleService = Depends(ServiceFactory().get_article_service),
 ) -> Any | ArticleSchema:
-    return await service.find_by_id(id)
+    return await service.find_by_id_or_slug(id)
 
 
 @router.post("/articles", response_model=ArticleSchema, status_code=status.HTTP_201_CREATED)
