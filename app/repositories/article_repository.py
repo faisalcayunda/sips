@@ -1,17 +1,33 @@
 from typing import List, Optional, override
 
+from app.core.exceptions import NotFoundException
 from app.models import ArticleModel
+from fastapi_async_sqlalchemy import db
+from sqlalchemy import select
 
 from .base import BaseRepository
 
 
 class ArticleRepository(BaseRepository[ArticleModel]):
-    def __init__(self, model):
+    def __init__(self, model: type[ArticleModel]):
         super().__init__(model)
 
     @override
     async def find_by_id(self, id: str, relationships: Optional[List[str]] = None) -> Optional[ArticleModel]:
-        article = await super().find_by_id(id, relationships)
+        article = await db.session.scalar(select(ArticleModel).filter(ArticleModel.id == id))
+        if not article:
+            raise NotFoundException("Article not found")
 
-        await self.update(id, {"counter": article.counter + 1})
+        article.counter =+ 1
+        await db.session.commit()
+        return article
+
+    @override
+    async def find_by_slug(self, slug: str, relationships: Optional[List[str]] = None) -> Optional[ArticleModel]:
+        article = await db.session.scalar(select(ArticleModel).filter(ArticleModel.slug == slug))
+        if not article:
+            raise NotFoundException("Article not found")
+
+        article.counter =+ 1
+        await db.session.commit()
         return article

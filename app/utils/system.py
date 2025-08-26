@@ -1,8 +1,13 @@
 import multiprocessing
 import os
-import resource
+import platform
+import sys
 
 import psutil
+
+# Import resource module only on Unix-like systems
+if platform.system() != "Windows":
+    import resource
 
 
 def get_optimal_workers():
@@ -28,17 +33,20 @@ def get_optimal_workers():
 async def optimize_system():
     """
     Lakukan optimasi sistem untuk performa maksimal.
-    - Set RLIMIT_NOFILE (max open files) ke target yang aman (default 65536, tidak melebihi hard limit).
+    - Set RLIMIT_NOFILE (max open files) ke target yang aman (default 65536, tidak melebihi hard limit) pada sistem Unix/Linux.
     - Set environment variable untuk optimasi TCP jika diperlukan.
     """
-    try:
-        soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-        target = 65536
-        new_soft = min(target, hard)
-        if soft < new_soft:
-            resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
-    except Exception:
-        pass
+    # Optimasi khusus untuk sistem Unix/Linux
+    if platform.system() != "Windows":
+        try:
+            soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+            target = 65536
+            new_soft = min(target, hard)
+            if soft < new_soft:
+                resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
+        except Exception:
+            pass
 
+    # Optimasi TCP untuk semua sistem operasi
     os.environ["TCP_NODELAY"] = "1"
     os.environ["TCP_QUICKACK"] = "1"

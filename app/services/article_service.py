@@ -14,6 +14,14 @@ class ArticleService(BaseService[ArticleModel, ArticleRepository]):
     def _slugify(self, text: str) -> str:
         return text.strip().lower().replace(" ", "-")
 
+    async def find_by_id_or_slug(self, id_or_slug: str) -> ArticleModel | None:
+        if id_or_slug.isdigit():
+            return await self.repository.find_by_id(id_or_slug)
+        else:
+            return await self.repository.find_by_slug(id_or_slug)
+
+
+
     @override
     async def create(self, data: Dict[str, Any], current_user: UserSchema) -> ArticleModel:
         data["created_by"] = current_user.id
