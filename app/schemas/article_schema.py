@@ -22,7 +22,6 @@ class ArticleCreateSchema(BaseSchema):
     enable: str
     cover: Optional[str] = None
     counter: Optional[int] = None
-    created_by: str
 
 
 class ArticleUpdateSchema(BaseSchema):
