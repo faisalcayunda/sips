@@ -12,8 +12,6 @@ class ArticleSchema(BaseSchema):
     enable: str
     cover: Optional[str] = None
     counter: Optional[int] = None
-    created_by: str
-    updated_by: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -33,5 +31,4 @@ class ArticleUpdateSchema(BaseSchema):
     enable: Optional[str] = None
     cover: Optional[str] = None
     counter: Optional[int] = None
-    updated_by: Optional[str] = None
-    updated_at: Optional[datetime] = None
+
