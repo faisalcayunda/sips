@@ -1,4 +1,9 @@
+from datetime import datetime
+
+from pytz import timezone
 from sqlalchemy import CHAR, BigInteger, Column, DateTime, Enum, Integer, String, Text
+
+from app.core.config import settings
 
 from .base import Base
 
@@ -24,5 +29,5 @@ class ArticleModel(Base):
     created_by = Column("create_by", CHAR(16), nullable=False)
     updated_by = Column("update_by", CHAR(16), nullable=True)
 
-    created_at = Column("create_at", DateTime, nullable=False)
-    updated_at = Column("update_at", DateTime, nullable=True)
+    created_at = Column("create_at", DateTime, default=datetime.now(timezone(settings.TIMEZONE)))
+    updated_at = Column("update_at", DateTime, onupdate=datetime.now(timezone(settings.TIMEZONE)), nullable=True)
