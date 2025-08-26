@@ -30,4 +30,3 @@ class ArticleUpdateSchema(BaseSchema):
     enable: Optional[str] = None
     cover: Optional[str] = None
     counter: Optional[int] = None
-

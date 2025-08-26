@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -35,7 +35,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           source: "sips-backend.tar"
           target: "~/"
-          timeout: 600s 
+          timeout: 600s
 
       - name: Deploy container
         uses: appleboy/ssh-action@v1.0.3

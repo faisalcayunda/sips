@@ -20,8 +20,6 @@ class ArticleService(BaseService[ArticleModel, ArticleRepository]):
         else:
             return await self.repository.find_by_slug(id_or_slug)
 
-
-
     @override
     async def create(self, data: Dict[str, Any], current_user: UserSchema) -> ArticleModel:
         data["created_by"] = current_user.id
