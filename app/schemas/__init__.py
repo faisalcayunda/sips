@@ -18,7 +18,22 @@ from .businesses_schema import (
     BusinessesUpdateSchema,
 )
 from .commodity_schema import CommoditySchema
+from .economic_values_schema import (
+    EconomicValuesCreateSchema,
+    EconomicValuesSchema,
+    EconomicValuesUpdateSchema,
+)
+from .farmer_incomes_schema import (
+    FarmerIncomesCreateSchema,
+    FarmerIncomesSchema,
+    FarmerIncomesUpdateSchema,
+)
 from .file_schema import FileSchema
+from .piaps_records_schema import (
+    PiapsRecordsCreateSchema,
+    PiapsRecordsSchema,
+    PiapsRecordsUpdateSchema,
+)
 from .user_schema import UserCreateSchema, UserSchema, UserUpdateSchema
 
 __all__ = [
@@ -42,4 +57,13 @@ __all__ = [
     "BusinessProductUpdate",
     "BusinessHarvestSchema",
     "CommoditySchema",
+    "PiapsRecordsSchema",
+    "PiapsRecordsCreateSchema",
+    "PiapsRecordsUpdateSchema",
+    "FarmerIncomesSchema",
+    "FarmerIncomesCreateSchema",
+    "FarmerIncomesUpdateSchema",
+    "EconomicValuesSchema",
+    "EconomicValuesCreateSchema",
+    "EconomicValuesUpdateSchema",
 ]

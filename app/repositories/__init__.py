@@ -6,12 +6,15 @@ from .business_product_repository import BusinessProductRepository
 from .business_service_repository import BusinessServiceRepository
 from .businesses_repository import BusinessesRepository
 from .commodity_repository import CommodityRepository
+from .economic_values_repository import EconomicValuesRepository
+from .farmer_incomes_repository import FarmerIncomesRepository
 from .file_repository import FileRepository
 from .forestry_area_repository import ForestryAreaRepository
 from .forestry_land_repository import ForestryLandRepository
 from .forestry_schema_repository import ForestrySchemaRepository
 from .navigation_repository import NavigationRepository
 from .permit_repository import PermitRepository
+from .piaps_records_repository import PiapsRecordsRepository
 from .piaps_repository import PiapsRepository
 from .proposal_forestry_repository import ForestryProposalRepository
 from .proposal_forestry_status_repository import ProposalforestryStatusRepository
@@ -42,4 +45,7 @@ __all__ = [
     "RolesRepository",
     "ForestryAreaRepository",
     "CommodityRepository",
+    "FarmerIncomesRepository",
+    "PiapsRecordsRepository",
+    "EconomicValuesRepository",
 ]

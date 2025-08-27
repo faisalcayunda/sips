@@ -9,6 +9,8 @@ from app.models import (
     BusinessProductModel,
     BusinessServiceModel,
     CommodityModel,
+    EconomicValueModel,
+    FarmerIncomesModel,
     FileModel,
     ForestryAreaModel,
     ForestryLandModel,
@@ -17,6 +19,7 @@ from app.models import (
     NavigationModel,
     PermitModel,
     PiapsModel,
+    PiapsRecordsModel,
     ProposalforestryStatusModel,
     RefreshTokenModel,
     RegionalModel,
@@ -31,6 +34,8 @@ from app.repositories import (
     BusinessProductRepository,
     BusinessServiceRepository,
     CommodityRepository,
+    EconomicValuesRepository,
+    FarmerIncomesRepository,
     FileRepository,
     ForestryAreaRepository,
     ForestryLandRepository,
@@ -38,6 +43,7 @@ from app.repositories import (
     ForestrySchemaRepository,
     NavigationRepository,
     PermitRepository,
+    PiapsRecordsRepository,
     PiapsRepository,
     ProposalforestryStatusRepository,
     RegionalRepository,
@@ -54,6 +60,8 @@ from app.services import (
     BusinessProductService,
     BusinessServiceService,
     CommodityService,
+    EconomicValuesService,
+    FarmerIncomesService,
     FileService,
     ForestryAreaService,
     ForestryLandService,
@@ -61,6 +69,7 @@ from app.services import (
     ForestyProposalService,
     NavigationService,
     PermitService,
+    PiapsRecordsService,
     PiapsService,
     ProposalforestryStatusService,
     RegionalService,
@@ -152,6 +161,18 @@ class RepositoryFactory:
     def create_article_repository() -> ArticleRepository:
         return ArticleRepository(ArticleModel)
 
+    @staticmethod
+    def create_farmer_incomes_repository() -> FarmerIncomesRepository:
+        return FarmerIncomesRepository(FarmerIncomesModel)
+
+    @staticmethod
+    def create_economic_values_repository() -> EconomicValuesRepository:
+        return EconomicValuesRepository(EconomicValueModel)
+
+    @staticmethod
+    def create_piaps_records_repository() -> PiapsRecordsRepository:
+        return PiapsRecordsRepository(PiapsRecordsModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -242,6 +263,18 @@ class ServiceFactory:
         """Get ArticleService instance."""
         return ArticleService(self.repository_factory.create_article_repository())
 
+    def get_farmer_incomes_service(self) -> FarmerIncomesService:
+        """Get FarmerIncomesService instance."""
+        return FarmerIncomesService(self.repository_factory.create_farmer_incomes_repository())
+
+    def get_economic_values_service(self) -> EconomicValuesService:
+        """Get EconomicValuesService instance."""
+        return EconomicValuesService(self.repository_factory.create_economic_values_repository())
+
+    def get_piaps_records_service(self) -> PiapsRecordsService:
+        """Get PiapsRecordsService instance."""
+        return PiapsRecordsService(self.repository_factory.create_piaps_records_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -272,3 +305,6 @@ class Factory(ServiceFactory):
         self.commodity_repository = staticmethod(partial(CommodityRepository, CommodityModel))
         self.business_service_repository = staticmethod(partial(BusinessServiceRepository, BusinessServiceModel))
         self.article_repository = staticmethod(partial(ArticleRepository, ArticleModel))
+        self.farmer_incomes_repository = staticmethod(partial(FarmerIncomesRepository, FarmerIncomesModel))
+        self.economic_values_repository = staticmethod(partial(EconomicValuesRepository, EconomicValueModel))
+        self.piaps_records_repository = staticmethod(partial(PiapsRecordsRepository, PiapsRecordsModel))

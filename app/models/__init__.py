@@ -8,6 +8,8 @@ from .business_product_model import BusinessProductModel
 from .business_service_model import BusinessServiceModel
 from .businesses_model import BusinessesModel
 from .commodity_model import CommodityModel
+from .economic_values_model import EconomicValueModel
+from .farmer_incomes_model import FarmerIncomesModel
 from .file_model import FileModel
 from .forestry_area import ForestryAreaModel
 from .forestry_land_model import ForestryLandModel
@@ -15,6 +17,7 @@ from .forestry_schema_model import ForestrySchemaModel
 from .navigation_model import NavigationModel
 from .permit_model import PermitModel
 from .piaps_model import PiapsModel
+from .piaps_records_model import PiapsRecordsModel
 from .proposal_forestry_model import ForestryProposalModel
 from .proposal_forestry_status_model import ProposalforestryStatusModel
 from .refresh_token_model import RefreshTokenModel
@@ -47,4 +50,7 @@ __all__ = [
     "BusinessProductModel",
     "BusinessHarvestModel",
     "CommodityModel",
+    "FarmerIncomesModel",
+    "PiapsRecordsModel",
+    "EconomicValueModel",
 ]

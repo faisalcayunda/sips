@@ -6,12 +6,15 @@ from .business_product_route import router as business_product_router
 from .business_service_route import router as business_service_router
 from .businesses_route import router as businesses_router
 from .commodity_route import router as commodity_router
+from .economic_values_route import router as economic_values_router
+from .farmer_incomes_route import router as farmer_incomes_router
 from .file_route import router as file_router
 from .forestry_area_route import router as forestry_area_router
 from .forestry_land_route import router as forestry_land_router
 from .forestry_schema_route import router as forestry_schema_router
 from .navigation_route import router as navigation_router
 from .permit_route import router as permit_router
+from .piaps_records_route import router as piaps_records_router
 from .piaps_route import router as piaps_router
 from .proposal_forestry_route import router as proposal_forestry_router
 from .proposal_forestry_status_route import router as proposal_forestry_status_router
@@ -40,4 +43,7 @@ __all__ = [
     "roles_router",
     "forestry_area_router",
     "commodity_router",
+    "economic_values_router",
+    "piaps_records_router",
+    "farmer_incomes_router",
 ]
