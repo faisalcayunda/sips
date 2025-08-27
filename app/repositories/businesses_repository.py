@@ -8,7 +8,11 @@ from app.models import (
     BusinessClassModel,
     BusinessesModel,
     BusinessOperationalStatusModel,
+    ForestryAreaModel,
     ForestryProposalModel,
+    ForestrySchemaModel,
+    ProposalforestryStatusModel,
+    RegionalModel,
     UserModel,
 )
 
@@ -41,6 +45,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         class_alias = aliased(BusinessClassModel)
         operational_status_alias = aliased(BusinessOperationalStatusModel)
         forestry_alias = aliased(ForestryProposalModel)
+        area_alias = aliased(ForestryAreaModel)
 
         account_users_subq = (
             select(
@@ -119,6 +124,164 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
             .scalar_subquery()
         )
 
+        assist_users_subq = (
+            select(
+                func.coalesce(
+                    func.json_arrayagg(
+                        func.json_object(
+                            "id",
+                            user_alias.id,
+                            "name",
+                            user_alias.name,
+                            "email",
+                            user_alias.email,
+                            "phone",
+                            user_alias.phone,
+                            "agency_name",
+                            user_alias.agency_name,
+                            "agency_type",
+                            user_alias.agency_type,
+                            "avatar",
+                            user_alias.avatar,
+                            "enable",
+                            user_alias.enable,
+                            "role_id",
+                            user_alias.role_id,
+                            "is_verified",
+                            user_alias.is_verified,
+                        )
+                    ),
+                    func.cast("[]", JSON),
+                )
+            )
+            .select_from(user_alias)
+            .where(
+                func.json_search(
+                    forestry_alias.assist_account_id,
+                    "one",
+                    func.cast(user_alias.id, String),
+                ).isnot(None)
+            )
+            .correlate(forestry_alias)
+            .scalar_subquery()
+        )
+
+        area_subq = (
+            select(
+                func.json_arrayagg(
+                    func.json_object(
+                        "id",
+                        area_alias.id,
+                        "name",
+                        area_alias.name,
+                        "abbreviation",
+                        area_alias.abbreviation,
+                    )
+                )
+            )
+            .select_from(area_alias)
+            .where(
+                func.json_contains(
+                    forestry_alias.kh_id,
+                    func.json_quote(area_alias.abbreviation),
+                )
+            )
+            .correlate(forestry_alias)
+            .scalar_subquery()
+        )
+
+        regional_subq = (
+            select(
+                func.json_object(
+                    "id",
+                    RegionalModel.id,
+                    "name",
+                    RegionalModel.name,
+                    "parent",
+                    RegionalModel.parent,
+                    "group",
+                    RegionalModel.group,
+                    "created_at",
+                    RegionalModel.created_at,
+                    "created_by",
+                    RegionalModel.created_by,
+                )
+            )
+            .select_from(RegionalModel)
+            .where(RegionalModel.id == forestry_alias.regional_id)
+            .correlate(forestry_alias)
+            .scalar_subquery()
+        )
+
+        vertex_subq = (
+            select(
+                func.json_object(
+                    "id",
+                    ProposalforestryStatusModel.id,
+                    "name",
+                    ProposalforestryStatusModel.name,
+                    "proposal_forestry_vertex",
+                    ProposalforestryStatusModel.proposal_forestry_vertex,
+                    "description",
+                    ProposalforestryStatusModel.description,
+                )
+            )
+            .select_from(ProposalforestryStatusModel)
+            .where(ProposalforestryStatusModel.proposal_forestry_vertex == forestry_alias.vertex)
+            .correlate(forestry_alias)
+            .scalar_subquery()
+        )
+
+        kph_account_subq = (
+            select(
+                func.json_object(
+                    "id",
+                    user_alias.id,
+                    "name",
+                    user_alias.name,
+                    "email",
+                    user_alias.email,
+                    "phone",
+                    user_alias.phone,
+                    "agency_name",
+                    user_alias.agency_name,
+                    "agency_type",
+                    user_alias.agency_type,
+                    "avatar",
+                    user_alias.avatar,
+                    "enable",
+                    user_alias.enable,
+                    "role_id",
+                    user_alias.role_id,
+                    "is_verified",
+                    user_alias.is_verified,
+                )
+            )
+            .select_from(user_alias)
+            .where(user_alias.id == forestry_alias.kph_account_id)
+            .correlate(forestry_alias)
+            .scalar_subquery()
+        )
+
+        schema_subq = (
+            select(
+                func.json_object(
+                    "schema_id",
+                    func.min(ForestrySchemaModel.schema_id),
+                    "name",
+                    func.min(ForestrySchemaModel.name),
+                    "description",
+                    func.min(ForestrySchemaModel.description),
+                    "ord",
+                    func.min(ForestrySchemaModel.ord),
+                )
+            )
+            .select_from(ForestrySchemaModel)
+            .where(ForestrySchemaModel.schema_id == forestry_alias.schema_id)
+            .correlate(forestry_alias)
+            .scalar_subquery()
+        )
+
         forestry_subq = (
             select(
                 func.coalesce(
@@ -171,12 +334,40 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                         forestry_alias.created_at,
                         "updated_at",
                         forestry_alias.updated_at,
+                        "regional",
+                        regional_subq,
+                        "schema",
+                        schema_subq,
+                        "kph_account",
+                        kph_account_subq,
+                        "vertex_detail",
+                        vertex_subq,
+                        "kh_detail",
+                        area_subq,
+                        "assist_accounts",
+                        assist_users_subq,
                     ),
                     func.cast("{}", JSON),
                 )
             )
             .select_from(forestry_alias)
             .where(self.model.forestry_id == forestry_alias.id)
+            .outerjoin(
+                ProposalforestryStatusModel,
+                forestry_alias.vertex == ProposalforestryStatusModel.proposal_forestry_vertex,
+            )
+            .outerjoin(
+                RegionalModel,
+                forestry_alias.regional_id == RegionalModel.id,
+            )
+            .outerjoin(
+                ForestrySchemaModel,
+                forestry_alias.schema_id == ForestrySchemaModel.schema_id,
+            )
+            .outerjoin(
+                user_alias,
+                forestry_alias.kph_account_id == user_alias.id,
+            )
             .correlate(self.model)
             .scalar_subquery()
         )
@@ -221,7 +412,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                 operational_status_alias,
                 self.model.operational_status_id == operational_status_alias.id,
             )
-            .group_by(self.model.id, class_alias.id, operational_status_alias.id)
+            .group_by(self.model.id)
         )
 
     @override

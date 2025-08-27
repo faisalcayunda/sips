@@ -139,6 +139,74 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
             .scalar_subquery()
         )
 
+        vertex_subq = (
+            select(
+                func.json_object(
+                    "id",
+                    ProposalforestryStatusModel.id,
+                    "name",
+                    ProposalforestryStatusModel.name,
+                    "proposal_forestry_vertex",
+                    ProposalforestryStatusModel.proposal_forestry_vertex,
+                    "description",
+                    ProposalforestryStatusModel.description,
+                )
+            )
+            .select_from(ProposalforestryStatusModel)
+            .where(ProposalforestryStatusModel.proposal_forestry_vertex == self.model.vertex)
+            .correlate(self.model)
+            .scalar_subquery()
+        )
+
+        kph_account_subq = (
+            select(
+                func.json_object(
+                    "id",
+                    user_alias.id,
+                    "name",
+                    user_alias.name,
+                    "email",
+                    user_alias.email,
+                    "phone",
+                    user_alias.phone,
+                    "agency_name",
+                    user_alias.agency_name,
+                    "agency_type",
+                    user_alias.agency_type,
+                    "avatar",
+                    user_alias.avatar,
+                    "enable",
+                    user_alias.enable,
+                    "role_id",
+                    user_alias.role_id,
+                    "is_verified",
+                    user_alias.is_verified,
+                )
+            )
+            .select_from(user_alias)
+            .where(user_alias.id == self.model.kph_account_id)
+            .correlate(self.model)
+            .scalar_subquery()
+        )
+
+        schema_subq = (
+            select(
+                func.json_object(
+                    "schema_id",
+                    func.min(ForestrySchemaModel.schema_id),
+                    "name",
+                    func.min(ForestrySchemaModel.name),
+                    "description",
+                    func.min(ForestrySchemaModel.description),
+                    "ord",
+                    func.min(ForestrySchemaModel.ord),
+                )
+            )
+            .select_from(ForestrySchemaModel)
+            .where(ForestrySchemaModel.schema_id == self.model.schema_id)
+            .correlate(self.model)
+            .scalar_subquery()
+        )
         return (
             select(
                 self.model.id.label("id"),
@@ -169,49 +237,10 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                 func.min(self.model.updated_at).label("updated_at"),
                 assist_users_subq.label("assist_accounts"),
                 area_subq.label("kh_detail"),
-                func.json_object(
-                    "id",
-                    func.min(ProposalforestryStatusModel.id),
-                    "name",
-                    func.min(ProposalforestryStatusModel.name),
-                    "proposal_forestry_vertex",
-                    func.min(ProposalforestryStatusModel.proposal_forestry_vertex),
-                    "description",
-                    func.min(ProposalforestryStatusModel.description),
-                ).label("vertex_detail"),
-                func.json_object(
-                    "id",
-                    func.min(user_alias.id),
-                    "name",
-                    func.min(user_alias.name),
-                    "email",
-                    func.min(user_alias.email),
-                    "phone",
-                    func.min(user_alias.phone),
-                    "agency_name",
-                    func.min(user_alias.agency_name),
-                    "agency_type",
-                    func.min(user_alias.agency_type),
-                    "avatar",
-                    func.min(user_alias.avatar),
-                    "enable",
-                    func.min(user_alias.enable),
-                    "role_id",
-                    func.min(user_alias.role_id),
-                    "is_verified",
-                    func.min(user_alias.is_verified),
-                ).label("kph_account"),
+                vertex_subq.label("vertex_detail"),
+                kph_account_subq.label("kph_account"),
                 regional_subq.label("regional"),
-                func.json_object(
-                    "schema_id",
-                    func.min(ForestrySchemaModel.schema_id),
-                    "name",
-                    func.min(ForestrySchemaModel.name),
-                    "description",
-                    func.min(ForestrySchemaModel.description),
-                    "ord",
-                    func.min(ForestrySchemaModel.ord),
-                ).label("schema"),
+                schema_subq.label("schema"),
             )
             .select_from(self.model)
             .outerjoin(
