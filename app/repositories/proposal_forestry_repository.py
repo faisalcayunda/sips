@@ -116,6 +116,29 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
             .scalar_subquery()
         )
 
+        regional_subq = (
+            select(
+                func.json_object(
+                    "id",
+                    RegionalModel.id,
+                    "name",
+                    RegionalModel.name,
+                    "parent",
+                    RegionalModel.parent,
+                    "group",
+                    RegionalModel.group,
+                    "created_at",
+                    RegionalModel.created_at,
+                    "created_by",
+                    RegionalModel.created_by,
+                )
+            )
+            .select_from(RegionalModel)
+            .where(RegionalModel.id == self.model.regional_id)
+            .correlate(self.model)
+            .scalar_subquery()
+        )
+
         return (
             select(
                 self.model.id.label("id"),
@@ -178,20 +201,7 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                     "is_verified",
                     func.min(user_alias.is_verified),
                 ).label("kph_account"),
-                func.json_object(
-                    "id",
-                    func.min(RegionalModel.id),
-                    "name",
-                    func.min(RegionalModel.name),
-                    "parent",
-                    func.min(RegionalModel.parent),
-                    "group",
-                    func.min(RegionalModel.group),
-                    "created_at",
-                    func.min(RegionalModel.created_at),
-                    "created_by",
-                    func.min(RegionalModel.created_by),
-                ).label("regional"),
+                regional_subq.label("regional"),
                 func.json_object(
                     "schema_id",
                     func.min(ForestrySchemaModel.schema_id),

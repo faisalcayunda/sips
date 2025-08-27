@@ -30,7 +30,7 @@ class ProposalForestrySchema(BaseSchema):
     regional: Optional[RegionalSchema] = Field(default={})
     vertex_detail: Optional[dict] = Field(default={})
     kh_detail: Optional[List] = Field(default=[])
-    forestry_sk: str
+    forestry_sk: Optional[str] = None
     nagari_sk: Optional[str] = None
     status: Optional[str]
     is_valid: YesNoEnum
