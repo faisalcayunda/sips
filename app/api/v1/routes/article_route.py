@@ -56,7 +56,7 @@ async def get_rating(
     id: str,
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
 ) -> Any | ArticleRatingSchema:
-    return await service.find_by_id(id)
+    return await service.find_by_slug(id)
 
 
 @router.post(
@@ -130,7 +130,7 @@ async def get_comment(
     id: str,
     service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
 ) -> Any | ArticleCommentSchema:
-    return await service.find_by_id(id)
+    return await service.find_by_slug(id)
 
 
 @router.post(

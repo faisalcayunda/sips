@@ -31,3 +31,6 @@ class ArticleCommentService(BaseService[ArticleCommentModel, ArticleCommentRepos
             data["article_id"] = article.id
 
         return await self.repository.update(id, data, refresh=refresh)
+
+    async def find_by_slug(self, slug: str) -> ArticleCommentModel:
+        return await self.repository.find_by_slug(slug)
