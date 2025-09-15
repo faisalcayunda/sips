@@ -20,5 +20,6 @@ class ArticleRatingCreateSchema(BaseSchema):
 
 
 class ArticleRatingUpdateSchema(BaseSchema):
+    article_slug: Optional[str] = None
     rating: Optional[int] = None
     comment: Optional[str] = None
