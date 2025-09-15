@@ -3,6 +3,7 @@ from functools import partial
 from app.core.minio_client import MinioClient
 from app.models import (
     ArticleModel,
+    ArticleRatingModel,
     AttachmentModel,
     BusinessesModel,
     BusinessHarvestModel,
@@ -27,6 +28,7 @@ from app.models import (
     UserModel,
 )
 from app.repositories import (
+    ArticleRatingRepository,
     ArticleRepository,
     AttachmentRepository,
     BusinessesRepository,
@@ -52,6 +54,7 @@ from app.repositories import (
     UserRepository,
 )
 from app.services import (
+    ArticleRatingService,
     ArticleService,
     AttachmentService,
     AuthService,
@@ -173,6 +176,10 @@ class RepositoryFactory:
     def create_piaps_records_repository() -> PiapsRecordsRepository:
         return PiapsRecordsRepository(PiapsRecordsModel)
 
+    @staticmethod
+    def create_article_rating_repository() -> ArticleRatingRepository:
+        return ArticleRatingRepository(ArticleRatingModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -275,6 +282,10 @@ class ServiceFactory:
         """Get PiapsRecordsService instance."""
         return PiapsRecordsService(self.repository_factory.create_piaps_records_repository())
 
+    def get_article_rating_service(self) -> ArticleRatingService:
+        """Get ArticleRatingService instance."""
+        return ArticleRatingService(self.repository_factory.create_article_rating_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -308,3 +319,4 @@ class Factory(ServiceFactory):
         self.farmer_incomes_repository = staticmethod(partial(FarmerIncomesRepository, FarmerIncomesModel))
         self.economic_values_repository = staticmethod(partial(EconomicValuesRepository, EconomicValueModel))
         self.piaps_records_repository = staticmethod(partial(PiapsRecordsRepository, PiapsRecordsModel))
+        self.article_rating_repository = staticmethod(partial(ArticleRatingRepository, ArticleRatingModel))

@@ -1,3 +1,8 @@
+from .article_rating_schema import (
+    ArticleRatingCreateSchema,
+    ArticleRatingSchema,
+    ArticleRatingUpdateSchema,
+)
 from .article_schema import ArticleCreateSchema, ArticleSchema, ArticleUpdateSchema
 from .business_harvest_schema import BusinessHarvestSchema
 from .business_product_schema import (
@@ -66,4 +71,7 @@ __all__ = [
     "EconomicValuesSchema",
     "EconomicValuesCreateSchema",
     "EconomicValuesUpdateSchema",
+    "ArticleRatingSchema",
+    "ArticleRatingCreateSchema",
+    "ArticleRatingUpdateSchema",
 ]

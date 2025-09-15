@@ -15,6 +15,7 @@ class ForestryProposalModel(Base):
         "fore_kps_id",
         Integer,
         primary_key=True,
+        autoincrement=False,
     )
     regional_id = Column(
         "reg_id",

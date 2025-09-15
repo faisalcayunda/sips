@@ -1,4 +1,5 @@
 from .article_model import ArticleModel
+from .article_rating_model import ArticleRatingModel
 from .attachment_model import AttachmentModel
 from .base import Base
 from .business_class_model import BusinessClassModel
@@ -33,7 +34,6 @@ __all__ = [
     "BusinessOperationalStatusModel",
     "BusinessServiceModel",
     "FileModel",
-    "OrganizationModel",
     "ForestrySchemaModel",
     "RefreshTokenModel",
     "RegionalModel",
@@ -53,4 +53,5 @@ __all__ = [
     "FarmerIncomesModel",
     "PiapsRecordsModel",
     "EconomicValueModel",
+    "ArticleRatingModel",
 ]

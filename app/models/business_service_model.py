@@ -91,7 +91,6 @@ class BusinessServiceModel(Base):
     updated_at = Column(
         "update_at",
         DateTime,
-        nullable=True,
         default=lambda: datetime.now(timezone(settings.TIMEZONE)),
         onupdate=lambda: datetime.now(timezone(settings.TIMEZONE)),
     )

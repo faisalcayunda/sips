@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class UserRepository(BaseRepository[UserModel]):
-    def __init__(self, model: UserModel, session: Optional[AsyncSession] = None):
+    def __init__(self, model: type[UserModel], session: Optional[AsyncSession] = None):
         super().__init__(model, session)
 
     async def find_by_username(self, username: str) -> Optional[UserModel]:

@@ -7,14 +7,92 @@ from app.api.dependencies.factory import ServiceFactory
 from app.core.params import CommonParams
 from app.schemas import (
     ArticleCreateSchema,
+    ArticleRatingCreateSchema,
+    ArticleRatingSchema,
+    ArticleRatingUpdateSchema,
     ArticleSchema,
     ArticleUpdateSchema,
     UserSchema,
 )
+from app.schemas.article_rating_schema import ArticleRatingSchema
 from app.schemas.base import PaginatedResponse
-from app.services import ArticleService
+from app.services import ArticleRatingService, ArticleService
 
 router = APIRouter()
+
+
+@router.get("/articles/ratings", response_model=PaginatedResponse[ArticleRatingSchema])
+async def get_piaps_list(
+    params: CommonParams = Depends(),
+    service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
+) -> PaginatedResponse[ArticleRatingSchema]:
+    filter = params.filter
+    sort = params.sort
+    search = params.search
+    group_by = params.group_by
+    limit = params.limit
+    offset = params.offset
+    rating_list, total = await service.find_all(
+        filters=filter,
+        sort=sort,
+        search=search,
+        group_by=group_by,
+        limit=limit,
+        offset=offset,
+    )
+
+    return PaginatedResponse[ArticleRatingSchema](
+        items=[ArticleRatingSchema.model_validate(rating) for rating in rating_list],
+        total=total,
+        limit=limit,
+        offset=offset,
+        has_more=total > (offset + limit),
+    )
+
+
+@router.get("/articles/ratings/{id}", response_model=ArticleRatingSchema)
+async def get_piaps(
+    id: str,
+    service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
+) -> Any | ArticleRatingSchema:
+    return await service.find_by_id(id)
+
+
+@router.post(
+    "/articles/ratings",
+    response_model=ArticleRatingSchema,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_piaps(
+    data: ArticleRatingCreateSchema,
+    service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
+):
+    return await service.create(data.model_dump())
+
+
+@router.patch(
+    "/articles/ratings/{id}",
+    response_model=ArticleRatingSchema,
+    dependencies=[Depends(get_current_active_user)],
+)
+async def update_piaps(
+    id: str,
+    data: ArticleRatingUpdateSchema,
+    service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
+):
+    return await service.update(id, data.dict(exclude_unset=True))
+
+
+@router.delete(
+    "/articles/ratings/{id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(get_current_active_user)],
+)
+async def delete_piaps(
+    id: str,
+    service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
+):
+    await service.delete(id)
 
 
 @router.get("/articles", response_model=PaginatedResponse[ArticleSchema])

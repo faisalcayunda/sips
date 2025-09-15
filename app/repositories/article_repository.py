@@ -19,7 +19,7 @@ class ArticleRepository(BaseRepository[ArticleModel]):
         if not article:
             raise NotFoundException("Article not found")
 
-        article.counter = +1
+        article.counter += 1
         await db.session.commit()
         return article
 
@@ -29,6 +29,6 @@ class ArticleRepository(BaseRepository[ArticleModel]):
         if not article:
             raise NotFoundException("Article not found")
 
-        article.counter = +1
+        article.counter += 1
         await db.session.commit()
         return article
