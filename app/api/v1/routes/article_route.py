@@ -6,6 +6,7 @@ from app.api.dependencies.auth import get_current_active_user
 from app.api.dependencies.factory import ServiceFactory
 from app.core.params import CommonParams
 from app.schemas import (
+    ArticleCommentSchema,
     ArticleCreateSchema,
     ArticleRatingCreateSchema,
     ArticleRatingSchema,
@@ -16,7 +17,7 @@ from app.schemas import (
 )
 from app.schemas.article_rating_schema import ArticleRatingSchema
 from app.schemas.base import PaginatedResponse
-from app.services import ArticleRatingService, ArticleService
+from app.services import ArticleCommentService, ArticleRatingService, ArticleService
 
 router = APIRouter()
 
@@ -91,6 +92,80 @@ async def update_rating(
 async def delete_rating(
     id: str,
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
+):
+    await service.delete(id)
+
+
+@router.get("/articles/comments", response_model=PaginatedResponse[ArticleCommentSchema])
+async def get_comment_list(
+    params: CommonParams = Depends(),
+    service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
+) -> PaginatedResponse[ArticleCommentSchema]:
+    filter = params.filter
+    sort = params.sort
+    search = params.search
+    group_by = params.group_by
+    limit = params.limit
+    offset = params.offset
+    rating_list, total = await service.find_all(
+        filters=filter,
+        sort=sort,
+        search=search,
+        group_by=group_by,
+        limit=limit,
+        offset=offset,
+    )
+
+    return PaginatedResponse[ArticleCommentSchema](
+        items=[ArticleCommentSchema.model_validate(rating) for rating in rating_list],
+        total=total,
+        limit=limit,
+        offset=offset,
+        has_more=total > (offset + limit),
+    )
+
+
+@router.get("/articles/comments/{id}", response_model=ArticleCommentSchema)
+async def get_comment(
+    id: str,
+    service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
+) -> Any | ArticleCommentSchema:
+    return await service.find_by_id(id)
+
+
+@router.post(
+    "/articles/comments",
+    response_model=ArticleCommentSchema,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_comment(
+    data: ArticleRatingCreateSchema,
+    service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
+):
+    return await service.create(data.model_dump())
+
+
+@router.patch(
+    "/articles/comments/{id}",
+    response_model=ArticleCommentSchema,
+    dependencies=[Depends(get_current_active_user)],
+)
+async def update_comment(
+    id: str,
+    data: ArticleRatingUpdateSchema,
+    service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
+):
+    return await service.update(id, data.model_dump(exclude_unset=True))
+
+
+@router.delete(
+    "/articles/comments/{id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(get_current_active_user)],
+)
+async def delete_comment(
+    id: str,
+    service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
 ):
     await service.delete(id)
 

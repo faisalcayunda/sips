@@ -2,6 +2,7 @@ from functools import partial
 
 from app.core.minio_client import MinioClient
 from app.models import (
+    ArticleCommentModel,
     ArticleModel,
     ArticleRatingModel,
     AttachmentModel,
@@ -28,6 +29,7 @@ from app.models import (
     UserModel,
 )
 from app.repositories import (
+    ArticleCommentRepository,
     ArticleRatingRepository,
     ArticleRepository,
     AttachmentRepository,
@@ -54,6 +56,7 @@ from app.repositories import (
     UserRepository,
 )
 from app.services import (
+    ArticleCommentService,
     ArticleRatingService,
     ArticleService,
     AttachmentService,
@@ -180,6 +183,10 @@ class RepositoryFactory:
     def create_article_rating_repository() -> ArticleRatingRepository:
         return ArticleRatingRepository(ArticleRatingModel)
 
+    @staticmethod
+    def create_article_comment_repository() -> ArticleCommentRepository:
+        return ArticleCommentRepository(ArticleCommentModel)
+
 
 class ServiceFactory:
     """Factory untuk membuat service instances."""
@@ -285,6 +292,10 @@ class ServiceFactory:
     def get_article_rating_service(self) -> ArticleRatingService:
         """Get ArticleRatingService instance."""
         return ArticleRatingService(self.repository_factory.create_article_rating_repository())
+
+    def get_article_comment_service(self) -> ArticleCommentService:
+        """Get ArticleCommentService instance."""
+        return ArticleCommentService(self.repository_factory.create_article_comment_repository())
 
 
 # Backward compatibility - maintain existing interface

@@ -1,3 +1,4 @@
+from .article_comment_repository import ArticleCommentRepository
 from .article_rating_repository import ArticleRatingRepository
 from .article_repository import ArticleRepository
 from .attachment_repository import AttachmentRepository
@@ -50,4 +51,5 @@ __all__ = [
     "FarmerIncomesRepository",
     "PiapsRecordsRepository",
     "EconomicValuesRepository",
+    "ArticleCommentRepository",
 ]

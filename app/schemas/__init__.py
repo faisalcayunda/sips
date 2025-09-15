@@ -1,3 +1,8 @@
+from .article_comment_schema import (
+    ArticleCommentCreateSchema,
+    ArticleCommentSchema,
+    ArticleCommentUpdateSchema,
+)
 from .article_rating_schema import (
     ArticleRatingCreateSchema,
     ArticleRatingSchema,
@@ -74,4 +79,7 @@ __all__ = [
     "ArticleRatingSchema",
     "ArticleRatingCreateSchema",
     "ArticleRatingUpdateSchema",
+    "ArticleCommentSchema",
+    "ArticleCommentCreateSchema",
+    "ArticleCommentUpdateSchema",
 ]

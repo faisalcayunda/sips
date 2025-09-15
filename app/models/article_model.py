@@ -10,7 +10,7 @@ from .base import Base
 
 class ArticleModel(Base):
     __tablename__ = "articles"
-    id = Column("article_id", Integer, primary_key=True, autoincrement=True, nullable=False)
+    id = Column("id", Integer, primary_key=True, autoincrement=True, nullable=False)
 
     title = Column("article_title", String(128), nullable=False)
     slug = Column("article_slug", String(256), nullable=False, index=True)

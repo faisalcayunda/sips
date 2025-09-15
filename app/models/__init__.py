@@ -1,3 +1,4 @@
+from .article_comment_model import ArticleCommentModel
 from .article_model import ArticleModel
 from .article_rating_model import ArticleRatingModel
 from .attachment_model import AttachmentModel
@@ -29,6 +30,7 @@ from .user_model import UserModel
 __all__ = [
     "Base",
     "ArticleModel",
+    "ArticleCommentModel",
     "BusinessesModel",
     "BusinessClassModel",
     "BusinessOperationalStatusModel",

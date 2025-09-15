@@ -1,3 +1,4 @@
+from .article_comment_service import ArticleCommentService
 from .article_rating_service import ArticleRatingService
 from .article_service import ArticleService
 from .attachment_service import AttachmentService
@@ -50,4 +51,5 @@ __all__ = [
     "EconomicValuesService",
     "PiapsRecordsService",
     "FarmerIncomesService",
+    "ArticleCommentService",
 ]
