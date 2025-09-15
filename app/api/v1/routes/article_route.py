@@ -22,7 +22,7 @@ router = APIRouter()
 
 
 @router.get("/articles/ratings", response_model=PaginatedResponse[ArticleRatingSchema])
-async def get_piaps_list(
+async def get_rating_list(
     params: CommonParams = Depends(),
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
 ) -> PaginatedResponse[ArticleRatingSchema]:
@@ -51,7 +51,7 @@ async def get_piaps_list(
 
 
 @router.get("/articles/ratings/{id}", response_model=ArticleRatingSchema)
-async def get_piaps(
+async def get_rating(
     id: str,
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
 ) -> Any | ArticleRatingSchema:
@@ -63,7 +63,7 @@ async def get_piaps(
     response_model=ArticleRatingSchema,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_piaps(
+async def create_rating(
     data: ArticleRatingCreateSchema,
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
 ):
@@ -75,7 +75,7 @@ async def create_piaps(
     response_model=ArticleRatingSchema,
     dependencies=[Depends(get_current_active_user)],
 )
-async def update_piaps(
+async def update_rating(
     id: str,
     data: ArticleRatingUpdateSchema,
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
@@ -88,7 +88,7 @@ async def update_piaps(
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(get_current_active_user)],
 )
-async def delete_piaps(
+async def delete_rating(
     id: str,
     service: ArticleRatingService = Depends(ServiceFactory().get_article_rating_service),
 ):

@@ -9,8 +9,6 @@ class ArticleRatingSchema(BaseSchema):
     article_slug: str
     rating: int
     comment: Optional[str] = None
-    created_by: str
-    updated_by: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
