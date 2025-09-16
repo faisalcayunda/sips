@@ -19,16 +19,21 @@ class ArticleRepository(BaseRepository[ArticleModel]):
         if not article:
             raise NotFoundException("Article not found")
 
-        article.counter += 1
+        await db.session.execute(
+            ArticleModel.__table__.update().where(ArticleModel.id == id).values(counter=ArticleModel.counter + 1)
+        )
         await db.session.commit()
+        await db.session.refresh(article)
         return article
 
-    @override
     async def find_by_slug(self, slug: str, relationships: Optional[List[str]] = None) -> Optional[ArticleModel]:
         article = await db.session.scalar(select(ArticleModel).filter(ArticleModel.slug == slug))
         if not article:
             raise NotFoundException("Article not found")
 
-        article.counter += 1
+        await db.session.execute(
+            ArticleModel.__table__.update().where(ArticleModel.slug == slug).values(counter=ArticleModel.counter + 1)
+        )
         await db.session.commit()
+        await db.session.refresh(article)
         return article
