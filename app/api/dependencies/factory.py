@@ -12,12 +12,12 @@ from app.models import (
     BusinessServiceModel,
     CommodityModel,
     EconomicValueModel,
-    FarmerIncomesModel,
     FileModel,
     ForestryAreaModel,
     ForestryLandModel,
     ForestryProposalModel,
     ForestrySchemaModel,
+    IncomeModel,
     NavigationModel,
     PermitModel,
     PiapsModel,
@@ -169,7 +169,7 @@ class RepositoryFactory:
 
     @staticmethod
     def create_farmer_incomes_repository() -> FarmerIncomesRepository:
-        return FarmerIncomesRepository(FarmerIncomesModel)
+        return FarmerIncomesRepository(IncomeModel)
 
     @staticmethod
     def create_economic_values_repository() -> EconomicValuesRepository:
@@ -327,7 +327,7 @@ class Factory(ServiceFactory):
         self.commodity_repository = staticmethod(partial(CommodityRepository, CommodityModel))
         self.business_service_repository = staticmethod(partial(BusinessServiceRepository, BusinessServiceModel))
         self.article_repository = staticmethod(partial(ArticleRepository, ArticleModel))
-        self.farmer_incomes_repository = staticmethod(partial(FarmerIncomesRepository, FarmerIncomesModel))
+        self.farmer_incomes_repository = staticmethod(partial(FarmerIncomesRepository, IncomeModel))
         self.economic_values_repository = staticmethod(partial(EconomicValuesRepository, EconomicValueModel))
         self.piaps_records_repository = staticmethod(partial(PiapsRecordsRepository, PiapsRecordsModel))
         self.article_rating_repository = staticmethod(partial(ArticleRatingRepository, ArticleRatingModel))

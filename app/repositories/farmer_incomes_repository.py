@@ -1,8 +1,8 @@
-from app.models import FarmerIncomesModel
+from app.models import IncomeModel
 
 from . import BaseRepository
 
 
-class FarmerIncomesRepository(BaseRepository[FarmerIncomesModel]):
-    def __init__(self, model: type[FarmerIncomesModel]):
+class FarmerIncomesRepository(BaseRepository[IncomeModel]):
+    def __init__(self, model: type[IncomeModel]):
         super().__init__(model)

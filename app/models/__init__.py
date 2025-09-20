@@ -11,7 +11,7 @@ from .business_service_model import BusinessServiceModel
 from .businesses_model import BusinessesModel
 from .commodity_model import CommodityModel
 from .economic_values_model import EconomicValueModel
-from .farmer_incomes_model import FarmerIncomesModel
+from .farmer_incomes_model import IncomeModel
 from .file_model import FileModel
 from .forestry_area import ForestryAreaModel
 from .forestry_land_model import ForestryLandModel
@@ -52,7 +52,7 @@ __all__ = [
     "BusinessProductModel",
     "BusinessHarvestModel",
     "CommodityModel",
-    "FarmerIncomesModel",
+    "IncomeModel",
     "PiapsRecordsModel",
     "EconomicValueModel",
     "ArticleRatingModel",
