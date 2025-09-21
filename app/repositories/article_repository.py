@@ -26,7 +26,7 @@ class ArticleRepository(BaseRepository[ArticleModel]):
                 self.model.enable,
                 self.model.cover,
                 self.model.counter,
-                func.avg(func.nullif(ArticleRatingModel.rating, None)).label("rating"),
+                func.coalesce(func.avg(func.nullif(ArticleRatingModel.rating, 0)), 0).label("rating"),
                 self.model.created_by,
                 self.model.updated_by,
                 self.model.created_at,
@@ -135,6 +135,7 @@ class ArticleRepository(BaseRepository[ArticleModel]):
             ArticleModel.__table__.update().where(ArticleModel.id == id).values(counter=ArticleModel.counter + 1)
         )
         await db.session.commit()
+        print(article)
 
         return article
 
