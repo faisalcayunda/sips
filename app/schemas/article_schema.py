@@ -12,6 +12,7 @@ class ArticleSchema(BaseSchema):
     enable: str
     cover: Optional[str] = None
     counter: Optional[int] = None
+    rating: Optional[float] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
