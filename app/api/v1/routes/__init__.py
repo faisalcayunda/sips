@@ -12,6 +12,7 @@ from .file_route import router as file_router
 from .forestry_area_route import router as forestry_area_router
 from .forestry_land_route import router as forestry_land_router
 from .forestry_schema_route import router as forestry_schema_router
+from .infographic_route import router as infographic_router
 from .navigation_route import router as navigation_router
 from .permit_route import router as permit_router
 from .piaps_records_route import router as piaps_records_router
@@ -46,4 +47,5 @@ __all__ = [
     "economic_values_router",
     "piaps_records_router",
     "farmer_incomes_router",
+    "infographic_router",
 ]

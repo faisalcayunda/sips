@@ -15,6 +15,7 @@ from .file_service import FileService
 from .forestry_area_service import ForestryAreaService
 from .forestry_land_service import ForestryLandService
 from .forestry_schema_service import ForestrySchemaService
+from .infographic_service import InfographicService
 from .navigation_service import NavigationService
 from .permit_service import PermitService
 from .piaps_records_service import PiapsRecordsService
@@ -52,4 +53,5 @@ __all__ = [
     "PiapsRecordsService",
     "FarmerIncomesService",
     "ArticleCommentService",
+    "InfographicService",
 ]
