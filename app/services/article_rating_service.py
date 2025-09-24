@@ -13,9 +13,13 @@ class ArticleRatingService(BaseService[ArticleRatingModel, ArticleRatingReposito
 
     @override
     async def create(self, data: dict) -> ArticleRatingModel:
-        article = await self.repository.find_by_slug(data["article_slug"])
+        article_slug = data.get("article_slug")
+        if not article_slug:
+            raise NotFoundException("Article slug is required")
+
+        article = await self.repository.find_by_slug(article_slug)
         if not article:
-            raise NotFoundException("Article not found")
+            raise NotFoundException(f"Article with slug '{article_slug}' not found")
 
         data["article_id"] = article.id
 
