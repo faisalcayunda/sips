@@ -14,7 +14,7 @@ class ArticleRatingModel(Base):
     id = Column("rating_id", Integer, primary_key=True, autoincrement=True, nullable=False)
     article_id = Column("article_id", Integer, nullable=False, index=True)
     article_slug = Column("article_slug", String(256), nullable=False, index=True)
-    rating = Column("rating", Integer, nullable=False)  # 1-5 misal
+    rating = Column("rating", Integer, default=0, nullable=False)  # 1-5 misal
     comment = Column("comment", Text, nullable=True)
 
     created_at = Column(

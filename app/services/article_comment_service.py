@@ -2,18 +2,23 @@ from typing import override
 
 from app.core.exceptions import NotFoundException
 from app.models import ArticleCommentModel
-from app.repositories import ArticleCommentRepository
+from app.repositories import ArticleCommentRepository, ArticleRepository
 
 from .base import BaseService
 
 
 class ArticleCommentService(BaseService[ArticleCommentModel, ArticleCommentRepository]):
-    def __init__(self, repository: ArticleCommentRepository):
+    def __init__(
+        self,
+        repository: ArticleCommentRepository,
+        article_repository: ArticleRepository,
+    ):
+        self.article_repository = article_repository
         super().__init__(ArticleCommentModel, repository)
 
     @override
     async def create(self, data: dict) -> ArticleCommentModel:
-        article = await self.repository.find_by_slug(data["article_slug"])
+        article = await self.article_repository.find_by_slug(data["article_slug"])
         if not article:
             raise NotFoundException("Article not found")
 

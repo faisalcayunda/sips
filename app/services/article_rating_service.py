@@ -2,13 +2,14 @@ from typing import override
 
 from app.core.exceptions import NotFoundException
 from app.models import ArticleRatingModel
-from app.repositories import ArticleRatingRepository
+from app.repositories import ArticleRatingRepository, ArticleRepository
 
 from .base import BaseService
 
 
 class ArticleRatingService(BaseService[ArticleRatingModel, ArticleRatingRepository]):
-    def __init__(self, repository: ArticleRatingRepository):
+    def __init__(self, repository: ArticleRatingRepository, article_repo: ArticleRepository):
+        self.article_repo = article_repo
         super().__init__(ArticleRatingModel, repository)
 
     @override
@@ -17,7 +18,7 @@ class ArticleRatingService(BaseService[ArticleRatingModel, ArticleRatingReposito
         if not article_slug:
             raise NotFoundException("Article slug is required")
 
-        article = await self.repository.find_by_slug(article_slug)
+        article = await self.article_repo.find_by_slug(article_slug)
         if not article:
             raise NotFoundException(f"Article with slug '{article_slug}' not found")
 

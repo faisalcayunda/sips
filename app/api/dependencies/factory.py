@@ -297,11 +297,17 @@ class ServiceFactory:
 
     def get_article_rating_service(self) -> ArticleRatingService:
         """Get ArticleRatingService instance."""
-        return ArticleRatingService(self.repository_factory.create_article_rating_repository())
+        return ArticleRatingService(
+            self.repository_factory.create_article_rating_repository(),
+            self.repository_factory.create_article_repository(),
+        )
 
     def get_article_comment_service(self) -> ArticleCommentService:
         """Get ArticleCommentService instance."""
-        return ArticleCommentService(self.repository_factory.create_article_comment_repository())
+        return ArticleCommentService(
+            self.repository_factory.create_article_comment_repository(),
+            self.repository_factory.create_article_repository(),
+        )
 
     def get_infographic_service(self) -> InfographicService:
         """Get InfographicService instance."""

@@ -15,7 +15,10 @@ from app.schemas import (
     ArticleUpdateSchema,
     UserSchema,
 )
-from app.schemas.article_comment_schema import ArticleCommentUpdateSchema
+from app.schemas.article_comment_schema import (
+    ArticleCommentCreateSchema,
+    ArticleCommentUpdateSchema,
+)
 from app.schemas.article_rating_schema import ArticleRatingSchema
 from app.schemas.base import PaginatedResponse
 from app.services import ArticleCommentService, ArticleRatingService, ArticleService
@@ -140,7 +143,7 @@ async def get_comment(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_comment(
-    data: ArticleCommentSchema,
+    data: ArticleCommentCreateSchema,
     service: ArticleCommentService = Depends(ServiceFactory().get_article_comment_service),
 ):
     return await service.create(data.model_dump())
