@@ -15,6 +15,7 @@ from .forestry_area_repository import ForestryAreaRepository
 from .forestry_land_repository import ForestryLandRepository
 from .forestry_schema_repository import ForestrySchemaRepository
 from .infographic_repository import InfographicRepository
+from .maps_repository import MapsRepository
 from .navigation_repository import NavigationRepository
 from .permit_repository import PermitRepository
 from .piaps_records_repository import PiapsRecordsRepository
@@ -54,4 +55,5 @@ __all__ = [
     "EconomicValuesRepository",
     "ArticleCommentRepository",
     "InfographicRepository",
+    "MapsRepository",
 ]

@@ -16,6 +16,7 @@ from app.api.v1.routes import (
     forestry_land_router,
     forestry_schema_router,
     infographic_router,
+    maps_router,
     navigation_router,
     permit_router,
     piaps_records_router,
@@ -43,6 +44,7 @@ router.include_router(forestry_area_router, tags=["Forestry Areas"])
 router.include_router(forestry_land_router, tags=["Forestry Lands"])
 router.include_router(forestry_schema_router, tags=["Forestry Schemas"])
 router.include_router(infographic_router, tags=["Infographics"])
+router.include_router(maps_router, tags=["Maps"])
 router.include_router(navigation_router, tags=["Navigations"])
 router.include_router(regional_router, tags=["Regionals"])
 router.include_router(roles_router, tags=["Roles"])

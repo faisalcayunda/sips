@@ -46,6 +46,7 @@ from app.repositories import (
     ForestryProposalRepository,
     ForestrySchemaRepository,
     InfographicRepository,
+    MapsRepository,
     NavigationRepository,
     PermitRepository,
     PiapsRecordsRepository,
@@ -75,6 +76,7 @@ from app.services import (
     ForestrySchemaService,
     ForestyProposalService,
     InfographicService,
+    MapsService,
     NavigationService,
     PermitService,
     PiapsRecordsService,
@@ -192,6 +194,10 @@ class RepositoryFactory:
     @staticmethod
     def create_infographic_repository() -> InfographicRepository:
         return InfographicRepository()
+
+    @staticmethod
+    def create_maps_repository() -> MapsRepository:
+        return MapsRepository()
 
 
 class ServiceFactory:
@@ -313,6 +319,10 @@ class ServiceFactory:
         """Get InfographicService instance."""
         return InfographicService(self.repository_factory.create_infographic_repository())
 
+    def get_maps_service(self) -> MapsService:
+        """Get MapsService instance."""
+        return MapsService(self.repository_factory.create_maps_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -348,3 +358,4 @@ class Factory(ServiceFactory):
         self.piaps_records_repository = staticmethod(partial(PiapsRecordsRepository, PiapsRecordsModel))
         self.article_rating_repository = staticmethod(partial(ArticleRatingRepository, ArticleRatingModel))
         self.infographic_repository = staticmethod(partial(InfographicRepository))
+        self.maps_repository = staticmethod(partial(MapsRepository))
