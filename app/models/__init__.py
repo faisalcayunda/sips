@@ -1,3 +1,4 @@
+from .adm_model import AdmModel
 from .article_comment_model import ArticleCommentModel
 from .article_model import ArticleModel
 from .article_rating_model import ArticleRatingModel
@@ -25,6 +26,7 @@ from .proposal_forestry_status_model import ProposalforestryStatusModel
 from .refresh_token_model import RefreshTokenModel
 from .regional_model import RegionalModel
 from .roles_model import RolesModel
+from .stat_ig_model import StatIGModel
 from .user_model import UserModel
 
 __all__ = [
@@ -56,4 +58,6 @@ __all__ = [
     "PiapsRecordsModel",
     "EconomicValueModel",
     "ArticleRatingModel",
+    "StatIGModel",
+    "AdmModel",
 ]
