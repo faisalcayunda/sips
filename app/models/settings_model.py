@@ -1,6 +1,4 @@
-from tokenize import String
-
-from sqlalchemy import Column
+from sqlalchemy import Column, String
 from sqlalchemy.types import JSON
 
 from . import Base

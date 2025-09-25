@@ -25,6 +25,7 @@ from .proposal_forestry_service import ForestyProposalService
 from .proposal_forestry_status_service import ProposalforestryStatusService
 from .regional_service import RegionalService
 from .roles_service import RolesService
+from .settings_service import SettingsService
 from .user_service import UserService
 
 __all__ = [
@@ -56,4 +57,5 @@ __all__ = [
     "ArticleCommentService",
     "InfographicService",
     "MapsService",
+    "SettingsService",
 ]

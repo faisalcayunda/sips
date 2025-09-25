@@ -1,5 +1,5 @@
 from ast import Dict
-from typing import Any, override
+from typing import Any, Dict, override
 
 from fastapi_async_sqlalchemy import db
 from sqlalchemy import select
@@ -28,8 +28,6 @@ class SettingsRepository(BaseRepository[SettingsModel]):
         setting = await self.find_key(key)
         if not setting:
             raise NotFoundException(f"Setting with key {key} not found.")
-        if refresh:
-            await db.session.refresh(setting)
         for key, value in data.items():
             setattr(setting, key, value)
         await db.session.commit()

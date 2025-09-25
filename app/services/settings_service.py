@@ -1,5 +1,5 @@
 from ast import Dict
-from typing import Any, override
+from typing import Any, Dict, override
 
 from app.models import SettingsModel
 from app.repositories import SettingsRepository
