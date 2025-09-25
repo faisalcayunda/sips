@@ -71,7 +71,7 @@ class FileService(BaseService[FileModel, FileRepository]):
             metadata = {
                 "filename": file.filename,
                 "description": description or "",
-                "uploaded_by": str(user_id),
+                "uploaded_by": str(user_id) if user_id else None,
             }
 
             url = await self.minio_client.upload_file(
@@ -89,7 +89,7 @@ class FileService(BaseService[FileModel, FileRepository]):
                 "size": content_length,
                 "description": description,
                 "url": url,
-                "user_id": user_id,
+                "user_id": user_id if user_id else None,
             }
 
             db_file = await self.create(file_data)

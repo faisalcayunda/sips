@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, File, Form, Response, UploadFile, status
 from fastapi.responses import StreamingResponse
 
-from app.api.dependencies.auth import get_current_active_user
+from app.api.dependencies.auth import get_current_active_user, get_only_payload
 from app.api.dependencies.factory import Factory
 from app.core.data_types import UUID7Field
 from app.core.params import CommonParams
@@ -62,10 +62,14 @@ async def get_file_info(id: str, service: FileService = Depends(Factory().get_fi
 async def upload_file(
     file: UploadFile = File(...),
     description: Optional[str] = Form(None),
-    current_user: UserModel = Depends(get_current_active_user),
+    current_user: UserModel = Depends(get_only_payload),
     service: FileService = Depends(Factory().get_file_service),
 ):
-    result = await service.upload_file(file=file, description=description, user_id=current_user.id)
+    result = await service.upload_file(
+        file=file,
+        description=description,
+        user_id=current_user.id if current_user else None,
+    )
     return result
 
 
