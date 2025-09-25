@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String
 
-from . import Base
+from .base import Base
 
 
 class AdmModel(Base):
