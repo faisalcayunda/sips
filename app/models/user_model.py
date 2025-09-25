@@ -4,6 +4,7 @@ from pytz import timezone
 from sqlalchemy import CHAR, Boolean, Column, DateTime, Integer, String
 
 from app.core.config import settings
+from app.utils.helpers import generate_code
 
 from . import Base
 
@@ -11,7 +12,7 @@ from . import Base
 class UserModel(Base):
     __tablename__ = "user_account"
 
-    id = Column("acc_id", String(36), primary_key=True, index=True)
+    id = Column("acc_id", String(36), primary_key=True, index=True, default=generate_code(36))
     name = Column("acc_name", String(256), nullable=False)
     address = Column("acc_address", String(512), nullable=True)
     phone = Column("acc_phone", String(20), nullable=True)

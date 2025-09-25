@@ -25,6 +25,7 @@ from app.api.v1.routes import (
     proposal_forestry_status_router,
     regional_router,
     roles_router,
+    settings_router,
     user_router,
 )
 
@@ -53,4 +54,5 @@ router.include_router(piaps_router, tags=["Piaps"])
 router.include_router(piaps_records_router, tags=["Piaps Records"])
 router.include_router(proposal_forestry_router, tags=["Proposal Forestries"])
 router.include_router(proposal_forestry_status_router, tags=["Proposal Forestry Statuses"])
+router.include_router(settings_router, tags=["Settings"])
 router.include_router(user_router, tags=["Users"])

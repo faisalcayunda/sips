@@ -45,7 +45,6 @@ class UserWithPermission(BaseSchema):
 
 
 class UserCreateSchema(BaseSchema):
-    id: str
     name: str = Field(..., min_length=2, max_length=100)
     address: Optional[str] = Field(None, max_length=255)
     phone: Optional[str] = Field(None, max_length=20)
@@ -88,7 +87,6 @@ class UserCreateSchema(BaseSchema):
 
 
 class UserUpdateSchema(BaseSchema):
-    id: Optional[str] = Field(None, min_length=2, max_length=100)
     name: Optional[str] = Field(None, min_length=2, max_length=100)
     address: Optional[str] = Field(None, max_length=255)
     phone: Optional[str] = Field(None, max_length=20)

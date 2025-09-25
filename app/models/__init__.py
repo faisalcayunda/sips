@@ -26,6 +26,7 @@ from .proposal_forestry_status_model import ProposalforestryStatusModel
 from .refresh_token_model import RefreshTokenModel
 from .regional_model import RegionalModel
 from .roles_model import RolesModel
+from .settings_model import SettingsModel
 from .stat_ig_model import StatIGModel
 from .user_model import UserModel
 
@@ -60,4 +61,5 @@ __all__ = [
     "ArticleRatingModel",
     "StatIGModel",
     "AdmModel",
+    "SettingsModel",
 ]

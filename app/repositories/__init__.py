@@ -24,6 +24,7 @@ from .proposal_forestry_repository import ForestryProposalRepository
 from .proposal_forestry_status_repository import ProposalforestryStatusRepository
 from .regional_repository import RegionalRepository
 from .roles_repository import RolesRepository
+from .settings_repository import SettingsRepository
 from .token_repository import TokenRepository
 from .user_repository import UserRepository
 
@@ -56,4 +57,5 @@ __all__ = [
     "ArticleCommentRepository",
     "InfographicRepository",
     "MapsRepository",
+    "SettingsRepository",
 ]

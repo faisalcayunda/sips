@@ -22,6 +22,7 @@ from .proposal_forestry_route import router as proposal_forestry_router
 from .proposal_forestry_status_route import router as proposal_forestry_status_router
 from .regional_route import router as regional_router
 from .roles_route import router as roles_router
+from .settings_route import router as settings_router
 from .user_route import router as user_router
 
 __all__ = [
@@ -50,4 +51,5 @@ __all__ = [
     "farmer_incomes_router",
     "infographic_router",
     "maps_router",
+    "settings_router",
 ]

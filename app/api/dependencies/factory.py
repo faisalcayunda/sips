@@ -26,6 +26,7 @@ from app.models import (
     RefreshTokenModel,
     RegionalModel,
     RolesModel,
+    SettingsModel,
     UserModel,
 )
 from app.repositories import (
@@ -54,6 +55,7 @@ from app.repositories import (
     ProposalforestryStatusRepository,
     RegionalRepository,
     RolesRepository,
+    SettingsRepository,
     TokenRepository,
     UserRepository,
 )
@@ -84,6 +86,7 @@ from app.services import (
     ProposalforestryStatusService,
     RegionalService,
     RolesService,
+    SettingsService,
     UserService,
 )
 
@@ -198,6 +201,10 @@ class RepositoryFactory:
     @staticmethod
     def create_maps_repository() -> MapsRepository:
         return MapsRepository()
+
+    @staticmethod
+    def create_settings_repository() -> SettingsRepository:
+        return SettingsRepository(SettingsModel)
 
 
 class ServiceFactory:
@@ -323,6 +330,10 @@ class ServiceFactory:
         """Get MapsService instance."""
         return MapsService(self.repository_factory.create_maps_repository())
 
+    def get_settings_service(self) -> SettingsService:
+        """Get SettingsService instance."""
+        return SettingsService(self.repository_factory.create_settings_repository())
+
 
 # Backward compatibility - maintain existing interface
 class Factory(ServiceFactory):
@@ -359,3 +370,4 @@ class Factory(ServiceFactory):
         self.article_rating_repository = staticmethod(partial(ArticleRatingRepository, ArticleRatingModel))
         self.infographic_repository = staticmethod(partial(InfographicRepository))
         self.maps_repository = staticmethod(partial(MapsRepository))
+        self.settings_repository = staticmethod(partial(SettingsRepository, SettingsModel))

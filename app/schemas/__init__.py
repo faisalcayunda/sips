@@ -44,6 +44,11 @@ from .piaps_records_schema import (
     PiapsRecordsSchema,
     PiapsRecordsUpdateSchema,
 )
+from .settings_schema import (
+    SettingsCreateSchema,
+    SettingsResponseSchema,
+    SettingsUpdateSchema,
+)
 from .user_schema import UserCreateSchema, UserSchema, UserUpdateSchema
 
 __all__ = [
@@ -82,4 +87,7 @@ __all__ = [
     "ArticleCommentSchema",
     "ArticleCommentCreateSchema",
     "ArticleCommentUpdateSchema",
+    "SettingsResponseSchema",
+    "SettingsCreateSchema",
+    "SettingsUpdateSchema",
 ]
