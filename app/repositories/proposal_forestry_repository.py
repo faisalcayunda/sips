@@ -277,10 +277,11 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
         sort: list = ...,
         search: str = "",
         group_by: str = None,
-        limit: int = 100,
+        limit: int = 0,
         offset: int = 0,
         relationships: List[str] = None,
         searchable_columns: List[str] = None,
+        all: bool = False,
     ) -> Tuple[List[ForestryProposalModel], int]:
 
         query = self._build_query()
@@ -338,7 +339,9 @@ class ForestryProposalRepository(BaseRepository[ForestryProposalModel]):
                     else:
                         query = query.options(joinedload(attr))
 
-        query = query.limit(limit).offset(offset)
+        if not all and limit and offset:
+            query = query.limit(limit).offset(offset)
+
         result = await db.session.execute(query)
 
         records = result.mappings().all()

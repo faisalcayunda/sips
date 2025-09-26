@@ -1,9 +1,12 @@
 import secrets
 import string
+from io import BytesIO
 from typing import Any, AsyncGenerator, BinaryIO, Dict, Optional
 
 import orjson
+import pandas as pd
 from fastapi import Request
+from openpyxl import Workbook
 
 from app.core.security import decode_token
 
@@ -99,5 +102,23 @@ async def auth_from_jwt(request: Request):
         payload = decode_token(token)
         request.state.user_id = str(payload.get("sub"))
     except:
-        # Token jelek → tetap dianggap guest (biar rate limit jatuh ke IP)
         return
+
+
+def export_to_xlsx(data: list, sheet_name: str = "Sheet1") -> bytes:
+    df = pd.DataFrame(data)
+    wb = Workbook()
+    ws = wb.active
+    ws.title = sheet_name
+
+    if not df.empty:
+        for col_idx, col_name in enumerate(df.columns, start=1):
+            ws.cell(row=1, column=col_idx, value=col_name)
+        for row_idx, row in enumerate(df.itertuples(index=False), start=2):
+            for col_idx, value in enumerate(row, start=1):
+                ws.cell(row=row_idx, column=col_idx, value=value)
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output.read()

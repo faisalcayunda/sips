@@ -54,7 +54,11 @@ async def get_business_service(
     return await service.find_by_id(id)
 
 
-@router.post("/business-services", response_model=BusinessServiceSchema, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/business-services",
+    response_model=BusinessServiceSchema,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_business_service(
     data: BusinessServiceCreate,
     current_user: UserSchema = Depends(get_current_active_user),

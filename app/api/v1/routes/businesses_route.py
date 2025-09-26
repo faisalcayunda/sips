@@ -1,6 +1,7 @@
-from typing import Any
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
+from fastapi.responses import StreamingResponse
 
 from app.api.dependencies.auth import get_current_active_user
 from app.api.dependencies.factory import Factory
@@ -43,6 +44,35 @@ async def get_businesses(
         limit=limit,
         offset=offset,
         has_more=total > (offset + limit),
+    )
+
+
+@router.get("/businesses/export")
+async def export_business(
+    filters: Optional[List[str]] = Query(None),
+    sort: Optional[List[str]] = Query(None),
+    search: str = Query(""),
+    group_by: Optional[str] = Query(None),
+    limit: int = Query(0),
+    offset: int = Query(0),
+    relationships: Optional[List[str]] = Query(None),
+    searchable_columns: Optional[List[str]] = Query(None),
+    service: BusinessesService = Depends(Factory().get_businesses_service),
+):
+    excel_bytes = await service.export_to_excel(
+        filters=filters,
+        sort=sort,
+        search=search,
+        group_by=group_by,
+        limit=limit,
+        offset=offset,
+        relationships=relationships,
+        searchable_columns=searchable_columns,
+    )
+    return StreamingResponse(
+        iter([excel_bytes]),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=KUPS.xlsx"},
     )
 
 

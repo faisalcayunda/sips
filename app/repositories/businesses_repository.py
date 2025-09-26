@@ -27,7 +27,12 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         if not record:
             return {}
 
-        json_fields = ["account_users", "business_class", "operational_status", "forestry"]
+        json_fields = [
+            "account_users",
+            "business_class",
+            "operational_status",
+            "forestry",
+        ]
 
         temp = dict(record)
         for field in json_fields:
@@ -78,7 +83,12 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                 )
             )
             .select_from(user_alias)
-            .where(func.json_contains(self.model.account_ids, func.json_quote(func.cast(user_alias.id, String))))
+            .where(
+                func.json_contains(
+                    self.model.account_ids,
+                    func.json_quote(func.cast(user_alias.id, String)),
+                )
+            )
             .correlate(self.model)
             .scalar_subquery()
         )
@@ -426,6 +436,7 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
         offset: int = 0,
         relationships: Optional[List[str]] = None,
         searchable_columns: Optional[List[str]] = None,
+        all: bool = False,
     ) -> Tuple[List[BusinessesModel], int]:
         filters = filters or []
         sort = sort or []
@@ -471,8 +482,9 @@ class BusinessesRepository(BaseRepository[BusinessesModel]):
                         query = query.options(selectinload(attr))
                     else:
                         query = query.options(joinedload(attr))
+        if not all:
+            query = query.limit(limit).offset(offset)
 
-        query = query.limit(limit).offset(offset)
         result = await self.session.execute(query)
         records_seq = result.mappings().all()
         records = [self._mapping(record) for record in records_seq]
